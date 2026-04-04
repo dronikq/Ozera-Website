@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OZERA — Адмін панель</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #232636;
+    --border: #2e3250; --accent: #4f8ef7; --accent2: #3d6fd4;
+    --text: #e8eaf6; --muted: #8891b2; --danger: #e55353;
+    --success: #4caf7d; --warn: #f0a030;
+    --radius: 8px; --radius-lg: 12px;
+  }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; }
+
+  /* LAYOUT */
+  .app { display: flex; height: 100vh; overflow: hidden; }
+  .sidebar { width: 280px; min-width: 280px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+  .main { flex: 1; overflow-y: auto; }
+
+  /* SIDEBAR */
+  .sidebar-header { padding: 20px 16px 12px; border-bottom: 1px solid var(--border); }
+  .sidebar-header h1 { font-size: 18px; font-weight: 700; color: var(--accent); }
+  .sidebar-header p { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .sidebar-search { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .sidebar-search input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; color: var(--text); font-size: 13px; outline: none; }
+  .sidebar-search input:focus { border-color: var(--accent); }
+  .sidebar-actions { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .btn-new { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); padding: 9px; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background .15s; }
+  .btn-new:hover { background: var(--accent2); }
+  .lake-list { flex: 1; overflow-y: auto; }
+  .lake-list-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; display: flex; align-items: flex-start; gap: 10px; }
+  .lake-list-item:hover { background: var(--surface2); }
+  .lake-list-item.active { background: var(--surface2); border-left: 3px solid var(--accent); }
+  .lake-thumb { width: 42px; height: 42px; border-radius: 6px; object-fit: cover; background: var(--surface2); flex-shrink: 0; border: 1px solid var(--border); }
+  .lake-thumb-placeholder { width: 42px; height: 42px; border-radius: 6px; background: var(--surface2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 18px; border: 1px solid var(--border); }
+  .lake-list-info { flex: 1; min-width: 0; }
+  .lake-list-name { font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lake-list-city { color: var(--muted); font-size: 11px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* MAIN CONTENT */
+  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted); gap: 12px; }
+  .empty-state .icon { font-size: 48px; }
+
+  /* EDITOR */
+  .editor { padding: 24px; max-width: 900px; }
+  .editor-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .editor-title { font-size: 20px; font-weight: 700; }
+  .editor-actions { display: flex; gap: 8px; }
+  .btn { border: none; border-radius: var(--radius); padding: 8px 16px; cursor: pointer; font-size: 13px; font-weight: 600; transition: opacity .15s; display: flex; align-items: center; gap: 6px; }
+  .btn:hover { opacity: .85; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* SECTIONS */
+  .section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 16px; overflow: hidden; }
+  .section-header { padding: 14px 18px; display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; border-bottom: 1px solid transparent; transition: background .1s; }
+  .section-header:hover { background: var(--surface2); }
+  .section-header.open { border-bottom-color: var(--border); }
+  .section-icon { font-size: 16px; }
+  .section-title { font-weight: 600; font-size: 14px; flex: 1; }
+  .section-chevron { color: var(--muted); font-size: 12px; transition: transform .2s; }
+  .section-chevron.open { transform: rotate(180deg); }
+  .section-body { padding: 18px; display: none; }
+  .section-body.open { display: block; }
+
+  /* FORM FIELDS */
+  .form-row { display: grid; gap: 14px; margin-bottom: 14px; }
+  .form-row.cols-2 { grid-template-columns: 1fr 1fr; }
+  .form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-row.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .form-control { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 12px; color: var(--text); font-size: 13px; outline: none; transition: border-color .15s; width: 100%; font-family: inherit; }
+  .form-control:focus { border-color: var(--accent); }
+  textarea.form-control { resize: vertical; min-height: 90px; line-height: 1.5; }
+  .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: var(--surface2); border: 1px solid var(--border); border-radius: 22px; transition: .2s; }
+  .toggle-slider::before { content: ''; position: absolute; height: 16px; width: 16px; left: 2px; top: 2px; background: var(--muted); border-radius: 50%; transition: .2s; }
+  .toggle input:checked + .toggle-slider { background: var(--accent); border-color: var(--accent); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); background: #fff; }
+  .toggle-label { font-size: 13px; color: var(--text); }
+
+  /* FISH TAGS */
+  .tags-input-wrap { display: flex; flex-wrap: wrap; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px; min-height: 44px; cursor: text; }
+  .tags-input-wrap.focused { border-color: var(--accent); }
+  .tag { background: var(--accent); color: #fff; border-radius: 4px; padding: 3px 8px; font-size: 12px; display: flex; align-items: center; gap: 4px; }
+  .tag-remove { cursor: pointer; opacity: .7; font-size: 14px; line-height: 1; }
+  .tag-remove:hover { opacity: 1; }
+  .tag-input { border: none; outline: none; background: transparent; color: var(--text); font-size: 13px; min-width: 120px; flex: 1; }
+
+  /* CONTACTS */
+  .contacts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* IMAGES */
+  .images-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .img-card { position: relative; width: 100px; height: 80px; border-radius: var(--radius); overflow: hidden; border: 2px solid var(--border); }
+  .img-card img { width: 100%; height: 100%; object-fit: cover; }
+  .img-card.primary { border-color: var(--accent); }
+  .img-del { position: absolute; top: 3px; right: 3px; background: rgba(0,0,0,.7); color: #fff; border: none; border-radius: 4px; width: 20px; height: 20px; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+  .img-primary-badge { position: absolute; bottom: 3px; left: 3px; background: var(--accent); color: #fff; border-radius: 3px; font-size: 9px; padding: 1px 4px; font-weight: 700; }
+  .upload-btn { background: var(--surface2); border: 2px dashed var(--border); border-radius: var(--radius); padding: 12px 18px; cursor: pointer; color: var(--muted); font-size: 13px; transition: border-color .15s; display: inline-flex; align-items: center; gap: 6px; }
+  .upload-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* TOAST */
+  .toast-wrap { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 1000; }
+  .toast { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; display: flex; align-items: center; gap: 8px; animation: slideIn .2s ease; max-width: 320px; }
+  .toast.success { border-color: var(--success); }
+  .toast.error { border-color: var(--danger); }
+  @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* LOADING */
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* MISC */
+  .badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; font-size: 11px; color: var(--muted); }
+  .divider { height: 1px; background: var(--border); margin: 14px 0; }
+  .hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* AUTH SCREEN */
+  .auth-screen { display: flex; align-items: center; justify-content: center; height: 100vh; background: var(--bg); }
+  .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 48px 40px; text-align: center; max-width: 380px; width: 90%; }
+  .auth-logo { font-size: 48px; margin-bottom: 16px; }
+  .auth-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .auth-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+  .btn-google { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 12px 20px; background: #fff; color: #333; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; transition: box-shadow .2s; }
+  .btn-google:hover { box-shadow: 0 4px 16px rgba(0,0,0,.3); }
+  .auth-denied { margin-top: 20px; background: rgba(229,83,83,.1); border: 1px solid var(--danger); border-radius: var(--radius); padding: 14px; color: var(--danger); font-size: 13px; }
+  /* USER INFO IN SIDEBAR */
+  .user-row { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--border); margin-top: auto; }
+  .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: var(--surface2); }
+  .user-name { flex: 1; font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .btn-logout { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); padding: 4px 8px; cursor: pointer; font-size: 11px; white-space: nowrap; }
+  .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+  @media (max-width: 700px) {
+    .form-row.cols-2, .form-row.cols-3, .form-row.cols-4 { grid-template-columns: 1fr; }
+    .contacts-grid { grid-template-columns: 1fr; }
+    .sidebar { width: 240px; min-width: 240px; }
+  }
+</style>
+</head>
+<body>
+<div id="authWrapper"><!-- auth screen or app renders here --></div>
+<div class="app" id="appShell" style="display:none">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1>🎣 OZERA Admin</h1>
+      <p id="lakeCount">Завантаження...</p>
+    </div>
+    <div class="sidebar-search">
+      <input type="text" id="searchInput" placeholder="🔍 Пошук озера..." oninput="filterLakes()">
+    </div>
+    <div class="sidebar-actions">
+      <button class="btn-new" onclick="createNew()">＋ Нове озеро</button>
+    </div>
+    <div class="lake-list" id="lakeList"></div>
+    <div class="user-row" id="userRow"></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="mainContent">
+    <div class="empty-state">
+      <div class="icon">🏞️</div>
+      <div>Виберіть озеро зі списку або створіть нове</div>
+    </div>
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://hakinbhfivthqxvkssok.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhha2luYmhmaXZ0aHF4dmtzc29rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4OTkwODksImV4cCI6MjA4MzQ3NTA4OX0.wS1nf7ymNbYZ1AlamiJiAPvcMAdcgIPBXrdpl4RxPzg';
+const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhha2luYmhmaXZ0aHF4dmtzc29rIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2Nzg5OTA4OSwiZXhwIjoyMDgzNDc1MDg5fQ.ABINhHvWES-S-oSIdzxZa48V4X8o8-rcJK0GilljCRs';
+const BUCKET = 'lake-images';
+
+// sbAuth — для Google OAuth (anon key)
+// sb — для операцій з даними (service key, минає RLS)
+const sbAuth = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+// ── STATE ────────────────────────────────────────────────────────────────
+let lakes = [];
+let currentLake = null;
+let fishTags = [];
+let currentUser = null;
+
+// ── INIT / AUTH ──────────────────────────────────────────────────────────
+async function init() {
+  // Supabase обробляє OAuth redirect автоматично з URL хешу
+  const { data: { session } } = await sbAuth.auth.getSession();
+
+  if (!session) {
+    showLoginScreen();
+    return;
+  }
+
+  // Перевіряємо is_admin в таблиці profiles
+  const { data: profile } = await sb.from('profiles').select('id, display_name, avatar_url, is_admin').eq('id', session.user.id).single();
+
+  if (!profile?.is_admin) {
+    showAccessDenied(session.user.email, profile?.display_name);
+    return;
+  }
+
+  currentUser = { ...session.user, display_name: profile.display_name, avatar_url: profile.avatar_url };
+  showApp();
+  await loadLakes();
+  renderUserRow();
+}
+
+function showLoginScreen() {
+  document.getElementById('appShell').style.display = 'none';
+  document.getElementById('authWrapper').innerHTML = `
+    <div class="auth-screen">
+      <div class="auth-card">
+        <div class="auth-logo">🎣</div>
+        <div class="auth-title">OZERA Admin</div>
+        <div class="auth-sub">Увійдіть щоб керувати озерами</div>
+        <button class="btn-google" onclick="loginWithGoogle()">
+          <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v8.51h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.14z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.16C6.51 42.62 14.62 48 24 48z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.16C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.75l7.97-6.16z"/><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.97 6.16C12.43 13.72 17.74 9.5 24 9.5z"/></svg>
+          Увійти через Google
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function showAccessDenied(email, name) {
+  document.getElementById('appShell').style.display = 'none';
+  document.getElementById('authWrapper').innerHTML = `
+    <div class="auth-screen">
+      <div class="auth-card">
+        <div class="auth-logo">🚫</div>
+        <div class="auth-title">Доступ заборонено</div>
+        <div class="auth-sub">Ви увійшли як <strong>${name || email}</strong></div>
+        <div class="auth-denied">Ваш акаунт не має прав адміністратора.<br>Зверніться до власника застосунку.</div>
+        <button class="btn-google" style="margin-top:20px;background:var(--surface2);color:var(--text)" onclick="logout()">
+          Вийти
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function showApp() {
+  document.getElementById('authWrapper').innerHTML = '';
+  document.getElementById('appShell').style.display = 'flex';
+}
+
+async function loginWithGoogle() {
+  await sbAuth.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+}
+
+async function logout() {
+  await sbAuth.auth.signOut();
+  currentUser = null;
+  showLoginScreen();
+}
+
+function renderUserRow() {
+  const el = document.getElementById('userRow');
+  if (!el || !currentUser) return;
+  el.innerHTML = `
+    ${currentUser.avatar_url ? `<img class="user-avatar" src="${currentUser.avatar_url}" alt="">` : '<div class="user-avatar" style="background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px">👤</div>'}
+    <span class="user-name">${currentUser.display_name || currentUser.email}</span>
+    <button class="btn-logout" onclick="logout()">Вийти</button>
+  `;
+}
+
+async function loadLakes() {
+  const { data, error } = await sb.from('lakes').select('id, name, city, image_url').order('name');
+  if (error) { toast('Помилка завантаження: ' + error.message, 'error'); return; }
+  lakes = data || [];
+  document.getElementById('lakeCount').textContent = `${lakes.length} озер`;
+  renderList(lakes);
+}
+
+function renderList(list) {
+  const el = document.getElementById('lakeList');
+  el.innerHTML = list.map(l => `
+    <div class="lake-list-item ${currentLake?.id === l.id ? 'active' : ''}" onclick="selectLake('${l.id}')">
+      ${l.image_url
+        ? `<img class="lake-thumb" src="${l.image_url}" onerror="this.style.display='none'">`
+        : `<div class="lake-thumb-placeholder">🏞</div>`}
+      <div class="lake-list-info">
+        <div class="lake-list-name">${l.name}</div>
+        <div class="lake-list-city">${l.city || '—'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterLakes() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  renderList(lakes.filter(l => l.name.toLowerCase().includes(q) || (l.city||'').toLowerCase().includes(q)));
+}
+
+// ── SELECT LAKE ──────────────────────────────────────────────────────────
+async function selectLake(id) {
+  const { data, error } = await sb.from('lakes').select('*').eq('id', id).single();
+  if (error) { toast('Помилка: ' + error.message, 'error'); return; }
+
+  // Load images
+  const { data: imgs } = await sb.from('lake_images').select('*').eq('lake_id', id).order('sort_order');
+
+  currentLake = { ...data, _images: imgs || [] };
+  renderEditor();
+  document.querySelectorAll('.lake-list-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.lake-list-item').forEach(el => {
+    if (el.onclick.toString().includes(id)) el.classList.add('active');
+  });
+}
+
+// ── CREATE NEW ───────────────────────────────────────────────────────────
+function createNew() {
+  currentLake = {
+    id: null, name: '', description: '', city: '', location_text: '', lat: null, lng: null,
+    area_ha: null, max_depth_m: null, fish_species: [], image_url: null,
+    price_details_text: '', price_details_enabled: true,
+    catch_quota_text: '', catch_quota_enabled: false,
+    additional_services_text: '', additional_services_enabled: false,
+    lake_rules_text: '', lake_rules_enabled: false,
+    stocking_text: '', stocking_enabled: false,
+    show_work_schedule: true, base_open_time: '07:00', base_close_time: '20:00', work_schedule_summary: '',
+    contacts: { phone: [], email: null, telegram: null, instagram: null, viber: null }, contacts_enabled: false,
+    location_google_url: '', extra: {},
+    _images: []
+  };
+  renderEditor();
+}
+
+// ── RENDER EDITOR ────────────────────────────────────────────────────────
+function renderEditor() {
+  const l = currentLake;
+  fishTags = Array.isArray(l.fish_species) ? [...l.fish_species] : [];
+  const contacts = l.contacts || {};
+  const phones = Array.isArray(contacts.phone) ? contacts.phone.join(', ') : (contacts.phone || '');
+
+  document.getElementById('mainContent').innerHTML = `
+    <div class="editor">
+      <div class="editor-header">
+        <div class="editor-title">${l.id ? l.name : '➕ Нове озеро'}</div>
+        <div class="editor-actions">
+          ${l.id ? `<button class="btn btn-danger" onclick="deleteLake()">🗑 Видалити</button>` : ''}
+          <button class="btn btn-primary" id="saveBtn" onclick="saveLake()">💾 Зберегти</button>
+        </div>
+      </div>
+
+      ${section('📋', 'Основна інформація', 'basic', true, `
+        <div class="form-row">
+          <div class="form-group">
+            <label>Назва *</label>
+            <input class="form-control" id="f_name" value="${esc(l.name)}" placeholder="Назва озера">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Опис</label>
+            <textarea class="form-control" id="f_description" placeholder="Живий опис 3-4 речення...">${esc(l.description || '')}</textarea>
+          </div>
+        </div>
+        <div class="form-row cols-2">
+          <div class="form-group">
+            <label>Область (місто)</label>
+            <select class="form-control" id="f_city">
+              <option value="">— Оберіть область —</option>
+              ${['Київ','Київська область','Вінницька область','Волинська область','Дніпропетровська область','Донецька область','Житомирська область','Закарпатська область','Запорізька область','Івано-Франківська область','Кіровоградська область','Крим','Луганська область','Львівська область','Миколаївська область','Одеська область','Полтавська область','Рівненська область','Сумська область','Тернопільська область','Харківська область','Херсонська область','Хмельницька область','Черкаська область','Чернівецька область','Чернігівська область'].map(r=>`<option value="${r}" ${l.city===r?'selected':''}>${r}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Адреса</label>
+            <input class="form-control" id="f_location_text" value="${esc(l.location_text || '')}" placeholder="Бородянський р-н, с. Бородянка">
+          </div>
+        </div>
+        <div class="form-row cols-4">
+          <div class="form-group">
+            <label>Широта</label>
+            <input class="form-control" id="f_lat" value="${l.lat || ''}" placeholder="50.1234">
+          </div>
+          <div class="form-group">
+            <label>Довгота</label>
+            <input class="form-control" id="f_lng" value="${l.lng || ''}" placeholder="30.5678">
+          </div>
+          <div class="form-group">
+            <label>Площа (га)</label>
+            <input class="form-control" id="f_area_ha" value="${l.area_ha || ''}" placeholder="12.5">
+          </div>
+          <div class="form-group">
+            <label>Глибина (м)</label>
+            <input class="form-control" id="f_max_depth_m" value="${l.max_depth_m || ''}" placeholder="4.5">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Google Maps посилання</label>
+            <input class="form-control" id="f_location_google_url" value="${esc(l.location_google_url || '')}" placeholder="https://maps.google.com/...">
+          </div>
+        </div>
+      `)}
+
+      ${section('🐟', 'Риби', 'fish', true, `
+        <div class="form-group">
+          <label>Види риб</label>
+          <div class="tags-input-wrap" id="tagsWrap" onclick="document.getElementById('tagInput').focus()">
+            <input class="tag-input" id="tagInput" placeholder="Додати рибу і натиснути Enter..." onkeydown="handleTagInput(event)" onfocus="document.getElementById('tagsWrap').classList.add('focused')" onblur="document.getElementById('tagsWrap').classList.remove('focused')">
+          </div>
+          <div class="hint">Вводьте назву риби і натискайте Enter</div>
+        </div>
+      `)}
+
+      ${section('🕐', 'Графік роботи', 'schedule', true, `
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="f_show_work_schedule" ${l.show_work_schedule ? 'checked' : ''}><span class="toggle-slider"></span></label>
+          <span class="toggle-label">Показувати графік роботи</span>
+        </div>
+        <div class="form-row cols-3">
+          <div class="form-group">
+            <label>Відкриття</label>
+            <input class="form-control" type="time" id="f_base_open_time" value="${l.base_open_time || '07:00'}">
+          </div>
+          <div class="form-group">
+            <label>Закриття</label>
+            <input class="form-control" type="time" id="f_base_close_time" value="${l.base_close_time || '20:00'}">
+          </div>
+          <div class="form-group">
+            <label>Короткий опис</label>
+            <input class="form-control" id="f_work_schedule_summary" value="${esc(l.work_schedule_summary || '')}" placeholder="Щодня 07:00–20:00">
+          </div>
+        </div>
+      `)}
+
+      ${section('💰', 'Ціни', 'price', true, `
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="f_price_details_enabled" ${l.price_details_enabled !== false ? 'checked' : ''}><span class="toggle-slider"></span></label>
+          <span class="toggle-label">Показувати ціни</span>
+        </div>
+        <div class="form-group">
+          <label>Деталі цін</label>
+          <textarea class="form-control" id="f_price_details_text" style="min-height:130px" placeholder="Денна риболовля: 300 грн/особу&#10;Нічна риболовля: 450 грн/особу&#10;...">${esc(l.price_details_text || '')}</textarea>
+        </div>
+      `)}
+
+      ${section('📏', 'Норма вилову', 'quota', false, `
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="f_catch_quota_enabled" ${l.catch_quota_enabled ? 'checked' : ''}><span class="toggle-slider"></span></label>
+          <span class="toggle-label">Показувати норму вилову</span>
+        </div>
+        <div class="form-group">
+          <textarea class="form-control" id="f_catch_quota_text" style="min-height:100px" placeholder="Короп — до 3 кг&#10;Щука — до 1 шт...">${esc(l.catch_quota_text || '')}</textarea>
+        </div>
+      `)}
+
+      ${section('🏕️', 'Додаткові послуги', 'services', false, `
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="f_additional_services_enabled" ${l.additional_services_enabled ? 'checked' : ''}><span class="toggle-slider"></span></label>
+          <span class="toggle-label">Показувати послуги</span>
+        </div>
+        <div class="form-group">
+          <textarea class="form-control" id="f_additional_services_text" style="min-height:120px" placeholder="Оренда альтанки — 200 грн&#10;Мангал — 100 грн&#10;...">${esc(l.additional_services_text || '')}</textarea>
+        </div>
+      `)}
+
+      ${section('📜', 'Правила озера', 'rules', false, `
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="f_lake_rules_enabled" ${l.lake_rules_enabled ? 'checked' : ''}><span class="toggle-slider"></span></label>
+          <span class="toggle-label">Показувати правила</span>
+        </div>
+        <div class="form-group">
+          <textarea class="form-control" id="f_lake_rules_text" style="min-height:120px" placeholder="1. Використання не більше 2 снастей&#10;2. Обов'язкові садки&#10;...">${esc(l.lake_rules_text || '')}</textarea>
+        </div>
+      `)}
+
+      ${section('🐠', 'Зариблення', 'stocking', false, `
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="f_stocking_enabled" ${l.stocking_enabled ? 'checked' : ''}><span class="toggle-slider"></span></label>
+          <span class="toggle-label">Показувати зариблення</span>
+        </div>
+        <div class="form-group">
+          <textarea class="form-control" id="f_stocking_text" style="min-height:90px" placeholder="Водойма регулярно зарибляється коропом, товстолобом...">${esc(l.stocking_text || '')}</textarea>
+        </div>
+      `)}
+
+      ${section('📞', 'Контакти', 'contacts', false, `
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="f_contacts_enabled" ${l.contacts_enabled ? 'checked' : ''}><span class="toggle-slider"></span></label>
+          <span class="toggle-label">Показувати контакти</span>
+        </div>
+        <div class="contacts-grid">
+          <div class="form-group">
+            <label>Телефони (через кому)</label>
+            <input class="form-control" id="f_contacts_phone" value="${esc(phones)}" placeholder="+380671234567, +380501234567">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input class="form-control" id="f_contacts_email" value="${esc(contacts.email || '')}" placeholder="lake@gmail.com">
+          </div>
+          <div class="form-group">
+            <label>Telegram</label>
+            <input class="form-control" id="f_contacts_telegram" value="${esc(contacts.telegram || '')}" placeholder="@lake_name">
+          </div>
+          <div class="form-group">
+            <label>Instagram</label>
+            <input class="form-control" id="f_contacts_instagram" value="${esc(contacts.instagram || '')}" placeholder="@lake_insta">
+          </div>
+          <div class="form-group">
+            <label>Viber</label>
+            <input class="form-control" id="f_contacts_viber" value="${esc(contacts.viber || '')}" placeholder="+380671234567">
+          </div>
+          <div class="form-group">
+            <label>Сайт</label>
+            <input class="form-control" id="f_contacts_website" value="${esc(contacts.website || '')}" placeholder="https://www.lake.com.ua">
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="form-row cols-2">
+          <div class="form-group">
+            <label>Waze посилання</label>
+            <input class="form-control" id="f_location_waze_url" value="${esc(l.location_waze_url || '')}" placeholder="https://waze.com/ul?ll=...">
+          </div>
+        </div>
+      `)}
+
+      ${section('🗺️', 'Схема озера', 'scheme', false, `
+        <div class="toggle-row">
+          <label class="toggle"><input type="checkbox" id="f_scheme_enabled" ${l.scheme_enabled ? 'checked' : ''}><span class="toggle-slider"></span></label>
+          <span class="toggle-label">Показувати схему озера</span>
+        </div>
+        <div class="form-group">
+          <label>URL зображення схеми</label>
+          <input class="form-control" id="f_scheme_image_url" value="${esc(l.scheme_image_url || '')}" placeholder="https://...">
+          <div class="hint">Пряме посилання на картинку схеми озера (jpg, png, webp)</div>
+        </div>
+        ${l.scheme_image_url ? `<div style="margin-top:10px"><img src="${esc(l.scheme_image_url)}" style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--border)"></div>` : ''}
+      `)}
+
+      ${section('🖼️', 'Фото', 'images', true, `
+        <div class="images-grid" id="imagesGrid"></div>
+        <label class="upload-btn">
+          📁 Завантажити фото
+          <input type="file" accept="image/*" multiple style="display:none" onchange="uploadImages(this)">
+        </label>
+        <p class="hint" style="margin-top:8px">Перше фото — головне. Натисніть 🗑 щоб видалити.</p>
+      `)}
+
+    </div>
+  `;
+
+  renderTags();
+  renderImages();
+
+  // Section toggle
+  document.querySelectorAll('.section-header').forEach(h => {
+    h.addEventListener('click', () => {
+      const body = h.nextElementSibling;
+      const chevron = h.querySelector('.section-chevron');
+      const isOpen = body.classList.toggle('open');
+      h.classList.toggle('open', isOpen);
+      chevron.classList.toggle('open', isOpen);
+    });
+  });
+}
+
+function section(icon, title, id, openByDefault, content) {
+  return `
+    <div class="section">
+      <div class="section-header ${openByDefault ? 'open' : ''}">
+        <span class="section-icon">${icon}</span>
+        <span class="section-title">${title}</span>
+        <span class="section-chevron ${openByDefault ? 'open' : ''}">▼</span>
+      </div>
+      <div class="section-body ${openByDefault ? 'open' : ''}">${content}</div>
+    </div>
+  `;
+}
+
+// ── TAGS ──────────────────────────────────────────────────────────────────
+function renderTags() {
+  const wrap = document.getElementById('tagsWrap');
+  if (!wrap) return;
+  const input = document.getElementById('tagInput');
+  wrap.innerHTML = '';
+  fishTags.forEach((tag, i) => {
+    const t = document.createElement('span');
+    t.className = 'tag';
+    t.innerHTML = `${esc(tag)} <span class="tag-remove" onclick="removeTag(${i})">×</span>`;
+    wrap.appendChild(t);
+  });
+  wrap.appendChild(input);
+}
+
+function handleTagInput(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = e.target.value.trim().replace(/,$/, '');
+    if (val && !fishTags.includes(val)) { fishTags.push(val); renderTags(); }
+    e.target.value = '';
+  } else if (e.key === 'Backspace' && e.target.value === '' && fishTags.length) {
+    fishTags.pop(); renderTags();
+  }
+}
+
+function removeTag(i) { fishTags.splice(i, 1); renderTags(); }
+
+// ── IMAGES ────────────────────────────────────────────────────────────────
+function renderImages() {
+  const grid = document.getElementById('imagesGrid');
+  if (!grid || !currentLake._images) return;
+  grid.innerHTML = currentLake._images.map((img, i) => `
+    <div class="img-card ${i === 0 ? 'primary' : ''}">
+      <img src="${img.url}" alt="">
+      <button class="img-del" onclick="deleteImage('${img.id}', '${img.storage_path || ''}')">✕</button>
+      ${i === 0 ? '<div class="img-primary-badge">ГОЛОВНЕ</div>' : ''}
+    </div>
+  `).join('');
+}
+
+async function uploadImages(input) {
+  if (!currentLake?.id) { toast('Спочатку збережіть озеро', 'error'); return; }
+  const files = Array.from(input.files);
+  toast(`Завантаження ${files.length} фото...`);
+  for (const file of files) {
+    const ext = file.name.split('.').pop();
+    const path = `${currentLake.id}/upload_${Date.now()}.${ext}`;
+    const { error: upErr } = await sb.storage.from(BUCKET).upload(path, file, { upsert: true });
+    if (upErr) { toast('Помилка upload: ' + upErr.message, 'error'); continue; }
+    const { data: urlData } = sb.storage.from(BUCKET).getPublicUrl(path);
+    const sortOrder = currentLake._images.length;
+    const { data: row } = await sb.from('lake_images').insert({ lake_id: currentLake.id, url: urlData.publicUrl, storage_path: path, sort_order: sortOrder }).select().single();
+    if (row) { currentLake._images.push(row); }
+    if (sortOrder === 0) { await sb.from('lakes').update({ image_url: urlData.publicUrl }).eq('id', currentLake.id); currentLake.image_url = urlData.publicUrl; }
+  }
+  renderImages();
+  toast(`✓ ${files.length} фото завантажено`, 'success');
+  input.value = '';
+}
+
+async function deleteImage(imgId, storagePath) {
+  if (!confirm('Видалити це фото?')) return;
+  await sb.from('lake_images').delete().eq('id', imgId);
+  if (storagePath) await sb.storage.from(BUCKET).remove([storagePath]);
+  currentLake._images = currentLake._images.filter(i => i.id !== imgId);
+  // Update primary image_url
+  if (currentLake._images.length > 0) {
+    await sb.from('lakes').update({ image_url: currentLake._images[0].url }).eq('id', currentLake.id);
+  } else {
+    await sb.from('lakes').update({ image_url: null }).eq('id', currentLake.id);
+  }
+  renderImages();
+  toast('Фото видалено');
+}
+
+// ── SAVE ──────────────────────────────────────────────────────────────────
+async function saveLake() {
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Збереження...';
+
+  const phones = (document.getElementById('f_contacts_phone')?.value || '').split(',').map(p => p.trim()).filter(Boolean);
+
+  const payload = {
+    name: document.getElementById('f_name').value.trim(),
+    description: document.getElementById('f_description').value.trim(),
+    city: document.getElementById('f_city').value.trim(),
+    location_text: document.getElementById('f_location_text').value.trim(),
+    lat: parseFloat(document.getElementById('f_lat').value) || null,
+    lng: parseFloat(document.getElementById('f_lng').value) || null,
+    area_ha: parseFloat(document.getElementById('f_area_ha').value) || null,
+    max_depth_m: parseFloat(document.getElementById('f_max_depth_m').value) || null,
+    location_google_url: document.getElementById('f_location_google_url').value.trim() || null,
+    location_waze_url: document.getElementById('f_location_waze_url').value.trim() || null,
+    scheme_enabled: document.getElementById('f_scheme_enabled').checked,
+    scheme_image_url: document.getElementById('f_scheme_image_url').value.trim() || null,
+    fish_species: fishTags,
+    show_work_schedule: document.getElementById('f_show_work_schedule').checked,
+    base_open_time: document.getElementById('f_base_open_time').value || null,
+    base_close_time: document.getElementById('f_base_close_time').value || null,
+    work_schedule_summary: document.getElementById('f_work_schedule_summary').value.trim() || null,
+    price_details_text: document.getElementById('f_price_details_text').value.trim() || null,
+    price_details_enabled: document.getElementById('f_price_details_enabled').checked,
+    catch_quota_text: document.getElementById('f_catch_quota_text').value.trim() || null,
+    catch_quota_enabled: document.getElementById('f_catch_quota_enabled').checked,
+    additional_services_text: document.getElementById('f_additional_services_text').value.trim() || null,
+    additional_services_enabled: document.getElementById('f_additional_services_enabled').checked,
+    lake_rules_text: document.getElementById('f_lake_rules_text').value.trim() || null,
+    lake_rules_enabled: document.getElementById('f_lake_rules_enabled').checked,
+    stocking_text: document.getElementById('f_stocking_text').value.trim() || null,
+    stocking_enabled: document.getElementById('f_stocking_enabled').checked,
+    contacts: {
+      phone: phones,
+      email: document.getElementById('f_contacts_email').value.trim() || null,
+      telegram: document.getElementById('f_contacts_telegram').value.trim() || null,
+      instagram: document.getElementById('f_contacts_instagram').value.trim() || null,
+      viber: document.getElementById('f_contacts_viber').value.trim() || null,
+      website: document.getElementById('f_contacts_website').value.trim() || null,
+    },
+    contacts_enabled: document.getElementById('f_contacts_enabled').checked,
+  };
+
+  if (!payload.name) { toast('Введіть назву озера', 'error'); btn.disabled = false; btn.innerHTML = '💾 Зберегти'; return; }
+
+  let error;
+  if (currentLake.id) {
+    ({ error } = await sb.from('lakes').update(payload).eq('id', currentLake.id));
+  } else {
+    const { data, error: err } = await sb.from('lakes').insert(payload).select().single();
+    error = err;
+    if (data) currentLake.id = data.id;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '💾 Зберегти';
+
+  if (error) { toast('Помилка: ' + error.message, 'error'); return; }
+
+  toast('✓ Збережено!', 'success');
+  await loadLakes();
+  document.querySelectorAll('.lake-list-item').forEach(el => {
+    if (el.onclick?.toString().includes(currentLake.id)) el.classList.add('active');
+  });
+}
+
+// ── DELETE ───────────────────────────────────────────────────────────────
+async function deleteLake() {
+  if (!confirm(`Видалити озеро "${currentLake.name}"?\nЦя дія незворотна!`)) return;
+  const { error } = await sb.from('lakes').delete().eq('id', currentLake.id);
+  if (error) { toast('Помилка: ' + error.message, 'error'); return; }
+  toast('Озеро видалено');
+  currentLake = null;
+  document.getElementById('mainContent').innerHTML = `<div class="empty-state"><div class="icon">🏞️</div><div>Виберіть озеро або створіть нове</div></div>`;
+  await loadLakes();
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function toast(msg, type = '') {
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'} ${msg}`;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+init();
+</script>
+</body>
+</html>

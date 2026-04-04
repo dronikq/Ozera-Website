@@ -1,0 +1,66 @@
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+export type Lake = {
+  id: string
+  name: string
+  description: string | null
+  location_text: string | null
+  city: string | null
+  lat: number | null
+  lng: number | null
+  area_ha: number | null
+  max_depth_m: number | null
+  image_url: string | null
+  extra: Record<string, unknown> | null
+  is_active: boolean
+  fish_species: string[] | null
+  location_google_url: string | null
+  location_waze_url: string | null
+  contacts_enabled: boolean
+  contacts: { email?: string; phone?: string[] } | null
+  price_details_enabled: boolean
+  price_details_text: string | null
+  catch_quota_enabled: boolean
+  catch_quota_text: string | null
+  additional_services_enabled: boolean
+  additional_services_text: string | null
+  lake_rules_enabled: boolean
+  lake_rules_text: string | null
+  stocking_enabled: boolean
+  stocking_text: string | null
+  faq_enabled: boolean
+  faq_items: { question: string; answer: string }[] | null
+  amenities_enabled: boolean
+  amenities: { key: string; name: string }[] | null
+  scheme_enabled: boolean
+  scheme_image_url: string | null
+  show_work_schedule: boolean
+  base_open_time: string | null
+  base_close_time: string | null
+  work_schedule_summary: string | null
+  price_uah: number | null
+  created_at: string
+  updated_at: string
+}
+
+export type LakeImage = {
+  id: string
+  lake_id: string
+  url: string
+  sort_order: number
+  created_at: string
+}
+
+export type LakeUpdate = {
+  id: string
+  lake_id: string
+  type: string
+  title: string
+  body: string | null
+  created_at: string
+}
