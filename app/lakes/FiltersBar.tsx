@@ -152,9 +152,28 @@ export default function FiltersBar({ vertical = false }: { vertical?: boolean })
           <span>{f.emoji}</span> {f.value}
         </button>
       ))}
-      {currentFish && (
+      {/* Divider */}
+      <div className="h-5 w-px bg-blue-100 shrink-0" />
+
+      {/* Region */}
+      <select
+        value={currentRegion}
+        onChange={(e) => update("region", e.target.value)}
+        className={`px-3 py-1.5 rounded-xl text-xs border focus:outline-none focus:border-blue-500 transition-colors shrink-0 ${
+          currentRegion
+            ? "bg-blue-50 border-blue-400 text-[#0f2a4a] font-medium"
+            : "bg-white border-blue-200 text-slate-500"
+        }`}
+      >
+        <option value="">🌍 Регіон</option>
+        {REGIONS.map((r) => (
+          <option key={r} value={r}>{r}</option>
+        ))}
+      </select>
+
+      {(currentFish || currentRegion) && (
         <button
-          onClick={() => update("fish", "")}
+          onClick={() => router.push("/lakes")}
           className="px-2.5 py-1.5 rounded-xl text-xs border border-red-200 text-red-400 hover:border-red-400 hover:bg-red-50 hover:text-red-600 bg-white transition-all shrink-0"
         >
           ✕
