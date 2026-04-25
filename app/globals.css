@@ -16,4 +16,36 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
+
+::selection {
+  background: #f5c842;
+  color: #0f2a4a;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(3deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+
+@keyframes float-badge {
+  0%, 100% { transform: translateY(0px) rotate(-5deg); }
+  50% { transform: translateY(-8px) rotate(-5deg); }
+}
+
+@keyframes float-notif {
+  0%, 100% { transform: translateY(0px) rotate(-3deg); }
+  50% { transform: translateY(-6px) rotate(-3deg); }
+}
+
+.phone-float { animation: float 4s ease-in-out infinite; }
+.badge-float { animation: float-badge 4s ease-in-out infinite 0.5s; }
+.notif-float { animation: float-notif 4s ease-in-out infinite 1s; }
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.pulse-ring { animation: pulse-ring 2s ease-out infinite; }

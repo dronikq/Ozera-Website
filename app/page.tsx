@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
+import Navbar from "./components/Navbar";
+import { FadeUp, SlideLeft, SlideRight, ScaleIn, FadeIn } from "./components/AnimatedSection";
 
 async function getLakesCount() {
   const { count } = await supabase
@@ -55,8 +57,9 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <Navbar />
       {/* Nav */}
-      <nav className="border-b border-blue-100 bg-white/80 backdrop-blur sticky top-0 z-50">
+      <nav className="border-b border-blue-100 bg-white/80 backdrop-blur sticky top-0 z-50 md:hidden">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Image
@@ -86,41 +89,52 @@ export default async function HomePage() {
       </nav>
 
       {/* Hero */}
-      <section className="max-w-6xl mx-auto px-4 py-20 flex flex-col md:flex-row items-center gap-12 w-full">
+      <section className="max-w-6xl mx-auto px-4 py-20 flex flex-col md:flex-row items-center gap-12 w-full pt-24">
         {/* Text */}
-        <div className="flex flex-col gap-6 flex-1 text-center md:text-left">
+        <SlideLeft className="flex flex-col gap-6 flex-1 text-center md:text-left">
+          <FadeUp delay={0.1}>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-sm font-medium w-fit mx-auto md:mx-0">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse inline-block" />
+            <span className="relative flex h-2 w-2">
+              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+            </span>
             {count} озер у базі
           </div>
+          </FadeUp>
 
+          <FadeUp delay={0.2}>
           <h1 className="text-4xl md:text-5xl font-bold text-[#0f2a4a] leading-tight">
             Знайди своє ідеальне місце для риболовлі
           </h1>
+          </FadeUp>
 
+          <FadeUp delay={0.3}>
           <p className="text-slate-500 text-lg">
             Актуальна інформація про озера України — ціни, риба, розклад та контакти.
           </p>
+          </FadeUp>
 
+          <FadeUp delay={0.4}>
           <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
             <Link
               href="/lakes"
-              className="px-8 py-3.5 rounded-2xl bg-[#f5c842] hover:bg-[#e6ba35] text-[#0f2a4a] font-bold text-lg transition-colors shadow-md"
+              className="group px-8 py-3.5 rounded-2xl bg-[#f5c842] hover:bg-[#e6ba35] text-[#0f2a4a] font-bold text-lg transition-all duration-200 shadow-md hover:shadow-xl hover:-translate-y-0.5"
             >
-              Переглянути озера
+              Переглянути озера <span className="group-hover:translate-x-1 inline-block transition-transform">→</span>
             </Link>
             <a
               href="#download"
-              className="px-8 py-3.5 rounded-2xl border-2 border-blue-200 hover:border-blue-400 text-blue-600 font-semibold transition-colors"
+              className="px-8 py-3.5 rounded-2xl border-2 border-blue-200 hover:border-blue-400 text-blue-600 font-semibold transition-all duration-200 hover:-translate-y-0.5"
             >
               Скачати застосунок
             </a>
           </div>
-        </div>
+          </FadeUp>
+        </SlideLeft>
 
         {/* Phone mockup */}
-        <div className="flex-1 flex justify-center items-center select-none">
-          <div className="relative" style={{ transform: "rotate(3deg)" }}>
+        <SlideRight delay={0.3} className="flex-1 flex justify-center items-center select-none">
+          <div className="relative phone-float">
 
             {/* Glow behind phone */}
             <div className="absolute inset-0 -m-10 rounded-[60px] bg-gradient-to-br from-blue-300/30 via-[#f5c842]/20 to-blue-200/20 blur-3xl" />
@@ -191,38 +205,36 @@ export default async function HomePage() {
             </div>
 
             {/* Floating badge */}
-            <div
-              className="absolute -bottom-3 -left-8 bg-[#f5c842] text-[#0f2a4a] text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg whitespace-nowrap"
-              style={{ transform: "rotate(-5deg)" }}
-            >
+            <div className="badge-float absolute -bottom-3 -left-8 bg-[#f5c842] text-[#0f2a4a] text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg whitespace-nowrap">
               🐟 {count} озер у базі
             </div>
 
             {/* Floating notification */}
             <div
-              className="absolute -top-2 -right-10 bg-white border border-blue-100 rounded-xl shadow-lg px-2.5 py-1.5 flex items-center gap-1.5"
-              style={{ transform: "rotate(-3deg)" }}
+              className="notif-float absolute -top-2 -right-10 bg-white border border-blue-100 rounded-xl shadow-lg px-2.5 py-1.5 flex items-center gap-1.5"
             >
               <span className="text-xs">🔔</span>
               <span className="text-[10px] font-medium text-[#0f2a4a]">Нове озеро!</span>
             </div>
 
           </div>
-        </div>
+        </SlideRight>
       </section>
 
       {/* Features */}
       <section className="max-w-6xl mx-auto px-4 pb-20 grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
         {[
-          { icon: "🗺️", title: "Карта та координати", desc: "Google Maps і Waze — одним кліком до озера" },
-          { icon: "🐟", title: "Види риб та ціни",    desc: "Актуальні ціни, норми вилову і склад риби" },
-          { icon: "🔔", title: "Оновлення",           desc: "Свіжі новини від адміністрації озер" },
+          { icon: "🗺️", title: "Карта та координати", desc: "Google Maps і Waze — одним кліком до озера", delay: 0 },
+          { icon: "🐟", title: "Види риб та ціни",    desc: "Актуальні ціни, норми вилову і склад риби", delay: 0.12 },
+          { icon: "🔔", title: "Оновлення",           desc: "Свіжі новини від адміністрації озер", delay: 0.24 },
         ].map((f) => (
-          <div key={f.title} className="rounded-2xl border border-blue-100 bg-white p-6 flex flex-col gap-3 shadow-sm">
+          <FadeUp key={f.title} delay={f.delay}>
+          <div className="rounded-2xl border border-blue-100 bg-white p-6 flex flex-col gap-3 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
             <span className="text-3xl">{f.icon}</span>
             <h3 className="font-bold text-[#0f2a4a]">{f.title}</h3>
             <p className="text-slate-400 text-sm">{f.desc}</p>
           </div>
+          </FadeUp>
         ))}
       </section>
 
