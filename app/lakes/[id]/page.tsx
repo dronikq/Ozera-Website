@@ -42,9 +42,46 @@ export async function generateMetadata({
   const { id } = await params;
   const lake = await getLake(id);
   if (!lake) return { title: "Озеро не знайдено" };
+
+  const BASE_URL = "https://www.ozera.in.ua";
+  const url = `${BASE_URL}/lakes/${id}`;
+
+  // Формуємо title: "Тихий Берег — Риболовля, Київська обл. | OZERA"
+  const locationPart = lake.city ? `, ${lake.city}` : "";
+  const title = `${lake.name} — Платна риболовля${locationPart}`;
+
+  // Формуємо опис: риба + ціна + локація
+  const fishPart = lake.fish_species?.length
+    ? `Риба: ${lake.fish_species.slice(0, 4).join(", ")}.`
+    : "";
+  const schedulePart = lake.work_schedule_summary
+    ? `Графік: ${lake.work_schedule_summary}.`
+    : "";
+  const description = lake.description
+    ? `${lake.description.slice(0, 120)} ${fishPart} ${schedulePart}`.trim()
+    : `Платна рибалка на ${lake.name}${locationPart}. ${fishPart} ${schedulePart}`.trim();
+
+  const image = lake.image_url ?? `${BASE_URL}/og-image.png`;
+
   return {
-    title: `${lake.name} — OZERA`,
-    description: lake.description ?? `Інформація про озеро ${lake.name}`,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      locale: "uk_UA",
+      siteName: "OZERA",
+      images: [{ url: image, width: 1200, height: 630, alt: lake.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
   };
 }
 
@@ -58,8 +95,53 @@ export default async function LakePage({
 
   if (!lake) notFound();
 
+  const BASE_URL = "https://www.ozera.in.ua";
+
+  // JSON-LD — Google розуміє що це місце для риболовлі
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": ["TouristAttraction", "LocalBusiness"],
+    name: lake.name,
+    description: lake.description ?? `Платна рибалка на ${lake.name}`,
+    url: `${BASE_URL}/lakes/${lake.id}`,
+    image: lake.image_url ?? `${BASE_URL}/og-image.png`,
+    ...(lake.lat && lake.lng && {
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: lake.lat,
+        longitude: lake.lng,
+      },
+    }),
+    ...(lake.city && {
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: lake.city,
+        addressCountry: "UA",
+      },
+    }),
+    ...(lake.contacts?.phone?.length && {
+      telephone: lake.contacts.phone[0],
+    }),
+    ...(lake.base_open_time && lake.base_close_time && {
+      openingHours: `Mo-Su ${lake.base_open_time}-${lake.base_close_time}`,
+    }),
+    ...(lake.fish_species?.length && {
+      amenityFeature: lake.fish_species.map((f) => ({
+        "@type": "LocationFeatureSpecification",
+        name: f,
+        value: true,
+      })),
+    }),
+    inLanguage: "uk-UA",
+    isAccessibleForFree: false,
+  };
+
   return (
     <main className="min-h-screen bg-[#f0f7ff]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Nav */}
       <nav className="border-b border-blue-100 bg-white/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-3">

@@ -17,10 +17,14 @@ export const metadata: Metadata = {
   },
 };
 
-async function getLakes(search: string, sort: string, region: string): Promise<Lake[]> {
-  let query = supabase
-    .from("lakes")
-    .select("*");
+async function getLakes(
+  search: string,
+  sort: string,
+  region: string,
+  fish: string,
+  price: string,
+): Promise<Lake[]> {
+  let query = supabase.from("lakes").select("*");
 
   if (search) {
     query = query.ilike("name", `%${search}%`);
@@ -28,6 +32,11 @@ async function getLakes(search: string, sort: string, region: string): Promise<L
 
   if (region) {
     query = query.eq("city", region);
+  }
+
+  // Fish species filter (array contains)
+  if (fish) {
+    query = query.contains("fish_species", [fish]);
   }
 
   // Server-side ordering where possible
@@ -60,16 +69,25 @@ async function getLakes(search: string, sort: string, region: string): Promise<L
     });
   }
 
+  // Client-side price range filter
+  if (price === "200") {
+    lakes = lakes.filter((l) => l.price_uah != null && l.price_uah <= 200);
+  } else if (price === "500") {
+    lakes = lakes.filter((l) => l.price_uah != null && l.price_uah <= 500);
+  } else if (price === "500+") {
+    lakes = lakes.filter((l) => l.price_uah != null && l.price_uah > 500);
+  }
+
   return lakes;
 }
 
 export default async function LakesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; sort?: string; region?: string }>;
+  searchParams: Promise<{ q?: string; sort?: string; region?: string; fish?: string; price?: string }>;
 }) {
-  const { q = "", sort = "name_asc", region = "" } = await searchParams;
-  const lakes = await getLakes(q, sort, region);
+  const { q = "", sort = "name_asc", region = "", fish = "", price = "" } = await searchParams;
+  const lakes = await getLakes(q, sort, region, fish, price);
 
   return (
     <main className="min-h-screen bg-[#f0f7ff]">

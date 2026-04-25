@@ -22,11 +22,11 @@ export default function CatalogView({ lakes, total }: Props) {
       {showMap ? (
         /* ── MAP MODE: filters on top, list + map side by side ── */
         <div>
-          <div className="flex items-center gap-3 mb-6 flex-wrap">
+          <div className="flex flex-col gap-2 mb-6">
             <Suspense>
               <FiltersBar />
             </Suspense>
-            <div className="ml-auto shrink-0">
+            <div className="flex justify-end">
               <button
                 onClick={() => setShowMap(false)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm border border-blue-200 bg-white text-slate-500 hover:border-blue-400 hover:text-[#0f2a4a] transition-all"
