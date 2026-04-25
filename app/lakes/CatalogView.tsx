@@ -46,9 +46,9 @@ export default function CatalogView({ lakes, total }: Props) {
         <div className="ml-auto shrink-0">
           <button
             onClick={() => setShowMap(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border border-blue-200 bg-white text-slate-600 hover:border-blue-400 hover:text-[#0f2a4a] hover:shadow-sm transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-[#0f2a4a] text-white hover:bg-blue-700 shadow-md hover:shadow-lg transition-all"
           >
-            🗺️ Показати на карті
+            🗺️ На карті
           </button>
         </div>
       </div>
