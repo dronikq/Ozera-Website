@@ -5,6 +5,11 @@
   --foreground: #0f2a4a;
 }
 
+/* Homepage uses dark theme — prevent flash */
+html.dark-home {
+  background: #0a1f38;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
