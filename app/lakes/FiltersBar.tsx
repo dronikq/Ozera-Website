@@ -137,96 +137,29 @@ export default function FiltersBar({ vertical = false }: { vertical?: boolean })
 
   /* ──────────────────────────── HORIZONTAL (map top bar) ──────────────────────────── */
   return (
-    <div className="flex flex-col gap-2 w-full">
-
-      {/* Row 1: Fish chips (scrollable) */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-0.5 no-scrollbar">
-        <span className="text-xs text-slate-400 font-medium shrink-0">Риба:</span>
-        {FISH_CHIPS.map((f) => (
-          <button
-            key={f.value}
-            onClick={() => update("fish", currentFish === f.value ? "" : f.value)}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all border shrink-0 ${
-              currentFish === f.value
-                ? "bg-blue-600 border-blue-600 text-white shadow-sm"
-                : "bg-white border-blue-100 text-slate-500 hover:border-blue-400 hover:text-[#0f2a4a]"
-            }`}
-          >
-            <span>{f.emoji}</span> {f.value}
-          </button>
-        ))}
-      </div>
-
-      {/* Row 2: Price + Sort + Region + Reset */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {/* Price chips */}
-        <span className="text-xs text-slate-400 font-medium">Ціна:</span>
-        <div className="flex gap-1.5 flex-wrap">
-          {PRICE_OPTIONS.filter((o) => o.value !== "").map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => update("price", currentPrice === opt.value ? "" : opt.value)}
-              className={`px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all border ${
-                currentPrice === opt.value
-                  ? "bg-[#f5c842] border-[#f5c842] text-[#0f2a4a] shadow-sm"
-                  : "bg-white border-blue-200 text-slate-500 hover:border-blue-400 hover:text-[#0f2a4a]"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Divider */}
-        <div className="h-5 w-px bg-blue-100" />
-
-        {/* Sort chips */}
-        <span className="text-xs text-slate-400 font-medium">Сортування:</span>
-        <div className="flex gap-1.5 flex-wrap">
-          {SORT_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => update("sort", opt.value)}
-              className={`px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all border ${
-                currentSort === opt.value
-                  ? "bg-[#f5c842] border-[#f5c842] text-[#0f2a4a] shadow-sm"
-                  : "bg-white border-blue-200 text-slate-500 hover:border-blue-400 hover:text-[#0f2a4a]"
-              }`}
-            >
-              {opt.icon} {opt.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Divider */}
-        <div className="h-5 w-px bg-blue-100" />
-
-        {/* Region */}
-        <select
-          value={currentRegion}
-          onChange={(e) => update("region", e.target.value)}
-          className={`px-3 py-1.5 rounded-xl text-xs border focus:outline-none focus:border-blue-500 transition-colors ${
-            currentRegion
-              ? "bg-blue-50 border-blue-400 text-[#0f2a4a] font-medium"
-              : "bg-white border-blue-200 text-slate-500"
+    <div className="flex items-center gap-2 overflow-x-auto pb-0.5 no-scrollbar">
+      <span className="text-xs text-slate-400 font-medium shrink-0">Риба:</span>
+      {FISH_CHIPS.map((f) => (
+        <button
+          key={f.value}
+          onClick={() => update("fish", currentFish === f.value ? "" : f.value)}
+          className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all border shrink-0 ${
+            currentFish === f.value
+              ? "bg-blue-600 border-blue-600 text-white shadow-sm"
+              : "bg-white border-blue-100 text-slate-500 hover:border-blue-400 hover:text-[#0f2a4a]"
           }`}
         >
-          <option value="">🌍 Регіон</option>
-          {REGIONS.map((r) => (
-            <option key={r} value={r}>{r}</option>
-          ))}
-        </select>
-
-        {/* Reset */}
-        {hasFilters && (
-          <button
-            onClick={() => router.push("/lakes")}
-            className="px-2.5 py-1.5 rounded-xl text-xs border border-red-200 text-red-400 hover:border-red-400 hover:bg-red-50 hover:text-red-600 bg-white transition-all flex items-center gap-1"
-          >
-            ✕ Скинути
-          </button>
-        )}
-      </div>
+          <span>{f.emoji}</span> {f.value}
+        </button>
+      ))}
+      {currentFish && (
+        <button
+          onClick={() => update("fish", "")}
+          className="px-2.5 py-1.5 rounded-xl text-xs border border-red-200 text-red-400 hover:border-red-400 hover:bg-red-50 hover:text-red-600 bg-white transition-all shrink-0"
+        >
+          ✕
+        </button>
+      )}
     </div>
   );
 }
