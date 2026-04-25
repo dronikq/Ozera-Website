@@ -79,48 +79,12 @@ export default function FiltersBar({ vertical = false }: { vertical?: boolean })
     currentFish !== "" ||
     currentPrice !== "";
 
+  const hasSidebarFilters = currentRegion !== "" || currentFish !== "";
+
   /* ──────────────────────────── VERTICAL (sidebar) ──────────────────────────── */
   if (vertical) {
     return (
       <div className="flex flex-col gap-5">
-
-        {/* Sort */}
-        <FilterSection title="Сортування">
-          <div className="flex flex-col gap-1.5">
-            {SORT_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => update("sort", opt.value)}
-                className={`w-full text-left px-3 py-2 rounded-xl text-sm font-medium transition-all border flex items-center gap-2 ${
-                  currentSort === opt.value
-                    ? "bg-[#f5c842] border-[#f5c842] text-[#0f2a4a]"
-                    : "bg-white border-blue-100 text-slate-500 hover:border-blue-300 hover:text-[#0f2a4a]"
-                }`}
-              >
-                <span>{opt.icon}</span> {opt.label}
-              </button>
-            ))}
-          </div>
-        </FilterSection>
-
-        {/* Price */}
-        <FilterSection title="Ціна за день">
-          <div className="flex flex-col gap-1.5">
-            {PRICE_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => update("price", opt.value)}
-                className={`w-full text-left px-3 py-2 rounded-xl text-sm font-medium transition-all border ${
-                  currentPrice === opt.value
-                    ? "bg-blue-600 border-blue-600 text-white"
-                    : "bg-white border-blue-100 text-slate-500 hover:border-blue-300 hover:text-[#0f2a4a]"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </FilterSection>
 
         {/* Fish species */}
         <FilterSection title="Вид риби">
@@ -159,12 +123,12 @@ export default function FiltersBar({ vertical = false }: { vertical?: boolean })
           </select>
         </FilterSection>
 
-        {hasFilters && (
+        {hasSidebarFilters && (
           <button
             onClick={() => router.push("/lakes")}
             className="w-full px-3 py-2 rounded-xl text-sm border border-red-200 text-red-400 hover:border-red-400 hover:bg-red-50 hover:text-red-600 bg-white transition-all flex items-center justify-center gap-1.5"
           >
-            ✕ Скинути всі фільтри
+            ✕ Скинути фільтри
           </button>
         )}
       </div>
