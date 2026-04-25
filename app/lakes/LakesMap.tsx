@@ -5,22 +5,16 @@ import type { Lake } from "@/lib/supabase";
 
 const TILE_STYLES = [
   {
-    id: "osm",
-    label: "Стандарт",
-    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    attribution: "© OpenStreetMap contributors",
-  },
-  {
     id: "positron",
     label: "Світла",
     url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
     attribution: "© OpenStreetMap contributors © CARTO",
   },
   {
-    id: "dark",
-    label: "Темна",
-    url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-    attribution: "© OpenStreetMap contributors © CARTO",
+    id: "osm",
+    label: "Стандарт",
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: "© OpenStreetMap contributors",
   },
   {
     id: "voyager",
@@ -30,8 +24,13 @@ const TILE_STYLES = [
   },
 ];
 
+type LakePinData = Pick<
+  Lake,
+  "id" | "name" | "lat" | "lng" | "city" | "location_text" | "image_url" | "price_uah" | "fish_species"
+>;
+
 interface Props {
-  lakes: Pick<Lake, "id" | "name" | "lat" | "lng" | "city" | "location_text">[];
+  lakes: LakePinData[];
   hoveredId: string | null;
   selectedId?: string | null;
   onMarkerClick?: (id: string) => void;
@@ -42,7 +41,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
   const mapRef = useRef<import("leaflet").Map | null>(null);
   const markersRef = useRef<Record<string, import("leaflet").CircleMarker>>({});
   const tileLayerRef = useRef<import("leaflet").TileLayer | null>(null);
-  const [activeStyle, setActiveStyle] = useState("osm");
+  const [activeStyle, setActiveStyle] = useState("positron");
 
   const lakesWithCoords = lakes.filter((l) => l.lat != null && l.lng != null);
 
@@ -59,7 +58,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
         zoomControl: true,
       });
 
-      const style = TILE_STYLES[0];
+      const style = TILE_STYLES.find((s) => s.id === activeStyle) ?? TILE_STYLES[0];
       tileLayerRef.current = L.tileLayer(style.url, {
         attribution: style.attribution,
         maxZoom: 18,
@@ -67,23 +66,47 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
 
       lakesWithCoords.forEach((lake) => {
         const marker = L.circleMarker([lake.lat!, lake.lng!], {
-          radius: 8,
+          radius: 9,
           fillColor: "#f5c842",
           color: "#0f2a4a",
           weight: 2,
           opacity: 1,
-          fillOpacity: 0.85,
+          fillOpacity: 0.9,
         }).addTo(map);
 
-        const location = lake.location_text || lake.city || "";
-        marker.bindPopup(
-          `<div style="min-width:140px">
-            <strong style="color:#0f2a4a;font-size:13px">${lake.name}</strong>
-            ${location ? `<br/><span style="color:#666;font-size:11px">📍 ${location}</span>` : ""}
-            <br/><a href="/lakes/${lake.id}" target="_blank" rel="noopener noreferrer" style="color:#1d6ee6;font-size:12px;text-decoration:none;display:inline-block;margin-top:4px">Відкрити →</a>
-          </div>`,
-          { maxWidth: 200, autoPan: false }
-        );
+        // Build hover card HTML
+        const imgHtml = lake.image_url
+          ? `<img src="${lake.image_url}" alt="${lake.name}" style="width:100%;height:110px;object-fit:cover;display:block;" />`
+          : `<div style="width:100%;height:110px;background:linear-gradient(135deg,#e0f0ff,#bfdbff);display:flex;align-items:center;justify-content:center;font-size:32px;">🌊</div>`;
+
+        const locationLine = lake.location_text || lake.city || "";
+        const fishLine = lake.fish_species?.length
+          ? `<div style="font-size:11px;color:#64748b;margin-top:2px;">🐟 ${lake.fish_species.slice(0, 2).join(", ")}${lake.fish_species.length > 2 ? ` +${lake.fish_species.length - 2}` : ""}</div>`
+          : "";
+
+        const priceLine = lake.price_uah
+          ? `<div style="margin-top:5px;"><span style="background:#f5c842;color:#0f2a4a;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;">від ${lake.price_uah} ₴</span></div>`
+          : "";
+
+        const tooltipHtml = `
+          <div class="lake-pin-card">
+            ${imgHtml}
+            <div style="padding:10px 12px 12px;">
+              <div style="font-weight:700;font-size:13px;color:#0f2a4a;line-height:1.3;">${lake.name}</div>
+              ${locationLine ? `<div style="font-size:11px;color:#94a3b8;margin-top:2px;">📍 ${locationLine}</div>` : ""}
+              ${fishLine}
+              ${priceLine}
+              <a href="/lakes/${lake.id}" style="display:inline-block;margin-top:8px;font-size:11px;color:#2563eb;font-weight:600;text-decoration:none;">Відкрити →</a>
+            </div>
+          </div>`;
+
+        marker.bindTooltip(tooltipHtml, {
+          direction: "top",
+          offset: [0, -8],
+          opacity: 1,
+          className: "lake-pin-tooltip",
+          sticky: false,
+        });
 
         marker.on("click", () => {
           onMarkerClick?.(lake.id);
@@ -92,7 +115,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
         markersRef.current[lake.id] = marker;
       });
 
-      // Auto-fit bounds to visible lakes
+      // Auto-fit bounds
       if (lakesWithCoords.length > 0) {
         const bounds = L.latLngBounds(lakesWithCoords.map((l) => [l.lat!, l.lng!]));
         map.fitBounds(bounds, { padding: [60, 60], maxZoom: 12 });
@@ -116,17 +139,15 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
       const isHovered = id === hoveredId;
       if (isSelected) {
         marker.setStyle({ radius: 13, fillColor: "#2563eb", color: "#fff", weight: 3, fillOpacity: 1 });
-        marker.openPopup();
       } else if (isHovered) {
         marker.setStyle({ radius: 12, fillColor: "#f5c842", color: "#0f2a4a", weight: 3, fillOpacity: 1 });
-        marker.openPopup();
       } else {
-        marker.setStyle({ radius: 8, fillColor: "#f5c842", color: "#0f2a4a", weight: 2, fillOpacity: 0.85 });
+        marker.setStyle({ radius: 9, fillColor: "#f5c842", color: "#0f2a4a", weight: 2, fillOpacity: 0.9 });
       }
     });
   }, [hoveredId, selectedId]);
 
-  // Swap tile layer when style changes
+  // Swap tile layer
   useEffect(() => {
     if (!mapRef.current || !tileLayerRef.current) return;
     (async () => {
@@ -142,7 +163,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
 
   if (lakesWithCoords.length === 0) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center bg-blue-50 rounded-2xl text-slate-400 gap-2">
+      <div className="w-full h-full flex flex-col items-center justify-center bg-blue-50 text-slate-400 gap-2">
         <span className="text-4xl">🗺️</span>
         <span className="text-sm">Координати озер ще не додані</span>
       </div>
