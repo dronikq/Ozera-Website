@@ -33,9 +33,11 @@ const TILE_STYLES = [
 interface Props {
   lakes: Pick<Lake, "id" | "name" | "lat" | "lng" | "city" | "location_text">[];
   hoveredId: string | null;
+  selectedId?: string | null;
+  onMarkerClick?: (id: string) => void;
 }
 
-export default function LakesMap({ lakes, hoveredId }: Props) {
+export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import("leaflet").Map | null>(null);
   const markersRef = useRef<Record<string, import("leaflet").CircleMarker>>({});
@@ -83,8 +85,18 @@ export default function LakesMap({ lakes, hoveredId }: Props) {
           { maxWidth: 200, autoPan: false }
         );
 
+        marker.on("click", () => {
+          onMarkerClick?.(lake.id);
+        });
+
         markersRef.current[lake.id] = marker;
       });
+
+      // Auto-fit bounds to visible lakes
+      if (lakesWithCoords.length > 0) {
+        const bounds = L.latLngBounds(lakesWithCoords.map((l) => [l.lat!, l.lng!]));
+        map.fitBounds(bounds, { padding: [60, 60], maxZoom: 12 });
+      }
 
       mapRef.current = map;
     })();
@@ -97,17 +109,22 @@ export default function LakesMap({ lakes, hoveredId }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Highlight marker on hover
+  // Highlight marker on hover or selection
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([id, marker]) => {
-      if (id === hoveredId) {
+      const isSelected = id === selectedId;
+      const isHovered = id === hoveredId;
+      if (isSelected) {
+        marker.setStyle({ radius: 13, fillColor: "#2563eb", color: "#fff", weight: 3, fillOpacity: 1 });
+        marker.openPopup();
+      } else if (isHovered) {
         marker.setStyle({ radius: 12, fillColor: "#f5c842", color: "#0f2a4a", weight: 3, fillOpacity: 1 });
         marker.openPopup();
       } else {
         marker.setStyle({ radius: 8, fillColor: "#f5c842", color: "#0f2a4a", weight: 2, fillOpacity: 0.85 });
       }
     });
-  }, [hoveredId]);
+  }, [hoveredId, selectedId]);
 
   // Swap tile layer when style changes
   useEffect(() => {

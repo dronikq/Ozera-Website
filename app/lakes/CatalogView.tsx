@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useRef, useEffect } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import type { Lake } from "@/lib/supabase";
@@ -14,179 +14,216 @@ interface Props {
 }
 
 export default function CatalogView({ lakes, total }: Props) {
-  const [showMap, setShowMap] = useState(true);
+  const [showMap, setShowMap] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const bottomPanelRef = useRef<HTMLDivElement>(null);
+
+  // Scroll selected card into view in bottom panel
+  useEffect(() => {
+    if (!selectedId || !bottomPanelRef.current) return;
+    const card = bottomPanelRef.current.querySelector(`[data-id="${selectedId}"]`);
+    card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [selectedId]);
+
+  // Lock body scroll when map overlay is open
+  useEffect(() => {
+    if (showMap) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [showMap]);
 
   return (
-    <div>
-      {showMap ? (
-        /* ── MAP MODE: filters on top, list + map side by side ── */
-        <div>
-          <div className="flex flex-col gap-2 mb-6">
-            <Suspense>
-              <FiltersBar />
-            </Suspense>
-            <div className="flex justify-end">
-              <button
-                onClick={() => setShowMap(false)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm border border-blue-200 bg-white text-slate-500 hover:border-blue-400 hover:text-[#0f2a4a] transition-all"
-              >
-                <span>⊠</span> Сховати карту
-              </button>
-            </div>
-          </div>
+    <>
+      {/* ── FILTERS ROW ── */}
+      <div className="flex items-center gap-3 mb-6 flex-wrap">
+        <Suspense>
+          <FiltersBar />
+        </Suspense>
+        <div className="ml-auto shrink-0">
+          <button
+            onClick={() => setShowMap(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border border-blue-200 bg-white text-slate-600 hover:border-blue-400 hover:text-[#0f2a4a] hover:shadow-sm transition-all"
+          >
+            🗺️ Показати на карті
+          </button>
+        </div>
+      </div>
 
-          <div className="flex gap-6 items-start">
-            {/* List */}
-            <div className="flex-1 flex flex-col gap-4">
-              {lakes.length === 0 ? (
-                <p className="text-slate-400 text-center py-20">Нічого не знайдено</p>
-              ) : (
-                lakes.map((lake) => (
-                  <LakeCard
-                    key={lake.id}
-                    lake={lake}
-                    isHovered={hoveredId === lake.id}
-                    onHover={setHoveredId}
-                  />
-                ))
-              )}
-            </div>
-
-            {/* Map */}
-            <div
-              className="w-[45%] shrink-0 sticky top-20 rounded-2xl overflow-hidden shadow-md"
-              style={{ height: "calc(100vh - 80px)" }}
-            >
-              <LakesMap lakes={lakes} hoveredId={hoveredId} />
-            </div>
-          </div>
+      {/* ── GRID ── */}
+      {lakes.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-24 text-slate-400 gap-3">
+          <span className="text-5xl">🎣</span>
+          <p className="text-lg font-medium">Нічого не знайдено</p>
+          <p className="text-sm">Спробуй змінити фільтри</p>
         </div>
       ) : (
-        /* ── LIST MODE: filters on left, grid on right ── */
-        <div className="flex gap-8 items-start">
-          {/* Left sidebar — filters */}
-          <div className="w-64 shrink-0 sticky top-20 flex flex-col gap-4">
-            <p className="text-sm text-slate-400">Знайдено {total} озер</p>
-            <Suspense>
-              <FiltersBar vertical />
-            </Suspense>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          {lakes.map((lake) => (
+            <GridCard key={lake.id} lake={lake} />
+          ))}
+        </div>
+      )}
+
+      {/* ── MAP OVERLAY ── */}
+      {showMap && (
+        <div className="fixed inset-0 z-50 flex flex-col">
+          {/* Top bar */}
+          <div className="shrink-0 bg-white/95 backdrop-blur-xl border-b border-blue-100 px-5 py-3 flex items-center gap-4 shadow-sm z-10">
+            <div className="flex-1 min-w-0">
+              <Suspense>
+                <FiltersBar />
+              </Suspense>
+            </div>
+            <button
+              onClick={() => setShowMap(false)}
+              className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm border border-blue-200 bg-white text-slate-500 hover:border-red-300 hover:text-red-500 transition-all"
+            >
+              ✕ Закрити
+            </button>
           </div>
 
-          {/* Right — grid */}
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-4">
-              <span />
-              <button
-                onClick={() => setShowMap(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm border border-blue-200 bg-white text-slate-500 hover:border-blue-400 hover:text-[#0f2a4a] transition-all"
-              >
-                <span>🗺</span> Показати карту
-              </button>
-            </div>
+          {/* Map */}
+          <div className="flex-1 relative">
+            <LakesMap
+              lakes={lakes}
+              hoveredId={hoveredId}
+              selectedId={selectedId}
+              onMarkerClick={(id) => setSelectedId(id === selectedId ? null : id)}
+            />
 
-            {lakes.length === 0 ? (
-              <p className="text-slate-400 text-center py-20">Нічого не знайдено</p>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                {lakes.map((lake) => (
-                  <GridCard key={lake.id} lake={lake} />
-                ))}
-              </div>
-            )}
+            {/* Lakes count badge */}
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow-md border border-blue-100 text-xs font-medium text-slate-600 pointer-events-none">
+              📍 {lakes.filter(l => l.lat && l.lng).length} озер на карті
+            </div>
+          </div>
+
+          {/* Bottom cards panel */}
+          <div className="shrink-0 bg-white border-t border-blue-100 shadow-[0_-4px_24px_rgba(0,0,0,0.08)]">
+            <div
+              ref={bottomPanelRef}
+              className="flex gap-3 overflow-x-auto px-5 py-4 no-scrollbar"
+            >
+              {lakes.map((lake) => (
+                <MapBottomCard
+                  key={lake.id}
+                  lake={lake}
+                  isSelected={selectedId === lake.id}
+                  onHover={setHoveredId}
+                  onClick={() => setSelectedId(lake.id === selectedId ? null : lake.id)}
+                />
+              ))}
+            </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
-/* ── List card (map mode) ── */
-function LakeCard({
-  lake,
-  isHovered,
-  onHover,
-}: {
-  lake: Lake;
-  isHovered: boolean;
-  onHover: (id: string | null) => void;
-}) {
-  return (
-    <Link
-      href={`/lakes/${lake.id}`}
-      onMouseEnter={() => onHover(lake.id)}
-      onMouseLeave={() => onHover(null)}
-      className={`group rounded-2xl border bg-white overflow-hidden transition-all ${
-        isHovered ? "border-[#f5c842] shadow-lg" : "border-blue-100 hover:border-blue-300 hover:shadow-sm"
-      }`}
-    >
-      <div className="h-44 bg-blue-50 overflow-hidden">
-        {lake.image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={lake.image_url} alt={lake.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-5xl">🌊</div>
-        )}
-      </div>
-      <div className="p-4 flex flex-col gap-1.5">
-        <h2 className="font-bold text-[#0f2a4a] group-hover:text-blue-600 transition-colors">{lake.name}</h2>
-        {lake.city && <p className="text-xs text-blue-500 font-medium">{lake.city}</p>}
-        {lake.location_text && (
-          <p className="text-sm text-slate-400 flex items-center gap-1">
-            <span>📍</span> {lake.location_text}
-          </p>
-        )}
-        <CardTags lake={lake} />
-      </div>
-    </Link>
-  );
-}
-
-/* ── Grid card (list mode) ── */
+/* ── Grid card (default view) ── */
 function GridCard({ lake }: { lake: Lake }) {
   return (
     <Link
       href={`/lakes/${lake.id}`}
-      className="group rounded-2xl border border-blue-100 bg-white overflow-hidden hover:border-blue-400 hover:shadow-md transition-all"
+      className="group rounded-2xl border border-blue-100 bg-white overflow-hidden hover:border-blue-300 hover:shadow-lg transition-all duration-200"
     >
-      <div className="h-44 bg-blue-50 overflow-hidden">
+      <div className="h-48 bg-blue-50 overflow-hidden relative">
         {lake.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={lake.image_url} alt={lake.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          <img
+            src={lake.image_url}
+            alt={lake.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-5xl">🌊</div>
+          <div className="w-full h-full flex items-center justify-center text-5xl bg-gradient-to-br from-blue-50 to-blue-100">🌊</div>
+        )}
+        {lake.price_uah && (
+          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-xs font-bold text-[#0f2a4a] shadow-sm">
+            від {lake.price_uah} ₴
+          </div>
         )}
       </div>
-      <div className="p-4 flex flex-col gap-1.5">
-        <h2 className="font-bold text-[#0f2a4a] group-hover:text-blue-600 transition-colors">{lake.name}</h2>
-        {lake.city && <p className="text-xs text-blue-500 font-medium">{lake.city}</p>}
+      <div className="p-4 flex flex-col gap-2">
+        <h2 className="font-bold text-[#0f2a4a] group-hover:text-blue-600 transition-colors leading-tight">
+          {lake.name}
+        </h2>
+        {lake.city && (
+          <p className="text-xs text-blue-500 font-medium">{lake.city}</p>
+        )}
         {lake.location_text && (
           <p className="text-sm text-slate-400 flex items-center gap-1 truncate">
-            <span>📍</span> <span className="truncate">{lake.location_text}</span>
+            <span>📍</span>
+            <span className="truncate">{lake.location_text}</span>
           </p>
         )}
-        <CardTags lake={lake} />
+        {lake.fish_species && lake.fish_species.length > 0 && (
+          <div className="flex items-center gap-1 flex-wrap mt-0.5">
+            <span className="text-xs">🐟</span>
+            <span className="text-xs text-slate-500">
+              {lake.fish_species.slice(0, 3).join(", ")}
+              {lake.fish_species.length > 3 ? ` +${lake.fish_species.length - 3}` : ""}
+            </span>
+          </div>
+        )}
+        {lake.area_ha && (
+          <p className="text-xs text-slate-400">{lake.area_ha} га</p>
+        )}
       </div>
     </Link>
   );
 }
 
-function CardTags({ lake }: { lake: Lake }) {
+/* ── Horizontal card in map bottom panel ── */
+function MapBottomCard({
+  lake,
+  isSelected,
+  onHover,
+  onClick,
+}: {
+  lake: Lake;
+  isSelected: boolean;
+  onHover: (id: string | null) => void;
+  onClick: () => void;
+}) {
   return (
-    <div className="flex flex-wrap gap-2 mt-1">
-      {lake.area_ha && <span className="text-xs text-slate-400">{lake.area_ha} га</span>}
-      {lake.max_depth_m && <span className="text-xs text-slate-400">до {lake.max_depth_m} м</span>}
-      {lake.price_uah && (
-        <span className="text-xs font-semibold text-[#0f2a4a] bg-[#f5c842]/20 px-1.5 py-0.5 rounded-md">
-          від {lake.price_uah} грн
-        </span>
-      )}
-      {lake.fish_species && lake.fish_species.length > 0 && (
-        <span className="text-xs text-blue-500">
-          🐟 {lake.fish_species.slice(0, 2).join(", ")}
-          {lake.fish_species.length > 2 ? ` +${lake.fish_species.length - 2}` : ""}
-        </span>
-      )}
+    <div
+      data-id={lake.id}
+      className={`shrink-0 w-56 rounded-2xl border bg-white overflow-hidden cursor-pointer transition-all duration-200 ${
+        isSelected
+          ? "border-blue-500 shadow-lg shadow-blue-100 ring-2 ring-blue-400/30"
+          : "border-blue-100 hover:border-blue-300 hover:shadow-md"
+      }`}
+      onMouseEnter={() => onHover(lake.id)}
+      onMouseLeave={() => onHover(null)}
+      onClick={onClick}
+    >
+      <div className="h-28 bg-blue-50 overflow-hidden">
+        {lake.image_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={lake.image_url} alt={lake.name} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-3xl bg-gradient-to-br from-blue-50 to-blue-100">🌊</div>
+        )}
+      </div>
+      <div className="p-3 flex flex-col gap-1">
+        <p className="font-semibold text-[#0f2a4a] text-sm leading-tight truncate">{lake.name}</p>
+        {lake.city && <p className="text-xs text-blue-500">{lake.city}</p>}
+        {lake.price_uah && (
+          <p className="text-xs font-bold text-[#0f2a4a]">від {lake.price_uah} ₴</p>
+        )}
+        <Link
+          href={`/lakes/${lake.id}`}
+          onClick={(e) => e.stopPropagation()}
+          className="mt-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
+        >
+          Відкрити →
+        </Link>
+      </div>
     </div>
   );
 }
