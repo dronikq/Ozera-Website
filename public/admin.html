@@ -95,6 +95,12 @@
   .tag-remove { cursor: pointer; opacity: .7; font-size: 14px; line-height: 1; }
   .tag-remove:hover { opacity: 1; }
   .tag-input { border: none; outline: none; background: transparent; color: var(--text); font-size: 13px; min-width: 120px; flex: 1; }
+  .fish-autocomplete { position: relative; }
+  .fish-dropdown { position: absolute; z-index: 200; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); max-height: 210px; overflow-y: auto; min-width: 200px; display: none; box-shadow: 0 6px 20px rgba(0,0,0,.35); margin-top: 2px; }
+  .fish-dropdown.show { display: block; }
+  .fish-option { padding: 7px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+  .fish-option:hover { background: var(--surface2); }
+  .fish-option .check { color: var(--success); font-size: 12px; }
 
   /* CONTACTS */
   .contacts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -124,6 +130,32 @@
   .badge { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; font-size: 11px; color: var(--muted); }
   .divider { height: 1px; background: var(--border); margin: 14px 0; }
   .hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* AI MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; }
+  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .modal-header h2 { flex: 1; font-size: 17px; font-weight: 700; }
+  .modal-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; padding: 4px; line-height: 1; }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { padding: 20px 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-ai { background: linear-gradient(135deg, #6366f1, #4f8ef7); color: #fff; }
+  .btn-ai:hover { opacity: .9; }
+  .ai-result-section { margin-top: 16px; }
+  .ai-result-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--muted); letter-spacing: .5px; margin-bottom: 8px; }
+  .ai-chip { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; font-size: 12px; margin: 2px; color: var(--text); }
+  .ai-chip.fish { border-color: #4f8ef7; color: #4f8ef7; }
+  .ai-chip.amenity { border-color: var(--success); color: var(--success); }
+  .ai-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; }
+  .ai-row-label { color: var(--muted); min-width: 120px; flex-shrink: 0; }
+  .ai-row-value { color: var(--text); }
+  .ai-cost { font-size: 12px; color: var(--muted); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .ai-loading { text-align: center; padding: 32px 0; color: var(--muted); }
+  .ai-spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: #6366f1; border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 12px; }
+  .ai-sources { margin-top: 10px; }
+  .ai-sources a { color: #4f8ef7; font-size: 12px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  .ai-sources a:hover { text-decoration: underline; }
 
   /* AUTH SCREEN */
   .auth-screen { display: flex; align-items: center; justify-content: center; height: 100vh; background: var(--bg); }
@@ -357,6 +389,7 @@ function renderEditor() {
       <div class="editor-header">
         <div class="editor-title">${l.id ? l.name : '➕ Нове озеро'}</div>
         <div class="editor-actions">
+          <button class="btn btn-ai" onclick="openAiModal()">🤖 AI Заповнити</button>
           ${l.id ? `<button class="btn btn-danger" onclick="deleteLake()">🗑 Видалити</button>` : ''}
           <button class="btn btn-primary" id="saveBtn" onclick="saveLake()">💾 Зберегти</button>
         </div>
@@ -417,10 +450,13 @@ function renderEditor() {
       ${section('🐟', 'Риби', 'fish', true, `
         <div class="form-group">
           <label>Види риб</label>
-          <div class="tags-input-wrap" id="tagsWrap" onclick="document.getElementById('tagInput').focus()">
-            <input class="tag-input" id="tagInput" placeholder="Додати рибу і натиснути Enter..." onkeydown="handleTagInput(event)" onfocus="document.getElementById('tagsWrap').classList.add('focused')" onblur="document.getElementById('tagsWrap').classList.remove('focused')">
+          <div class="fish-autocomplete">
+            <div class="tags-input-wrap" id="tagsWrap" onclick="document.getElementById('tagInput').focus()">
+              <input class="tag-input" id="tagInput" placeholder="Почніть вводити назву риби..." onkeydown="handleTagInput(event)" oninput="filterFishSuggestions()" onfocus="document.getElementById('tagsWrap').classList.add('focused'); filterFishSuggestions();" onblur="document.getElementById('tagsWrap').classList.remove('focused'); setTimeout(()=>document.getElementById('fishDropdown').classList.remove('show'), 150)">
+            </div>
+            <div id="fishDropdown" class="fish-dropdown"></div>
           </div>
-          <div class="hint">Вводьте назву риби і натискайте Enter</div>
+          <div class="hint">Почніть вводити або виберіть зі списку</div>
         </div>
       `)}
 
@@ -589,6 +625,44 @@ function section(icon, title, id, openByDefault, content) {
   `;
 }
 
+// ── FISH CANONICAL LIST ───────────────────────────────────────────────────
+const CANONICAL_FISH = [
+  'Амур білий','Амур чорний','Бестер','Білизна','Верховодка','Вугор',
+  'Головень','Густера','Єрш','Карась','Карась сріблястий','Короп',
+  'Краснопірка','Лин','Лящ','Минь','Окунь','Плітка','Підуст','Рак',
+  'Сазан','Сом','Стерлядь','Судак','Товстолоб','Товстолоб строкатий',
+  'Форель веселкова','Форель струмкова','Чехоня','Щука','Язь',
+];
+
+function filterFishSuggestions() {
+  const input = document.getElementById('tagInput');
+  const dropdown = document.getElementById('fishDropdown');
+  if (!dropdown) return;
+  const q = (input.value || '').toLowerCase();
+  const matches = q
+    ? CANONICAL_FISH.filter(f => f.toLowerCase().includes(q))
+    : CANONICAL_FISH;
+  if (!matches.length) { dropdown.classList.remove('show'); return; }
+  dropdown.innerHTML = matches.map(f => {
+    const added = fishTags.some(t => t.toLowerCase() === f.toLowerCase());
+    return `<div class="fish-option" onmousedown="selectFishSuggestion('${f}')">
+      <span>${f}</span>${added ? '<span class="check">✓</span>' : ''}
+    </div>`;
+  }).join('');
+  dropdown.classList.add('show');
+}
+
+function selectFishSuggestion(name) {
+  if (!fishTags.some(t => t.toLowerCase() === name.toLowerCase())) {
+    fishTags.push(name);
+    renderTags();
+  }
+  const input = document.getElementById('tagInput');
+  if (input) input.value = '';
+  const dropdown = document.getElementById('fishDropdown');
+  if (dropdown) { dropdown.classList.remove('show'); filterFishSuggestions(); }
+}
+
 // ── TAGS ──────────────────────────────────────────────────────────────────
 function renderTags() {
   const wrap = document.getElementById('tagsWrap');
@@ -608,8 +682,13 @@ function handleTagInput(e) {
   if (e.key === 'Enter' || e.key === ',') {
     e.preventDefault();
     const val = e.target.value.trim().replace(/,$/, '');
-    if (val && !fishTags.includes(val)) { fishTags.push(val); renderTags(); }
+    if (val && !fishTags.some(t => t.toLowerCase() === val.toLowerCase())) {
+      fishTags.push(val);
+      renderTags();
+    }
     e.target.value = '';
+    const dropdown = document.getElementById('fishDropdown');
+    if (dropdown) dropdown.classList.remove('show');
   } else if (e.key === 'Backspace' && e.target.value === '' && fishTags.length) {
     fishTags.pop(); renderTags();
   }
@@ -761,6 +840,214 @@ function toast(msg, type = '') {
 }
 
 init();
+
+// ── AI MODAL ──────────────────────────────────────────────────────────────
+const AI_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/ai-lake-search`;
+let aiData = null;
+
+function openAiModal() {
+  const lakeName = document.getElementById('f_name')?.value?.trim() || '';
+  const lakeCity = document.getElementById('f_city')?.value?.trim() || '';
+
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="modal-overlay" id="aiModal" onclick="closeAiModal(event)">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <span style="font-size:20px">🤖</span>
+          <h2>AI — Автозаповнення</h2>
+          <button class="modal-close" onclick="closeAiModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group" style="margin-bottom:12px">
+            <label>Назва озера</label>
+            <input class="form-control" id="ai_lake_name" value="${esc(lakeName)}" placeholder="Введіть назву озера">
+          </div>
+          <div class="form-group">
+            <label>Регіон (необов'язково)</label>
+            <input class="form-control" id="ai_region" value="${esc(lakeCity)}" placeholder="Наприклад: Київська область">
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--muted)">
+            Claude виконає до 8 веб-пошуків (~40 сек) і заповнить всі поля автоматично.
+          </div>
+          <div id="aiResultArea"></div>
+        </div>
+        <div class="modal-footer" id="aiFooter">
+          <button class="btn btn-secondary" onclick="closeAiModal()">Скасувати</button>
+          <button class="btn btn-ai" id="aiSearchBtn" onclick="runAiSearch()">🔍 Шукати</button>
+        </div>
+      </div>
+    </div>
+  `);
+
+  document.getElementById('ai_lake_name').focus();
+  document.getElementById('ai_lake_name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') runAiSearch();
+  });
+}
+
+function closeAiModal(event) {
+  if (event && event.target !== document.getElementById('aiModal')) return;
+  document.getElementById('aiModal')?.remove();
+  aiData = null;
+}
+
+async function runAiSearch() {
+  const lakeName = document.getElementById('ai_lake_name').value.trim();
+  const region   = document.getElementById('ai_region').value.trim();
+
+  if (!lakeName) {
+    document.getElementById('ai_lake_name').focus();
+    return;
+  }
+
+  // Показуємо лоадер
+  document.getElementById('aiSearchBtn').disabled = true;
+  document.getElementById('aiResultArea').innerHTML = `
+    <div class="ai-loading">
+      <div class="ai-spinner"></div>
+      <div><strong>Шукаю інформацію...</strong></div>
+      <div style="margin-top:6px;font-size:12px">Claude переглядає сайти, соцмережі, карти</div>
+    </div>
+  `;
+  document.getElementById('aiFooter').innerHTML = `
+    <div style="font-size:12px;color:var(--muted);margin:auto 0">Зачекайте ~40 секунд...</div>
+  `;
+
+  try {
+    const res = await fetch(AI_FUNCTION_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ lake_name: lakeName, region: region || undefined }),
+    });
+
+    const json = await res.json();
+    if (!json.ok || !json.data) throw new Error(json.error || 'Помилка сервера');
+
+    aiData = json.data;
+    renderAiResult(aiData);
+
+  } catch (err) {
+    document.getElementById('aiResultArea').innerHTML = `
+      <div style="margin-top:16px;background:rgba(229,83,83,.1);border:1px solid var(--danger);border-radius:8px;padding:14px;color:var(--danger);font-size:13px">
+        ❌ <strong>Помилка:</strong> ${err.message}<br>
+        <span style="font-size:11px;margin-top:4px;display:block;color:var(--muted)">
+          Переконайся що Edge Function задеплоєна і ANTHROPIC_API_KEY встановлено у Supabase Secrets.
+        </span>
+      </div>
+    `;
+    document.getElementById('aiFooter').innerHTML = `
+      <button class="btn btn-secondary" onclick="closeAiModal()">Закрити</button>
+      <button class="btn btn-ai" onclick="runAiSearch()">🔄 Спробувати знову</button>
+    `;
+  }
+}
+
+function renderAiResult(d) {
+  const meta = d._meta || {};
+  const fish = (d.fish_species || []).map(f => `<span class="ai-chip fish">🐟 ${f}</span>`).join('');
+  const amenities = (d.amenities || []).map(a => `<span class="ai-chip amenity">✅ ${a.label}</span>`).join('');
+  const c = d.contacts || {};
+  const sources = (d.sources || []).map(s => `<a href="${s}" target="_blank">${s}</a>`).join('');
+
+  document.getElementById('aiResultArea').innerHTML = `
+    <div class="ai-result-section" style="margin-top:20px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px">
+
+      <div class="ai-result-title">✅ Знайдено</div>
+
+      <div class="ai-row"><span class="ai-row-label">📍 Назва</span><span class="ai-row-value">${esc(d.name || '—')}</span></div>
+      <div class="ai-row"><span class="ai-row-label">🗺️ Адреса</span><span class="ai-row-value">${esc(d.location_text || '—')}</span></div>
+      <div class="ai-row"><span class="ai-row-label">📐 Координати</span><span class="ai-row-value">${d.lat && d.lng ? `${d.lat}, ${d.lng}` : '—'}</span></div>
+      <div class="ai-row"><span class="ai-row-label">📏 Площа / Глибина</span><span class="ai-row-value">${d.area_ha ? d.area_ha + ' га' : '—'} / ${d.max_depth_m ? d.max_depth_m + ' м' : '—'}</span></div>
+      <div class="ai-row"><span class="ai-row-label">⏰ Режим роботи</span><span class="ai-row-value">${esc(d.work_schedule_summary || '—')}</span></div>
+      <div class="ai-row"><span class="ai-row-label">📱 Телефон</span><span class="ai-row-value">${esc(c.phone || '—')}</span></div>
+
+      <div style="margin:10px 0 4px"><span class="ai-row-label" style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--muted)">🐟 Риба</span></div>
+      <div>${fish || '<span style="color:var(--muted);font-size:12px">не знайдено</span>'}</div>
+
+      <div style="margin:10px 0 4px"><span class="ai-row-label" style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--muted)">🏕️ Зручності</span></div>
+      <div>${amenities || '<span style="color:var(--muted);font-size:12px">не знайдено</span>'}</div>
+
+      ${sources ? `<div class="ai-sources" style="margin-top:10px"><div class="ai-result-title">📎 Джерела</div>${sources}</div>` : ''}
+
+      <div class="ai-cost">
+        🔎 ${meta.web_searches || 0} пошуків &nbsp;·&nbsp;
+        💸 $${meta.estimated_cost_usd || 0} &nbsp;·&nbsp;
+        📊 ${meta.input_tokens || 0} + ${meta.output_tokens || 0} токенів
+      </div>
+    </div>
+  `;
+
+  document.getElementById('aiFooter').innerHTML = `
+    <button class="btn btn-secondary" onclick="closeAiModal()">Скасувати</button>
+    <button class="btn btn-ai" onclick="applyAiData()">✅ Заповнити форму</button>
+  `;
+}
+
+function applyAiData() {
+  if (!aiData) return;
+  const d = aiData;
+  const c = d.contacts || {};
+
+  // Основна інформація
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el && val != null && val !== '') el.value = val; };
+  const setChk = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.checked = !!val; };
+
+  setVal('f_name',                  d.name);
+  setVal('f_description',           d.description);
+  setVal('f_location_text',         d.location_text);
+  setVal('f_lat',                   d.lat);
+  setVal('f_lng',                   d.lng);
+  setVal('f_area_ha',               d.area_ha);
+  setVal('f_max_depth_m',           d.max_depth_m);
+  setVal('f_location_google_url',   d.location_google_url);
+  setVal('f_location_waze_url',     d.location_waze_url);
+  setVal('f_work_schedule_summary', d.work_schedule_summary);
+  setVal('f_base_open_time',        d.base_open_time);
+  setVal('f_base_close_time',       d.base_close_time);
+  setVal('f_price_details_text',    d.price_details_text);
+  setVal('f_catch_quota_text',      d.catch_quota_text);
+  setVal('f_additional_services_text', d.additional_services_text);
+  setVal('f_stocking_text',         d.stocking_text);
+  setVal('f_lake_rules_text',       d.lake_rules_text);
+
+  setChk('f_price_details_enabled',        d.price_details_enabled);
+  setChk('f_contacts_enabled',             d.contacts_enabled);
+  setChk('f_show_work_schedule',           d.work_schedule_summary != null);
+
+  // Місто — підбираємо найближчий варіант із select
+  if (d.city) {
+    const sel = document.getElementById('f_city');
+    if (sel) {
+      const opts = Array.from(sel.options);
+      const match = opts.find(o => o.value.toLowerCase().includes(d.city.toLowerCase()) || d.city.toLowerCase().includes(o.value.toLowerCase().replace(' область','')));
+      if (match) sel.value = match.value;
+    }
+  }
+
+  // Контакти
+  const phones = [c.phone].flat().filter(Boolean);
+  setVal('f_contacts_phone',     phones.join(', '));
+  setVal('f_contacts_telegram',  c.telegram);
+  setVal('f_contacts_instagram', c.instagram);
+  setVal('f_contacts_viber',     c.viber);
+
+  // Риба
+  if (Array.isArray(d.fish_species) && d.fish_species.length > 0) {
+    fishTags = [...d.fish_species];
+    renderTags();
+  }
+
+  document.getElementById('aiModal')?.remove();
+  aiData = null;
+
+  toast('✅ Поля заповнено! Перевір і натисни «Зберегти»', 'success');
+
+  // Скролимо вгору до форми
+  document.getElementById('mainContent')?.scrollTo({ top: 0, behavior: 'smooth' });
+}
 </script>
 </body>
 </html>
