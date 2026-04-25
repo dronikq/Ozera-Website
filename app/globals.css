@@ -72,3 +72,28 @@ body {
   border: 1px solid #e0eeff;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Popup (click — stays open) */
+.lake-pin-popup .leaflet-popup-content-wrapper {
+  padding: 0 !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 32px rgba(15, 42, 74, 0.18) !important;
+  border: 1px solid #e0eeff !important;
+}
+.lake-pin-popup .leaflet-popup-content {
+  margin: 0 !important;
+  width: 200px !important;
+}
+.lake-pin-popup .leaflet-popup-tip-container {
+  display: none !important;
+}
+.lake-pin-popup .leaflet-popup-close-button {
+  top: 6px !important;
+  right: 8px !important;
+  color: #fff !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5) !important;
+  z-index: 10 !important;
+}

@@ -100,6 +100,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
             </div>
           </div>`;
 
+        // Hover → tooltip (disappears when mouse leaves)
         marker.bindTooltip(tooltipHtml, {
           direction: "top",
           offset: [0, -8],
@@ -108,7 +109,18 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
           sticky: false,
         });
 
+        // Click → popup (stays open until user closes it)
+        marker.bindPopup(tooltipHtml, {
+          maxWidth: 200,
+          minWidth: 200,
+          autoPan: false,
+          closeButton: true,
+          className: "lake-pin-popup",
+        });
+
         marker.on("click", () => {
+          marker.closeTooltip();
+          marker.openPopup();
           onMarkerClick?.(lake.id);
         });
 
