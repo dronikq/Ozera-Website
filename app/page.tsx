@@ -4,10 +4,27 @@ import { supabase } from "@/lib/supabase";
 import Navbar from "./components/Navbar";
 import { FadeUp, SlideLeft, SlideRight, ScaleIn, FadeIn } from "./components/AnimatedSection";
 
+const UNSPLASH_KEY = process.env.UNSPLASH_ACCESS_KEY;
+
+const HERO_PHOTO    = "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1920&q=90&fit=crop";
+const STORY_PHOTO   = "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&q=85&fit=crop";
+const FEATURE_PHOTO = "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=85&fit=crop&crop=center";
+
+const galleryPhotos = [
+  { id: "1506905925346-21bda4d32df4", label: "Ранковий туман" },
+  { id: "1544551763-46a013bb70d5", label: "Золотий час" },
+  { id: "1559128010-7c1ad6e1d6a3", label: "Тиша берега" },
+  { id: "1470071459604-3b5ec3a7fe05", label: "Лісова водойма" },
+];
+
+const lakeMocks = [
+  { name: "Тихий Берег",      region: "Київська обл.",   fish: "Короп, Амур",  price: "від 300 грн", color: "bg-blue-400" },
+  { name: "Озеро Синє",       region: "Черкаська обл.",  fish: "Окунь, Карась", price: "від 200 грн", color: "bg-teal-400" },
+  { name: "Рибальський Рай",  region: "Львівська обл.",  fish: "Щука, Короп",  price: "від 450 грн", color: "bg-indigo-400" },
+];
+
 async function getLakesCount() {
-  const { count } = await supabase
-    .from("lakes")
-    .select("*", { count: "exact", head: true });
+  const { count } = await supabase.from("lakes").select("*", { count: "exact", head: true });
   return count ?? 0;
 }
 
@@ -33,412 +50,348 @@ export default async function HomePage() {
         description: `Каталог ${count}+ платних озер України для риболовлі з цінами, рибою та навігацією.`,
         publisher: { "@id": "https://www.ozera.in.ua/#organization" },
         inLanguage: "uk-UA",
-        potentialAction: {
-          "@type": "SearchAction",
-          target: { "@type": "EntryPoint", urlTemplate: "https://www.ozera.in.ua/lakes?search={search_term_string}" },
-          "query-input": "required name=search_term_string",
-        },
-      },
-      {
-        "@type": "MobileApplication",
-        name: "OZERA — Рибальські озера",
-        operatingSystem: "Android",
-        applicationCategory: "SportsApplication",
-        offers: { "@type": "Offer", price: "0", priceCurrency: "UAH" },
-        description: "Мобільний застосунок для пошуку платних озер України",
-        url: "https://www.ozera.in.ua/ozera-release.apk",
       },
     ],
   };
 
   return (
-    <main className="flex flex-col min-h-screen bg-[#f0f7ff]">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+    <main className="flex flex-col min-h-screen bg-[#07090d] grain">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Navbar />
-      {/* Nav */}
-      <nav className="border-b border-blue-100 bg-white/80 backdrop-blur sticky top-0 z-50 md:hidden">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Image
-              src="/icon.png"
-              alt="до Ozera"
-              width={40}
-              height={40}
-              className="rounded-xl"
-            />
-            <span className="font-bold text-[#0f2a4a] text-lg">до Ozera</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <a
-              href="#about"
-              className="text-sm text-slate-500 hover:text-[#0f2a4a] font-medium transition-colors"
-            >
-              Про нас
-            </a>
-            <Link
-              href="/lakes"
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
-            >
-              Каталог озер
-            </Link>
-          </div>
-        </div>
-      </nav>
 
-      {/* Hero */}
-      <section className="max-w-6xl mx-auto px-4 py-20 flex flex-col md:flex-row items-center gap-12 w-full pt-24">
-        {/* Text */}
-        <SlideLeft className="flex flex-col gap-6 flex-1 text-center md:text-left">
+      {/* ═══ HERO ═══ */}
+      <section className="relative min-h-screen flex items-end overflow-hidden">
+        {/* Background photo */}
+        <div className="absolute inset-0">
+          <Image
+            src={HERO_PHOTO}
+            alt="Рибальське озеро на світанку"
+            fill
+            className="object-cover object-center"
+            priority
+            quality={90}
+          />
+          {/* Multi-layer dark overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#07090d] via-[#07090d]/60 to-[#07090d]/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#07090d]/80 via-transparent to-transparent" />
+        </div>
+
+        {/* Content */}
+        <div className="relative max-w-6xl mx-auto px-6 pb-24 pt-40 w-full">
           <FadeUp delay={0.1}>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-sm font-medium w-fit mx-auto md:mx-0">
-            <span className="relative flex h-2 w-2">
-              <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
-            </span>
-            {count} озер у базі
-          </div>
+            <div className="flex items-center gap-3 mb-8">
+              <span className="gold-line" />
+              <span className="text-[#c9a84c] text-xs tracking-[0.3em] uppercase font-medium">
+                Преміум рибальський клуб
+              </span>
+              <span className="gold-line" />
+            </div>
           </FadeUp>
 
           <FadeUp delay={0.2}>
-          <h1 className="text-4xl md:text-5xl font-bold text-[#0f2a4a] leading-tight">
-            Знайди своє ідеальне місце для риболовлі
-          </h1>
+            <h1 className="font-serif text-6xl md:text-8xl font-bold leading-[1.02] tracking-tight mb-6 max-w-4xl">
+              Мистецтво{" "}
+              <span className="gold-shimmer">риболовлі</span>
+              <br />в Україні
+            </h1>
           </FadeUp>
 
           <FadeUp delay={0.3}>
-          <p className="text-slate-500 text-lg">
-            Актуальна інформація про озера України — ціни, риба, розклад та контакти.
-          </p>
+            <p className="text-[#7a7060] text-xl leading-relaxed max-w-xl mb-10">
+              {count}+ ретельно відібраних водойм. Ціни, риба, координати —
+              все що потрібно для ідеального виїзду.
+            </p>
           </FadeUp>
 
           <FadeUp delay={0.4}>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-            <Link
-              href="/lakes"
-              className="group px-8 py-3.5 rounded-2xl bg-[#f5c842] hover:bg-[#e6ba35] text-[#0f2a4a] font-bold text-lg transition-all duration-200 shadow-md hover:shadow-xl hover:-translate-y-0.5"
-            >
-              Переглянути озера <span className="group-hover:translate-x-1 inline-block transition-transform">→</span>
-            </Link>
-            <a
-              href="#download"
-              className="px-8 py-3.5 rounded-2xl border-2 border-blue-200 hover:border-blue-400 text-blue-600 font-semibold transition-all duration-200 hover:-translate-y-0.5"
-            >
-              Скачати застосунок
-            </a>
-          </div>
-          </FadeUp>
-        </SlideLeft>
-
-        {/* Phone mockup */}
-        <SlideRight delay={0.3} className="flex-1 flex justify-center items-center select-none">
-          <div className="relative phone-float">
-
-            {/* Glow behind phone */}
-            <div className="absolute inset-0 -m-10 rounded-[60px] bg-gradient-to-br from-blue-300/30 via-[#f5c842]/20 to-blue-200/20 blur-3xl" />
-
-            {/* Phone body */}
-            <div className="relative w-[220px] bg-[#0f2a4a] rounded-[38px] shadow-2xl border-4 border-[#1a3a5c] flex flex-col overflow-hidden"
-              style={{ height: 440 }}>
-
-              {/* Camera notch */}
-              <div className="flex justify-center pt-3 pb-1">
-                <div className="w-16 h-5 bg-[#0a1f38] rounded-full flex items-center justify-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-[#1a3a5c]" />
-                  <div className="w-1 h-1 rounded-full bg-[#243d56]" />
-                </div>
-              </div>
-
-              {/* Screen */}
-              <div className="flex-1 bg-[#f0f7ff] mx-2 mb-2 rounded-[28px] overflow-hidden flex flex-col">
-
-                {/* App header */}
-                <div className="bg-white px-3 py-2.5 flex items-center justify-between border-b border-blue-100">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-5 h-5 rounded-lg bg-[#0f2a4a] flex items-center justify-center text-[8px]">🎣</div>
-                    <span className="text-[9px] font-bold text-[#0f2a4a]">до Ozera</span>
-                  </div>
-                  <div className="w-5 h-5 rounded-full bg-blue-50 flex items-center justify-center text-[8px]">📍</div>
-                </div>
-
-                {/* Search bar */}
-                <div className="px-2.5 pt-2 pb-1">
-                  <div className="bg-white rounded-lg px-2 py-1.5 flex items-center gap-1.5 border border-blue-100">
-                    <span className="text-[8px]">🔍</span>
-                    <span className="text-[8px] text-slate-300">Пошук озера...</span>
-                  </div>
-                </div>
-
-                {/* Lake cards */}
-                <div className="px-2.5 flex flex-col gap-1.5 pb-2 flex-1">
-
-                  {[
-                    { name: "Тихий Берег", region: "Київська обл.", fish: "Короп, Амур", price: "від 300 грн", color: "bg-blue-400" },
-                    { name: "Озеро Синє", region: "Черкаська обл.", fish: "Окунь, Карась", price: "від 200 грн", color: "bg-teal-400" },
-                    { name: "Рибальський Рай", region: "Львівська обл.", fish: "Щука, Короп", price: "від 450 грн", color: "bg-indigo-400" },
-                  ].map((lake) => (
-                    <div key={lake.name} className="bg-white rounded-xl overflow-hidden flex border border-blue-50 shadow-sm">
-                      <div className={`w-12 ${lake.color} flex-shrink-0 flex items-center justify-center text-lg`}>🌊</div>
-                      <div className="px-2 py-1.5 flex flex-col gap-0.5 min-w-0">
-                        <span className="text-[8px] font-bold text-[#0f2a4a] truncate">{lake.name}</span>
-                        <span className="text-[7px] text-slate-400 truncate">📍 {lake.region}</span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[6px] text-blue-400">🐟 {lake.fish}</span>
-                        </div>
-                        <span className="text-[7px] font-semibold text-[#0f2a4a] bg-[#f5c842]/30 px-1 rounded w-fit">{lake.price}</span>
-                      </div>
-                    </div>
-                  ))}
-
-                </div>
-
-                {/* Bottom nav */}
-                <div className="bg-white border-t border-blue-100 px-4 py-2 flex justify-around">
-                  {["🏠", "🗺️", "❤️", "👤"].map((icon) => (
-                    <span key={icon} className="text-sm">{icon}</span>
-                  ))}
-                </div>
-
-              </div>
-            </div>
-
-            {/* Floating badge */}
-            <div className="badge-float absolute -bottom-3 -left-8 bg-[#f5c842] text-[#0f2a4a] text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg whitespace-nowrap">
-              🐟 {count} озер у базі
-            </div>
-
-            {/* Floating notification */}
-            <div
-              className="notif-float absolute -top-2 -right-10 bg-white border border-blue-100 rounded-xl shadow-lg px-2.5 py-1.5 flex items-center gap-1.5"
-            >
-              <span className="text-xs">🔔</span>
-              <span className="text-[10px] font-medium text-[#0f2a4a]">Нове озеро!</span>
-            </div>
-
-          </div>
-        </SlideRight>
-      </section>
-
-      {/* Features */}
-      <section className="max-w-6xl mx-auto px-4 pb-20 grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
-        {[
-          { icon: "🗺️", title: "Карта та координати", desc: "Google Maps і Waze — одним кліком до озера", delay: 0 },
-          { icon: "🐟", title: "Види риб та ціни",    desc: "Актуальні ціни, норми вилову і склад риби", delay: 0.12 },
-          { icon: "🔔", title: "Оновлення",           desc: "Свіжі новини від адміністрації озер", delay: 0.24 },
-        ].map((f) => (
-          <FadeUp key={f.title} delay={f.delay}>
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 flex flex-col gap-3 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <span className="text-3xl">{f.icon}</span>
-            <h3 className="font-bold text-[#0f2a4a]">{f.title}</h3>
-            <p className="text-slate-400 text-sm">{f.desc}</p>
-          </div>
-          </FadeUp>
-        ))}
-      </section>
-
-      {/* About */}
-      <section id="about" className="bg-[#0a1f38] text-white overflow-hidden">
-
-        {/* Hero quote */}
-        <div className="relative border-b border-white/10">
-          <div className="max-w-6xl mx-auto px-4 py-24 md:py-32">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[#f5c842] text-xs font-semibold tracking-widest uppercase mb-8 block w-fit">
-              Про нас
-            </span>
-            <h2 className="text-4xl md:text-6xl font-bold leading-tight max-w-3xl">
-              Ми зробили цей сервіс,{" "}
-              <span className="text-[#f5c842]">бо самі постійно шукали,</span>{" "}
-              де рибалити.
-            </h2>
-            {/* Decorative large text */}
-            <span
-              className="absolute right-0 top-1/2 -translate-y-1/2 text-[200px] font-black text-white/[0.03] select-none pointer-events-none leading-none"
-              aria-hidden
-            >
-              🎣
-            </span>
-          </div>
-        </div>
-
-        {/* Story */}
-        <div className="max-w-6xl mx-auto px-4 py-20">
-
-          {/* Row 1 — the problem */}
-          <div className="grid md:grid-cols-2 gap-16 items-center border-b border-white/10 pb-20 mb-20">
-            <div>
-              <p className="text-white/40 text-xs tracking-widest uppercase mb-6 font-semibold">01 — Початок</p>
-              <p className="text-white/70 text-xl leading-relaxed">
-                По форумах, чатах, знайомих.{" "}
-                <span className="text-white font-medium">І кожен раз це займало більше часу, ніж сама риболовля.</span>
-              </p>
-            </div>
-            <div className="flex flex-col gap-3">
-              {["Форуми", "Viber-чати", "Знайомі знайомих", "Дзвінки наосліп", "Поїздка в нікуди"].map((item, i) => (
-                <div key={item} className="flex items-center gap-4 text-white/40 group">
-                  <span className="text-xs font-mono text-white/20 w-6">{String(i + 1).padStart(2, "0")}</span>
-                  <div className="h-px flex-1 bg-white/10" />
-                  <span className="text-sm">{item}</span>
-                  <span className="text-red-400/60 text-xs">×</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Pull quote */}
-          <div className="text-center py-4 mb-20 border-b border-white/10 pb-20">
-            <p className="text-xs tracking-widest uppercase text-white/30 mb-6 font-semibold">02 — Ідея</p>
-            <blockquote className="text-3xl md:text-5xl font-bold leading-tight max-w-4xl mx-auto">
-              Тут ми зібрали платні озера,{" "}
-              <br className="hidden md:block" />
-              куди реально можна поїхати.{" "}
-              <span className="text-white/30">Але це не просто список.</span>
-            </blockquote>
-          </div>
-
-          {/* Row 2 — the vision */}
-          <div className="grid md:grid-cols-3 gap-8 border-b border-white/10 pb-20 mb-20">
-            <div className="md:col-span-1">
-              <p className="text-white/40 text-xs tracking-widest uppercase mb-4 font-semibold">03 — Мета</p>
-            </div>
-            <div className="md:col-span-2">
-              <p className="text-2xl text-white font-medium leading-relaxed mb-6">
-                Ми хочемо, щоб це був інструмент, який відповідає на просте питання:
-              </p>
-              <div className="inline-block bg-[#f5c842] text-[#0a1f38] text-2xl md:text-3xl font-black px-6 py-4 rounded-2xl">
-                Чи варто їхати сюди зараз?
-              </div>
-            </div>
-          </div>
-
-          {/* Row 3 — how */}
-          <div className="grid md:grid-cols-2 gap-16 border-b border-white/10 pb-20 mb-20 items-start">
-            <div>
-              <p className="text-white/40 text-xs tracking-widest uppercase mb-6 font-semibold">04 — Як ми працюємо</p>
-              <p className="text-white/70 text-lg leading-relaxed">
-                Ми додаємо озера з{" "}
-                <span className="text-white font-semibold">власного досвіду,</span>{" "}
-                рекомендацій і перевірених джерел. І поступово доповнюємо інформацію, щоб вона була максимально актуальною.
-              </p>
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-              <p className="text-white/40 text-xs tracking-widest uppercase mb-5 font-semibold">Наш підхід</p>
-              {[
-                { icon: "🔍", text: "Власний досвід виїздів" },
-                { icon: "📡", text: "Перевірені рекомендації" },
-                { icon: "🔄", text: "Постійне оновлення даних" },
-                { icon: "📍", text: "Точна локація та навігація" },
-              ].map(({ icon, text }) => (
-                <div key={text} className="flex items-center gap-4 py-3 border-b border-white/5 last:border-0">
-                  <span className="text-xl">{icon}</span>
-                  <span className="text-white/70 text-sm">{text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* До / Після */}
-          <div className="border-b border-white/10 pb-20 mb-20">
-            <p className="text-white/40 text-xs tracking-widest uppercase mb-8 font-semibold">04.5 — До і після</p>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 flex flex-col gap-5">
-                <span className="text-2xl">😤</span>
-                <h3 className="text-xl font-bold text-white/80">Як було раніше</h3>
-                <ul className="flex flex-col gap-3 text-white/50 text-sm">
-                  {[
-                    "Годинами гуглити озера по районах",
-                    "Телефонувати щоб дізнатися ціну та рибу",
-                    "Їхати і дізнаватися що озеро закрите",
-                    "Збирати контакти по групах у Viber і Telegram",
-                    "Питати знайомих — і не отримувати відповіді",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <span className="text-red-400 mt-0.5 shrink-0">✗</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="rounded-2xl border border-[#f5c842]/30 bg-[#f5c842]/5 p-8 flex flex-col gap-5">
-                <span className="text-2xl">✨</span>
-                <h3 className="text-xl font-bold text-[#f5c842]">Як стало з OZERA</h3>
-                <ul className="flex flex-col gap-3 text-white/70 text-sm">
-                  {[
-                    "Всі озера в одному місці — одразу з цінами",
-                    "Фото, склад риби та графік роботи",
-                    "Навігація одним натиском — Google Maps або Waze",
-                    "Push-сповіщення від улюблених озер",
-                    "Постійно оновлювана база по всій Україні",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <span className="text-[#f5c842] mt-0.5 shrink-0">✓</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* Philosophy + CTA */}
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-10 flex flex-col gap-5">
-              <p className="text-white/40 text-xs tracking-widest uppercase font-semibold">05 — Філософія</p>
-              <p className="text-xl text-white leading-relaxed font-medium">
-                Для нас риболовля — це не точка на карті.
-              </p>
-              <p className="text-white/50 text-lg leading-relaxed">
-                Це розуміння місця, часу і умов.
-              </p>
-            </div>
-            <div className="bg-[#f5c842]/10 border border-[#f5c842]/30 rounded-2xl p-10 flex flex-col gap-5">
-              <p className="text-[#f5c842]/60 text-xs tracking-widest uppercase font-semibold">06 — Ти теж можеш допомогти</p>
-              <p className="text-xl text-white leading-relaxed font-medium">
-                Якщо ти був на озері — поділись інформацією.
-              </p>
-              <p className="text-white/50 leading-relaxed">
-                Це допоможе іншим не витрачати час дарма.
-              </p>
-              <a
-                href="mailto:info@ozera.app"
-                className="mt-2 inline-flex items-center gap-2 bg-[#f5c842] text-[#0a1f38] font-bold px-5 py-3 rounded-xl text-sm w-fit hover:bg-yellow-300 transition-colors"
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                href="/lakes"
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-[#c9a84c] hover:bg-[#e8d5a3] text-[#07090d] font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-[#c9a84c]/20"
               >
-                Написати нам →
+                Переглянути каталог
+                <span className="group-hover:translate-x-1 transition-transform">→</span>
+              </Link>
+              <a
+                href="#story"
+                className="inline-flex items-center gap-3 px-8 py-4 border border-[#c9a84c]/30 text-[#c9a84c] hover:border-[#c9a84c] font-medium text-sm tracking-widest uppercase transition-all duration-300 hover:-translate-y-0.5"
+              >
+                Дізнатись більше
               </a>
             </div>
-          </div>
+          </FadeUp>
 
+          {/* Bottom stats */}
+          <FadeIn delay={0.6}>
+            <div className="flex items-center gap-12 mt-20 pt-8 border-t border-white/5">
+              {[
+                { num: `${count}+`, label: "водойм" },
+                { num: "25",       label: "областей" },
+                { num: "5★",       label: "рейтинг" },
+              ].map((s) => (
+                <div key={s.label}>
+                  <div className="font-serif text-3xl text-[#c9a84c] font-bold">{s.num}</div>
+                  <div className="text-[#7a7060] text-xs tracking-widest uppercase mt-1">{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
         </div>
       </section>
 
-      {/* Download */}
-      <section id="download" className="bg-white border-t border-blue-100">
-        <div className="max-w-6xl mx-auto px-4 py-20 flex flex-col md:flex-row items-center gap-10">
-          <Image src="/icon.png" alt="OZERA app" width={100} height={100} className="rounded-3xl shadow-lg" />
-          <div className="flex flex-col gap-4 text-center md:text-left">
-            <h2 className="text-3xl font-bold text-[#0f2a4a]">Мобільний застосунок</h2>
-            <p className="text-slate-500 max-w-md">
-              Обрані озера, push-сповіщення, офлайн-доступ та зручний пошук — все в кишені.
+      {/* ═══ MARQUEE ═══ */}
+      <div className="border-y border-[#c9a84c]/10 bg-[#0d1117] py-4 overflow-hidden">
+        <div className="flex gap-16 whitespace-nowrap animate-[marquee_20s_linear_infinite]" style={{
+          animation: "marquee 25s linear infinite",
+        }}>
+          {Array(3).fill(["Преміум водойми", "Актуальні ціни", "GPS навігація", "Склад риби", "Push сповіщення", "Вся Україна"]).flat().map((t, i) => (
+            <span key={i} className="text-[#c9a84c]/40 text-xs tracking-[0.3em] uppercase shrink-0">
+              ◆ {t}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══ GALLERY ═══ */}
+      <section className="max-w-6xl mx-auto px-6 py-24 w-full">
+        <FadeUp>
+          <div className="flex items-center gap-4 mb-3">
+            <span className="text-[#c9a84c] text-xs tracking-[0.3em] uppercase">Атмосфера</span>
+          </div>
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#f0ebe0] mb-16">
+            Природа, що надихає
+          </h2>
+        </FadeUp>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {galleryPhotos.map((p, i) => (
+            <FadeUp key={p.id} delay={i * 0.1}>
+              <div className="group relative aspect-[3/4] overflow-hidden">
+                <Image
+                  src={`https://images.unsplash.com/photo-${p.id}?w=600&q=80&fit=crop`}
+                  alt={p.label}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#07090d]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="text-[#c9a84c] text-xs tracking-widest uppercase">{p.label}</span>
+                </div>
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══ STORY ═══ */}
+      <section id="story" className="bg-[#0d1117] border-y border-[#c9a84c]/10">
+        <div className="max-w-6xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-16 items-center">
+          <SlideLeft>
+            <span className="text-[#c9a84c] text-xs tracking-[0.3em] uppercase block mb-4">Наша історія</span>
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#f0ebe0] leading-tight mb-8">
+              Ми зробили це,{" "}
+              <em className="text-[#c9a84c] not-italic">бо самі шукали</em>{" "}
+              де рибалити
+            </h2>
+            <p className="text-[#7a7060] text-lg leading-relaxed mb-6">
+              По форумах, чатах, знайомих. Кожен раз це займало більше часу, ніж сама риболовля. Тому ми зібрали всі платні водойми України в одному місці.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+            <p className="text-[#7a7060] leading-relaxed mb-10">
+              Актуальні ціни, склад риби, графік роботи, точні координати — все перевірено особисто.
+            </p>
+            <div className="inline-block border border-[#c9a84c]/30 px-6 py-4">
+              <p className="font-serif text-2xl text-[#c9a84c] italic">
+                "Чи варто їхати сюди зараз?"
+              </p>
+            </div>
+          </SlideLeft>
+
+          <SlideRight delay={0.1}>
+            <div className="relative aspect-[4/5] overflow-hidden">
+              <Image
+                src={STORY_PHOTO}
+                alt="Рибальське озеро"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#c9a84c]/10 to-transparent" />
+              {/* Corner decoration */}
+              <div className="absolute top-4 left-4 w-12 h-12 border-t border-l border-[#c9a84c]/50" />
+              <div className="absolute bottom-4 right-4 w-12 h-12 border-b border-r border-[#c9a84c]/50" />
+            </div>
+          </SlideRight>
+        </div>
+      </section>
+
+      {/* ═══ FEATURES ═══ */}
+      <section className="max-w-6xl mx-auto px-6 py-24 w-full">
+        <FadeUp className="text-center mb-20">
+          <span className="text-[#c9a84c] text-xs tracking-[0.3em] uppercase block mb-4">Можливості</span>
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#f0ebe0]">
+            Все для ідеальної рибалки
+          </h2>
+        </FadeUp>
+
+        <div className="grid md:grid-cols-3 gap-px bg-[#c9a84c]/10">
+          {[
+            { icon: "🗺️", title: "Карта та навігація",  desc: "Google Maps і Waze — одним натиском. Ніколи не заблукаєш до озера.", num: "01" },
+            { icon: "🐟", title: "Риба та ціни",        desc: "Актуальні прайси, норми вилову, повний склад риби для кожної водойми.", num: "02" },
+            { icon: "🔔", title: "Push сповіщення",     desc: "Новини від улюблених озер — акції, зариблення, зміни цін миттєво.", num: "03" },
+          ].map((f, i) => (
+            <FadeUp key={f.title} delay={i * 0.15}>
+              <div className="group bg-[#0d1117] p-10 hover:bg-[#141b24] transition-colors duration-300 cursor-default">
+                <div className="font-serif text-6xl text-[#c9a84c]/10 font-bold mb-6 group-hover:text-[#c9a84c]/20 transition-colors">
+                  {f.num}
+                </div>
+                <span className="text-3xl mb-4 block">{f.icon}</span>
+                <h3 className="font-serif text-xl font-bold text-[#f0ebe0] mb-3">{f.title}</h3>
+                <p className="text-[#7a7060] leading-relaxed text-sm">{f.desc}</p>
+                <div className="mt-6 w-8 h-px bg-[#c9a84c]/40 group-hover:w-16 transition-all duration-300" />
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══ FULL-WIDTH PHOTO ═══ */}
+      <section className="relative h-[60vh] overflow-hidden">
+        <Image
+          src={FEATURE_PHOTO}
+          alt="Лісова водойма"
+          fill
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-[#07090d]/70" />
+        <ScaleIn className="absolute inset-0 flex items-center justify-center text-center px-6">
+          <div>
+            <p className="text-[#c9a84c] text-xs tracking-[0.4em] uppercase mb-6">Наш підхід</p>
+            <h2 className="font-serif text-4xl md:text-6xl font-bold text-[#f0ebe0] max-w-3xl leading-tight">
+              Для нас риболовля — це не точка на карті
+            </h2>
+            <p className="text-[#7a7060] text-xl mt-6">Це розуміння місця, часу і умов.</p>
+          </div>
+        </ScaleIn>
+      </section>
+
+      {/* ═══ APP MOCKUP ═══ */}
+      <section className="max-w-6xl mx-auto px-6 py-24 w-full">
+        <div className="grid md:grid-cols-2 gap-16 items-center">
+          <FadeUp>
+            <span className="text-[#c9a84c] text-xs tracking-[0.3em] uppercase block mb-4">Мобільний застосунок</span>
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#f0ebe0] leading-tight mb-6">
+              Завжди під рукою
+            </h2>
+            <p className="text-[#7a7060] leading-relaxed mb-10">
+              Каталог озер, Push-сповіщення, офлайн-доступ та зручний пошук — все в кишені. Перший в Україні застосунок для платної риболовлі.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
               <a
                 href="/ozera-release.apk"
-                className="px-6 py-3 rounded-2xl bg-[#f5c842] hover:bg-[#e6ba35] text-[#0f2a4a] font-bold transition-colors shadow-md flex items-center gap-2 justify-center"
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-[#c9a84c] hover:bg-[#e8d5a3] text-[#07090d] font-semibold text-sm tracking-widest uppercase transition-all duration-300 hover:-translate-y-0.5"
               >
-                <span>📱</span> Android APK
+                📱 Android APK
+                <span className="group-hover:translate-x-1 transition-transform">→</span>
               </a>
-              <span className="px-6 py-3 rounded-2xl border-2 border-slate-200 text-slate-400 flex items-center gap-2 justify-center cursor-not-allowed">
-                <span>🍎</span> iOS — незабаром
+              <span className="inline-flex items-center gap-2 px-8 py-4 border border-[#c9a84c]/10 text-[#7a7060] text-sm tracking-widest uppercase cursor-not-allowed">
+                🍎 iOS — незабаром
               </span>
             </div>
-          </div>
+          </FadeUp>
+
+          <SlideRight>
+            <div className="flex justify-center">
+              <div className="relative">
+                <div className="absolute inset-0 -m-10 bg-[#c9a84c]/5 rounded-full blur-3xl" />
+                <div className="phone-float relative w-[230px] bg-[#0d1117] rounded-[42px] shadow-2xl border border-[#c9a84c]/20 flex flex-col overflow-hidden" style={{ height: 460 }}>
+                  <div className="flex justify-center pt-3 pb-1">
+                    <div className="w-20 h-5 bg-[#07090d] rounded-full" />
+                  </div>
+                  <div className="flex-1 bg-[#07090d] mx-2 mb-2 rounded-[32px] overflow-hidden flex flex-col">
+                    <div className="bg-[#0d1117] px-3 py-2.5 flex items-center justify-between border-b border-[#c9a84c]/10">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-5 h-5 rounded-lg bg-[#c9a84c]/20 flex items-center justify-center text-[9px]">🎣</div>
+                        <span className="text-[9px] font-bold text-[#c9a84c]">OZERA</span>
+                      </div>
+                      <div className="w-5 h-5 rounded-full bg-[#c9a84c]/10 flex items-center justify-center text-[8px]">📍</div>
+                    </div>
+                    <div className="px-2.5 pt-2 pb-1">
+                      <div className="bg-[#0d1117] rounded-xl px-2.5 py-1.5 flex items-center gap-1.5 border border-[#c9a84c]/10">
+                        <span className="text-[9px]">🔍</span>
+                        <span className="text-[9px] text-[#7a7060]">Пошук озера...</span>
+                      </div>
+                    </div>
+                    <div className="px-2.5 flex flex-col gap-1.5 pb-2 flex-1 overflow-hidden">
+                      {lakeMocks.map((lake) => (
+                        <div key={lake.name} className="bg-[#0d1117] rounded-xl overflow-hidden flex border border-[#c9a84c]/10">
+                          <div className={`w-12 ${lake.color} flex-shrink-0 flex items-center justify-center text-base opacity-80`}>🌊</div>
+                          <div className="px-2 py-1.5 flex flex-col gap-0.5 min-w-0">
+                            <span className="text-[8px] font-bold text-[#f0ebe0] truncate">{lake.name}</span>
+                            <span className="text-[7px] text-[#7a7060] truncate">📍 {lake.region}</span>
+                            <span className="text-[7px] text-[#c9a84c]/70 truncate">🐟 {lake.fish}</span>
+                            <span className="text-[7px] font-semibold text-[#c9a84c] bg-[#c9a84c]/10 px-1 rounded w-fit">{lake.price}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="bg-[#0d1117] border-t border-[#c9a84c]/10 px-4 py-2 flex justify-around">
+                      {["🏠", "🗺️", "❤️", "👤"].map((icon) => (
+                        <span key={icon} className="text-sm opacity-60">{icon}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="badge-float absolute -bottom-4 -left-10 bg-[#c9a84c] text-[#07090d] text-xs font-bold px-3.5 py-2 whitespace-nowrap shadow-xl shadow-[#c9a84c]/20">
+                  🐟 {count}+ озер
+                </div>
+                <div className="notif-float absolute -top-3 -right-12 bg-[#0d1117] border border-[#c9a84c]/20 px-3 py-2 flex items-center gap-2 shadow-xl">
+                  <span className="text-sm">🔔</span>
+                  <div>
+                    <div className="text-[10px] font-bold text-[#f0ebe0]">Нове озеро!</div>
+                    <div className="text-[9px] text-[#c9a84c]">Київська обл.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </SlideRight>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-blue-100 py-6 text-center text-slate-400 text-sm bg-white">
-        © {new Date().getFullYear()} до Ozera
+      {/* ═══ CTA ═══ */}
+      <section id="download" className="relative overflow-hidden border-t border-[#c9a84c]/10">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#c9a84c]/5 via-transparent to-transparent" />
+        <div className="max-w-6xl mx-auto px-6 py-24 relative text-center">
+          <ScaleIn>
+            <p className="text-[#c9a84c] text-xs tracking-[0.4em] uppercase mb-6">Починай зараз</p>
+            <h2 className="font-serif text-4xl md:text-6xl font-bold text-[#f0ebe0] mb-6 max-w-2xl mx-auto leading-tight">
+              Знайди своє ідеальне місце
+            </h2>
+            <p className="text-[#7a7060] text-lg mb-12 max-w-md mx-auto">
+              Якщо ти був на озері — поділись інформацією. Це допоможе іншим не витрачати час.
+            </p>
+            <a
+              href="mailto:info@ozera.app"
+              className="group inline-flex items-center gap-3 px-10 py-5 border border-[#c9a84c] text-[#c9a84c] hover:bg-[#c9a84c] hover:text-[#07090d] font-semibold text-sm tracking-widest uppercase transition-all duration-300"
+            >
+              Написати нам
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
+            </a>
+          </ScaleIn>
+        </div>
+      </section>
+
+      {/* ═══ FOOTER ═══ */}
+      <footer className="border-t border-[#c9a84c]/10 bg-[#07090d]">
+        <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <span className="font-serif text-xl text-[#c9a84c]">OZERA</span>
+            <span className="text-[#7a7060] text-xs">© {new Date().getFullYear()}</span>
+          </div>
+          <div className="flex items-center gap-8">
+            <Link href="/lakes" className="text-[#7a7060] hover:text-[#c9a84c] text-sm transition-colors tracking-widest uppercase">Каталог</Link>
+            <a href="mailto:info@ozera.app" className="text-[#7a7060] hover:text-[#c9a84c] text-sm transition-colors tracking-widest uppercase">Контакт</a>
+          </div>
+          <p className="text-[#7a7060]/40 text-xs">Photo: Unsplash</p>
+        </div>
       </footer>
     </main>
   );
