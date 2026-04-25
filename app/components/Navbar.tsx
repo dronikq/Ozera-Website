@@ -2,55 +2,50 @@
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
-  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 40));
+  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 20));
 
   return (
     <motion.nav
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 hidden md:block ${
         scrolled
-          ? "bg-[#07090d]/95 backdrop-blur-xl border-b border-[#c9a84c]/10"
-          : "bg-transparent"
+          ? "bg-white/90 backdrop-blur-xl shadow-lg shadow-blue-100/50 border-b border-blue-100/50"
+          : "bg-white/80 backdrop-blur border-b border-blue-100"
       }`}
     >
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <motion.div
-          className="font-serif text-xl font-bold text-[#c9a84c] tracking-widest cursor-default"
-          whileHover={{ opacity: 0.8 }}
-        >
-          OZERA
-        </motion.div>
+      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <Image
+            src="/icon.png"
+            alt="до Ozera"
+            width={40}
+            height={40}
+            className="rounded-xl"
+          />
+          <span className="font-bold text-[#0f2a4a] text-lg">до Ozera</span>
+        </Link>
 
-        <div className="hidden md:flex items-center gap-10">
-          {[
-            { href: "#story",    label: "Про нас" },
-            { href: "/lakes",    label: "Каталог" },
-            { href: "mailto:info@ozera.app", label: "Контакт" },
-          ].map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="text-[#7a7060] hover:text-[#c9a84c] text-xs tracking-[0.2em] uppercase transition-colors duration-300"
-            >
-              {item.label}
-            </a>
-          ))}
+        <div className="flex items-center gap-6">
+          <a
+            href="#about"
+            className="text-sm text-slate-500 hover:text-[#0f2a4a] font-medium transition-colors"
+          >
+            Про нас
+          </a>
+          <Link
+            href="/lakes"
+            className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+          >
+            Каталог озер
+          </Link>
         </div>
-
-        <motion.a
-          href="/ozera-release.apk"
-          className="px-5 py-2.5 border border-[#c9a84c]/40 text-[#c9a84c] text-xs tracking-widest uppercase hover:bg-[#c9a84c] hover:text-[#07090d] transition-all duration-300"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          Завантажити
-        </motion.a>
       </div>
     </motion.nav>
   );
