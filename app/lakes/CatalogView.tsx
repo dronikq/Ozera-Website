@@ -26,12 +26,14 @@ export default function CatalogView({ lakes, total }: Props) {
             <Suspense>
               <FiltersBar />
             </Suspense>
-            <button
-              onClick={() => setShowMap(false)}
-              className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm border border-blue-200 bg-white text-slate-500 hover:border-blue-400 hover:text-[#0f2a4a] transition-all shrink-0"
-            >
-              <span>⊠</span> Сховати карту
-            </button>
+            <div className="ml-auto shrink-0">
+              <button
+                onClick={() => setShowMap(false)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm border border-blue-200 bg-white text-slate-500 hover:border-blue-400 hover:text-[#0f2a4a] transition-all"
+              >
+                <span>⊠</span> Сховати карту
+              </button>
+            </div>
           </div>
 
           <div className="flex gap-6 items-start">

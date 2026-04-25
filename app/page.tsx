@@ -12,8 +12,49 @@ async function getLakesCount() {
 export default async function HomePage() {
   const count = await getLakesCount();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://www.ozera.in.ua/#organization",
+        name: "OZERA",
+        url: "https://www.ozera.in.ua",
+        logo: "https://www.ozera.in.ua/icon.png",
+        contactPoint: { "@type": "ContactPoint", email: "info@ozera.app", contactType: "customer service" },
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.ozera.in.ua/#website",
+        url: "https://www.ozera.in.ua",
+        name: "OZERA — Платна риболовля в Україні",
+        description: `Каталог ${count}+ платних озер України для риболовлі з цінами, рибою та навігацією.`,
+        publisher: { "@id": "https://www.ozera.in.ua/#organization" },
+        inLanguage: "uk-UA",
+        potentialAction: {
+          "@type": "SearchAction",
+          target: { "@type": "EntryPoint", urlTemplate: "https://www.ozera.in.ua/lakes?search={search_term_string}" },
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@type": "MobileApplication",
+        name: "OZERA — Рибальські озера",
+        operatingSystem: "Android",
+        applicationCategory: "SportsApplication",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "UAH" },
+        description: "Мобільний застосунок для пошуку платних озер України",
+        url: "https://www.ozera.in.ua/ozera-release.apk",
+      },
+    ],
+  };
+
   return (
     <main className="flex flex-col min-h-screen bg-[#f0f7ff]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Nav */}
       <nav className="border-b border-blue-100 bg-white/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">

@@ -1,7 +1,21 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase, type Lake } from "@/lib/supabase";
 import CatalogView from "./CatalogView";
+import AILakePicker from "./AILakePicker";
+
+export const metadata: Metadata = {
+  title: "Каталог озер — Платна риболовля в Україні",
+  description:
+    "Знайди платне озеро для риболовлі поруч. Фільтри по регіону, виду риби та ціні. Актуальні ціни, графік роботи та навігація до кожного озера.",
+  alternates: { canonical: "https://www.ozera.in.ua/lakes" },
+  openGraph: {
+    title: "Каталог платних озер України | OZERA",
+    description: "39+ озер для риболовлі: ціни, риба, карта. Фільтруй по регіону та виду риби.",
+    url: "https://www.ozera.in.ua/lakes",
+  },
+};
 
 async function getLakes(search: string, sort: string, region: string): Promise<Lake[]> {
   let query = supabase
@@ -71,20 +85,28 @@ export default async function LakesPage({
       </nav>
 
       <div className="max-w-6xl mx-auto px-4 py-10">
-        <div className="flex flex-col gap-1 mb-6">
-          <h1 className="text-3xl font-bold text-[#0f2a4a]">Каталог озер</h1>
-          <p className="text-slate-400">{lakes.length} озер знайдено</p>
-        </div>
+        {/* Header row: title+search on left, AI picker on right */}
+        <div className="flex gap-5 items-end mb-6">
+          <div className="w-64 shrink-0">
+            <div className="flex flex-col gap-1 mb-3">
+              <h1 className="text-3xl font-bold text-[#0f2a4a]">Каталог озер</h1>
+              <p className="text-slate-400">{lakes.length} озер знайдено</p>
+            </div>
+            <form>
+              <input
+                name="q"
+                defaultValue={q}
+                placeholder="Пошук за назвою..."
+                className="w-full px-3 py-2 rounded-xl bg-white border border-blue-200 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition-colors shadow-sm"
+              />
+            </form>
+          </div>
 
-        {/* Search */}
-        <form className="mb-6">
-          <input
-            name="q"
-            defaultValue={q}
-            placeholder="Пошук за назвою..."
-            className="w-full max-w-md px-4 py-2.5 rounded-xl bg-white border border-blue-200 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition-colors shadow-sm"
-          />
-        </form>
+          {/* AI picker — займає весь простір праворуч */}
+          <div className="flex-1">
+            <AILakePicker lakes={lakes} />
+          </div>
+        </div>
 
         <CatalogView lakes={lakes} total={lakes.length} />
       </div>

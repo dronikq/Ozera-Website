@@ -119,8 +119,8 @@ function biteClass(score: number): "g" | "o" | "b" {
 
 // ── Fetch and parse Open-Meteo ──
 async function fetchWeather(lat: number, lng: number): Promise<WeatherData> {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m,precipitation,surface_pressure&forecast_days=5&timezone=Europe%2FKiev`;
-  const res = await fetch(url, { next: { revalidate: 3600 } });
+  const url = `/api/weather?lat=${lat}&lng=${lng}&days=5`;
+  const res = await fetch(url);
   const json = await res.json();
 
   const { hourly } = json;
@@ -186,21 +186,26 @@ async function fetchWeather(lat: number, lng: number): Promise<WeatherData> {
 export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }) {
   const [data, setData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [activeDay, setActiveDay] = useState(0);
   const [activeHour, setActiveHour] = useState<number | null>(null);
 
-  useEffect(() => {
+  const load = () => {
+    setLoading(true);
+    setError(false);
     fetchWeather(lat, lng)
       .then(d => {
         setData(d);
-        // set active hour to current hour
         const nowHour = new Date().getHours();
         const todayHours = d.days[0]?.hours ?? [];
         const idx = todayHours.findIndex(h => h.hour >= nowHour);
         setActiveHour(idx >= 0 ? idx : 0);
       })
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, [lat, lng]);
+  };
+
+  useEffect(() => { load(); }, [lat, lng]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (
@@ -210,7 +215,16 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
       </div>
     );
   }
-  if (!data || data.days.length === 0) return null;
+  if (error || !data || data.days.length === 0) {
+    return (
+      <div className="rounded-2xl bg-white border border-blue-100 p-5 shadow-sm flex items-center justify-between gap-4">
+        <p className="text-slate-400 text-sm">⚠️ Не вдалось завантажити погоду</p>
+        <button onClick={load} className="text-sm text-blue-500 hover:text-blue-700 font-semibold transition-colors shrink-0">
+          Спробувати ще раз
+        </button>
+      </div>
+    );
+  }
 
   const day = data.days[activeDay];
   const hourIdx = activeHour ?? 0;
