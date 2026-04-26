@@ -23,9 +23,9 @@ async function getPopularLakes(): Promise<Lake[]> {
 
 // Phone mockup card data — real fishing lake photos from Unsplash
 const PHONE_CARDS = [
-  { name: "Тихий Берег",   region: "Київська обл.",  fish: "Короп, Амур",       img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=120&h=90&fit=crop" },
-  { name: "Соснове Озеро", region: "Черкаська обл.", fish: "Щука, Карась",      img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=120&h=90&fit=crop" },
-  { name: "Дзеркальне",    region: "Полтавська обл.", fish: "Короп, Білий амур", img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=120&h=90&fit=crop" },
+  { name: "Тихий Берег",   region: "Київська обл.",  fish: "Короп, Амур",       img: "https://plus.unsplash.com/premium_photo-1668203985517-99c47113e5e6?w=120&h=90&fit=crop&auto=format&q=80" },
+  { name: "Соснове Озеро", region: "Черкаська обл.", fish: "Щука, Карась",      img: "https://plus.unsplash.com/premium_photo-1663091623349-3dc639c79363?w=120&h=90&fit=crop&auto=format&q=80" },
+  { name: "Дзеркальне",    region: "Полтавська обл.", fish: "Короп, Білий амур", img: "https://plus.unsplash.com/premium_photo-1727538367105-13590ea2fec1?w=120&h=90&fit=crop&auto=format&q=80" },
 ];
 
 export default async function HomePage() {
@@ -249,10 +249,10 @@ export default async function HomePage() {
                 ))
               : /* Fallback static cards — real fishing lake photos */
                 [
-                  { name: "Тихий Берег",   city: "Київська обл.",   fish: "Короп, Амур, Карась",  img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&h=400&fit=crop" },
-                  { name: "Соснове Озеро", city: "Черкаська обл.",  fish: "Щука, Карась, Лящ",   img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=600&h=400&fit=crop" },
-                  { name: "Дзеркальне",    city: "Полтавська обл.", fish: "Короп, Білий амур",    img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&h=400&fit=crop" },
-                  { name: "Кленове",       city: "Вінницька обл.",  fish: "Щука, Окунь, Карась",  img: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=400&fit=crop" },
+                  { name: "Тихий Берег",   city: "Київська обл.",   fish: "Короп, Амур, Карась",  img: "https://plus.unsplash.com/premium_photo-1668203985517-99c47113e5e6?w=600&h=400&fit=crop&auto=format&q=80" },
+                  { name: "Соснове Озеро", city: "Черкаська обл.",  fish: "Щука, Карась, Лящ",   img: "https://plus.unsplash.com/premium_photo-1663091623349-3dc639c79363?w=600&h=400&fit=crop&auto=format&q=80" },
+                  { name: "Дзеркальне",    city: "Полтавська обл.", fish: "Короп, Білий амур",    img: "https://plus.unsplash.com/premium_photo-1727538367105-13590ea2fec1?w=600&h=400&fit=crop&auto=format&q=80" },
+                  { name: "Кленове",       city: "Вінницька обл.",  fish: "Щука, Окунь, Карась",  img: "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80" },
                 ].map((l) => (
                   <Link href="/lakes" className="l-lake-card" key={l.name}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -288,9 +288,9 @@ export default async function HomePage() {
                 </div>
                 <div className="l-cta-phone-body">
                   {[
-                    { name: "Тихий Берег", img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=80&h=64&fit=crop" },
-                    { name: "Соснове",     img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=80&h=64&fit=crop" },
-                    { name: "Кленове",     img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=80&h=64&fit=crop" },
+                    { name: "Тихий Берег", img: "https://plus.unsplash.com/premium_photo-1668203985517-99c47113e5e6?w=80&h=64&fit=crop&auto=format&q=80" },
+                    { name: "Соснове",     img: "https://plus.unsplash.com/premium_photo-1663091623349-3dc639c79363?w=80&h=64&fit=crop&auto=format&q=80" },
+                    { name: "Кленове",     img: "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=80&h=64&fit=crop&auto=format&q=80" },
                   ].map((c) => (
                     <div className="l-cta-mini-card" key={c.name}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
