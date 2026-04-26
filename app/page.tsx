@@ -23,9 +23,9 @@ async function getPopularLakes(): Promise<Lake[]> {
 
 // Phone mockup card data — real fishing lake photos from Unsplash
 const PHONE_CARDS = [
-  { name: "Тихий Берег",   region: "Київська обл.",  fish: "Короп, Амур",       price: "від 300 грн", img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=120&h=90&fit=crop" },
-  { name: "Соснове Озеро", region: "Черкаська обл.", fish: "Щука, Карась",      price: "від 250 грн", img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=120&h=90&fit=crop" },
-  { name: "Дзеркальне",    region: "Полтавська обл.", fish: "Короп, Білий амур", price: "від 280 грн", img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=120&h=90&fit=crop" },
+  { name: "Тихий Берег",   region: "Київська обл.",  fish: "Короп, Амур",       img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=120&h=90&fit=crop" },
+  { name: "Соснове Озеро", region: "Черкаська обл.", fish: "Щука, Карась",      img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=120&h=90&fit=crop" },
+  { name: "Дзеркальне",    region: "Полтавська обл.", fish: "Короп, Білий амур", img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=120&h=90&fit=crop" },
 ];
 
 export default async function HomePage() {
@@ -146,7 +146,6 @@ export default async function HomePage() {
                             <span className="l-phone-card-name">{c.name}</span>
                             <span className="l-phone-card-loc">📍 {c.region}</span>
                             <span className="l-phone-card-fish">🐟 {c.fish}</span>
-                            <span className="l-phone-card-price">{c.price}</span>
                           </div>
                         </div>
                       ))}
@@ -289,16 +288,15 @@ export default async function HomePage() {
                 </div>
                 <div className="l-cta-phone-body">
                   {[
-                    { name: "Тихий Берег", price: "300 грн", img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=80&h=64&fit=crop" },
-                    { name: "Соснове",     price: "250 грн", img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=80&h=64&fit=crop" },
-                    { name: "Кленове",     price: "200 грн", img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=80&h=64&fit=crop" },
+                    { name: "Тихий Берег", img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=80&h=64&fit=crop" },
+                    { name: "Соснове",     img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=80&h=64&fit=crop" },
+                    { name: "Кленове",     img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=80&h=64&fit=crop" },
                   ].map((c) => (
                     <div className="l-cta-mini-card" key={c.name}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img className="l-cta-mini-img" src={c.img} alt={c.name} />
                       <div className="l-cta-mini-info">
                         <span className="l-cta-mini-name">{c.name}</span>
-                        <span className="l-cta-mini-price">{c.price}</span>
                       </div>
                     </div>
                   ))}
