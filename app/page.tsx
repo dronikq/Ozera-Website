@@ -272,6 +272,7 @@ export default async function HomePage() {
                   </Link>
                 ))
             }
+          </div>
           </FadeUp>
         </div>
       </section>
