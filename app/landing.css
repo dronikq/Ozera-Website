@@ -111,7 +111,7 @@
 .l-hero {
   background:
     linear-gradient(135deg, rgba(11,31,58,0.85) 0%, rgba(23,59,107,0.80) 100%),
-    url('https://images.pexels.com/photos/14195462/pexels-photo-14195462.jpeg?auto=compress&cs=tinysrgb&w=1920&q=80') center/cover no-repeat;
+    url('/fishing-hero.jpg.png') center/cover no-repeat;
   min-height: calc(100vh - 64px);
   padding-top: 64px;
   display: flex; align-items: center;
