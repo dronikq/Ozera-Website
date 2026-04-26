@@ -172,7 +172,23 @@ export default async function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════
-          3. ЯК БУЛО РАНІШЕ
+          3. ПРО НАС
+      ══════════════════════════════════════ */}
+      <section className="l-about-section">
+        <div className="l-container">
+          <SlideLeft>
+            <span className="l-about-badge">Про нас</span>
+            <h2 className="l-about-title">
+              Ми зробили цей сервіс,<br />
+              <span className="l-accent">бо самі постійно шукали,</span><br />
+              де рибалити.
+            </h2>
+          </SlideLeft>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          4. ЯК БУЛО РАНІШЕ
       ══════════════════════════════════════ */}
       <section className="l-section l-section-bg-secondary" id="about">
         <div className="l-container">
