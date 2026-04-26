@@ -21,11 +21,11 @@ async function getPopularLakes(): Promise<Lake[]> {
   return (data ?? []) as unknown as Lake[];
 }
 
-// Phone mockup card data
+// Phone mockup card data — real fishing lake photos from Unsplash
 const PHONE_CARDS = [
-  { name: "Тихий Берег",  region: "Київська обл.",  fish: "Короп, Амур",      price: "від 300 грн", img: "https://picsum.photos/seed/lake11/120/90" },
-  { name: "Соснове Озеро", region: "Черкаська обл.", fish: "Щука, Карась",     price: "від 250 грн", img: "https://picsum.photos/seed/lake22/120/90" },
-  { name: "Дзеркальне",   region: "Полтавська обл.", fish: "Короп, Білий амур", price: "від 280 грн", img: "https://picsum.photos/seed/lake33/120/90" },
+  { name: "Тихий Берег",   region: "Київська обл.",  fish: "Короп, Амур",       price: "від 300 грн", img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=120&h=90&fit=crop" },
+  { name: "Соснове Озеро", region: "Черкаська обл.", fish: "Щука, Карась",      price: "від 250 грн", img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=120&h=90&fit=crop" },
+  { name: "Дзеркальне",    region: "Полтавська обл.", fish: "Короп, Білий амур", price: "від 280 грн", img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=120&h=90&fit=crop" },
 ];
 
 export default async function HomePage() {
@@ -245,18 +245,15 @@ export default async function HomePage() {
                           {lake.fish_species.length > 3 ? ` +${lake.fish_species.length - 3}` : ""}
                         </p>
                       )}
-                      {lake.price_uah && (
-                        <span className="l-price-badge">від {lake.price_uah} грн</span>
-                      )}
                     </div>
                   </Link>
                 ))
-              : /* Fallback static cards if no data */
+              : /* Fallback static cards — real fishing lake photos */
                 [
-                  { name: "Тихий Берег",   city: "Київська обл.",   fish: "Короп, Амур, Карась",    price: 300, img: "https://picsum.photos/seed/lk1/600/400" },
-                  { name: "Соснове Озеро", city: "Черкаська обл.",  fish: "Щука, Карась, Лящ",      price: 250, img: "https://picsum.photos/seed/lk2/600/400" },
-                  { name: "Дзеркальне",    city: "Полтавська обл.", fish: "Короп, Білий амур",       price: 280, img: "https://picsum.photos/seed/lk3/600/400" },
-                  { name: "Кленове",       city: "Вінницька обл.",  fish: "Щука, Окунь, Карась",    price: 200, img: "https://picsum.photos/seed/lk4/600/400" },
+                  { name: "Тихий Берег",   city: "Київська обл.",   fish: "Короп, Амур, Карась",  img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&h=400&fit=crop" },
+                  { name: "Соснове Озеро", city: "Черкаська обл.",  fish: "Щука, Карась, Лящ",   img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=600&h=400&fit=crop" },
+                  { name: "Дзеркальне",    city: "Полтавська обл.", fish: "Короп, Білий амур",    img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&h=400&fit=crop" },
+                  { name: "Кленове",       city: "Вінницька обл.",  fish: "Щука, Окунь, Карась",  img: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=400&fit=crop" },
                 ].map((l) => (
                   <Link href="/lakes" className="l-lake-card" key={l.name}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -265,7 +262,6 @@ export default async function HomePage() {
                       <p className="l-lake-name">{l.name}</p>
                       <p className="l-lake-loc">📍 {l.city}</p>
                       <p className="l-lake-fish">🐟 {l.fish}</p>
-                      <span className="l-price-badge">від {l.price} грн</span>
                     </div>
                   </Link>
                 ))
@@ -293,9 +289,9 @@ export default async function HomePage() {
                 </div>
                 <div className="l-cta-phone-body">
                   {[
-                    { name: "Тихий Берег", price: "300 грн", img: "https://picsum.photos/seed/ctalk1/80/64" },
-                    { name: "Соснове",     price: "250 грн", img: "https://picsum.photos/seed/ctalk2/80/64" },
-                    { name: "Кленове",     price: "200 грн", img: "https://picsum.photos/seed/ctalk3/80/64" },
+                    { name: "Тихий Берег", price: "300 грн", img: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=80&h=64&fit=crop" },
+                    { name: "Соснове",     price: "250 грн", img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=80&h=64&fit=crop" },
+                    { name: "Кленове",     price: "200 грн", img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=80&h=64&fit=crop" },
                   ].map((c) => (
                     <div className="l-cta-mini-card" key={c.name}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}

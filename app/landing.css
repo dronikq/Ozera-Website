@@ -109,7 +109,9 @@
 
 /* ── HERO ── */
 .l-hero {
-  background: var(--gradient-hero);
+  background:
+    linear-gradient(135deg, rgba(11,31,58,0.90) 0%, rgba(23,59,107,0.80) 55%, rgba(11,31,58,0.72) 100%),
+    url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920&q=75') center/cover no-repeat;
   min-height: calc(100vh - 64px);
   padding-top: 64px;
   display: flex; align-items: center;
@@ -355,20 +357,19 @@
 .l-cta-text { flex: 1; }
 .l-cta-title { font-size: clamp(24px, 3vw, 36px); font-weight: 800; line-height: 1.25; margin-bottom: 28px; }
 
-.l-store-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+.l-store-buttons { display: flex; gap: 14px; flex-wrap: wrap; }
 .l-store-btn {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 22px; border-radius: 12px;
-  font-family: 'Inter', sans-serif; font-weight: 600;
-  min-width: 180px; transition: transform 0.2s, box-shadow 0.2s;
-  border: none; cursor: pointer;
+  display: flex; align-items: center; gap: 14px;
+  padding: 13px 24px; border-radius: 14px;
+  font-family: 'Inter', sans-serif;
+  min-width: 200px; transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid rgba(255,255,255,0.12); cursor: pointer;
+  background: #111; color: #fff; text-decoration: none;
 }
-.l-store-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-.l-store-apple { background: #fff; color: #000; }
-.l-store-google { background: #1a1a1a; color: #fff; }
-.l-store-icon { font-size: 26px; line-height: 1; }
-.l-store-sub { font-size: 11px; opacity: 0.55; display: block; line-height: 1.2; margin-bottom: 2px; }
-.l-store-name { font-size: 17px; font-weight: 700; display: block; line-height: 1; }
+.l-store-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.45); border-color: rgba(255,255,255,0.22); }
+.l-store-icon { font-size: 30px; line-height: 1; flex-shrink: 0; }
+.l-store-sub  { font-size: 10px; color: rgba(255,255,255,0.55); display: block; line-height: 1.3; margin-bottom: 2px; letter-spacing: 0.01em; }
+.l-store-name { font-size: 19px; font-weight: 700; display: block; line-height: 1; color: #fff; }
 
 /* ── FOOTER BOTTOM ── */
 .l-footer-bottom { background: var(--bg-primary); border-top: 1px solid var(--border); padding: 24px 0; }
