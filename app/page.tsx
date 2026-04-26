@@ -310,7 +310,8 @@ export default async function HomePage() {
             {/* Text + store buttons */}
             <div className="l-cta-text">
               <h2 className="l-cta-title">
-                Скачай додаток до і лови більше риби!
+                Скачай додаток до<br />
+                <span className="l-accent">і лови більше риби!</span>
               </h2>
               <div className="l-store-buttons">
                 <a href="#" className="l-store-btn l-store-apple">
