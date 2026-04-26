@@ -187,9 +187,9 @@ export default async function LakePage({ params }: { params: Promise<{ id: strin
                   🚗 Прокласти у Waze
                 </a>
               )}
-              {primaryPhone && (
-                <a href={`tel:${primaryPhone}`} className="dk-btn-call">
-                  📱 Зателефонувати
+              {lake.contacts_enabled && lake.contacts && (
+                <a href="#lake-contacts" className="dk-btn-call">
+                  📞 Показати контакти
                 </a>
               )}
             </div>
@@ -257,7 +257,7 @@ export default async function LakePage({ params }: { params: Promise<{ id: strin
 
           {/* Контакти */}
           {lake.contacts_enabled && lake.contacts && (
-            <div className="dk-section">
+            <div id="lake-contacts" className="dk-section">
               <h2 className="dk-section-title">📞 Контакти</h2>
               {lake.contacts.phone?.map((p) => (
                 <a key={p} href={`tel:${p}`} className="dk-contact-link">📱 {p}</a>
