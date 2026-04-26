@@ -209,17 +209,17 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
 
   if (loading) {
     return (
-      <div className="rounded-2xl bg-white border border-blue-100 p-6 shadow-sm animate-pulse">
-        <div className="h-4 bg-blue-50 rounded w-40 mb-4" />
-        <div className="h-20 bg-blue-50 rounded" />
+      <div className="rounded-2xl p-6 animate-pulse" style={{ background: "#132F57", border: "1px solid #1E3A5F" }}>
+        <div className="h-4 rounded w-40 mb-4" style={{ background: "#0F2A4D" }} />
+        <div className="h-20 rounded" style={{ background: "#0F2A4D" }} />
       </div>
     );
   }
   if (error || !data || data.days.length === 0) {
     return (
-      <div className="rounded-2xl bg-white border border-blue-100 p-5 shadow-sm flex items-center justify-between gap-4">
-        <p className="text-slate-400 text-sm">⚠️ Не вдалось завантажити погоду</p>
-        <button onClick={load} className="text-sm text-blue-500 hover:text-blue-700 font-semibold transition-colors shrink-0">
+      <div className="rounded-2xl p-5 flex items-center justify-between gap-4" style={{ background: "#132F57", border: "1px solid #1E3A5F" }}>
+        <p className="text-sm" style={{ color: "#6F85A8" }}>⚠️ Не вдалось завантажити погоду</p>
+        <button onClick={load} className="text-sm font-semibold transition-colors shrink-0" style={{ color: "#4DA3FF" }}>
           Спробувати ще раз
         </button>
       </div>
@@ -260,9 +260,9 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
   const ringStroke = (hour.biteScore / 10) * 213.6;
 
   return (
-    <div className="rounded-2xl bg-white border border-blue-100 shadow-sm overflow-hidden">
+    <div className="rounded-2xl overflow-hidden" style={{ background: "#132F57", border: "1px solid #1E3A5F" }}>
       <div className="px-5 pt-5">
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">☁ Погода та умови кльову</p>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#6F85A8" }}>☁ Погода та умови кльову</p>
 
         {/* Day tabs */}
         <div className="flex gap-2 flex-wrap mb-4">
@@ -273,7 +273,7 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-semibold border transition-all ${
                 activeDay === i
                   ? "bg-[#0f2a4a] border-[#0f2a4a] text-white"
-                  : "bg-white border-blue-200 text-slate-500 hover:border-blue-400"
+                  : "bg-[#0F2A4D] border-[#1E3A5F] text-[#A9B8D4] hover:border-[#2A4D78]"
               }`}
             >
               {d.shortLabel}
@@ -288,9 +288,9 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
             <span className="text-4xl">{hour.icon}</span>
             <div>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black text-[#0f2a4a]">+{hour.temp}°</span>
+                <span className="text-3xl font-black text-white">+{hour.temp}°</span>
               </div>
-              <div className="text-sm text-slate-400">
+              <div className="text-sm" style={{ color: "#A9B8D4" }}>
                 {hour.desc} · {String(hour.hour).padStart(2, "0")}:00
               </div>
             </div>
@@ -334,7 +334,7 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
         {/* Solunar peaks row */}
         {peakWindows.length > 0 && (
           <div className="flex items-center gap-2 flex-wrap mb-4">
-            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Піки активності:</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "#6F85A8" }}>Піки активності:</span>
             {peakWindows.map((p, i) => (
               <span
                 key={i}
@@ -354,10 +354,10 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
       {/* Hour strip */}
       <div className="flex gap-1.5 overflow-x-auto px-5 pb-5 pt-1 scroll-snap-type-x" style={{ scrollSnapType: "x mandatory" }}>
         {day.hours.map((h, i) => {
-          const borderColor = h.biteClass === "g" ? "#4ade80" : h.biteClass === "o" ? "#fbbf24" : "#e2e8f0";
-          const bg = i === hourIdx ? "#0f2a4a" : h.biteClass === "g" ? "#f0fdf4" : h.biteClass === "o" ? "#fffbeb" : "#f8fafc";
-          const textColor = i === hourIdx ? "white" : "#0f2a4a";
-          const subColor = i === hourIdx ? "rgba(255,255,255,0.5)" : "#94a3b8";
+          const borderColor = h.biteClass === "g" ? "#4ade80" : h.biteClass === "o" ? "#fbbf24" : "#1E3A5F";
+          const bg = i === hourIdx ? "#0f2a4a" : "#0F2A4D";
+          const textColor = "white";
+          const subColor = i === hourIdx ? "rgba(255,255,255,0.5)" : "#6F85A8";
           return (
             <div
               key={h.hour}
@@ -385,7 +385,7 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
               <span style={{ fontSize: 13, fontWeight: 800, color: textColor }}>+{h.temp}°</span>
               <span style={{ fontSize: 9, color: subColor }}>{h.wind} м/с</span>
               {/* rain bar */}
-              <div style={{ width: 6, height: 20, background: i === hourIdx ? "rgba(255,255,255,0.2)" : "#e2e8f0", borderRadius: 3, overflow: "hidden", display: "flex", alignItems: "flex-end" }}>
+              <div style={{ width: 6, height: 20, background: i === hourIdx ? "rgba(255,255,255,0.2)" : "#1E3A5F", borderRadius: 3, overflow: "hidden", display: "flex", alignItems: "flex-end" }}>
                 <div style={{ width: "100%", height: `${Math.min(100, h.rain * 20)}%`, background: "#60a5fa", borderRadius: 3 }} />
               </div>
               <span style={{ fontSize: 10, fontWeight: 700, color: i === hourIdx ? biteColors[h.biteClass] : scoreColor[h.biteClass] }}>

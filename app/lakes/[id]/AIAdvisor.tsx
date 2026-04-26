@@ -720,15 +720,15 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
 
   if (loading) {
     return (
-      <div className="rounded-2xl overflow-hidden shadow-sm animate-pulse">
+      <div className="rounded-2xl overflow-hidden animate-pulse" style={{ border: "1px solid #1E3A5F" }}>
         <div className="h-16 bg-[#0f2a4a]" />
-        <div className="bg-white p-5 flex flex-col gap-5">
+        <div className="p-5 flex flex-col gap-5" style={{ background: "#132F57" }}>
           {[1,2,3,4].map(i => (
             <div key={i} className="flex gap-4">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 shrink-0" />
+              <div className="w-10 h-10 rounded-xl shrink-0" style={{ background: "#0F2A4D" }} />
               <div className="flex-1 flex flex-col gap-2 pt-1">
-                <div className="h-3 bg-blue-50 rounded w-24" />
-                <div className="h-4 bg-blue-50 rounded w-full" />
+                <div className="h-3 rounded w-24" style={{ background: "#0F2A4D" }} />
+                <div className="h-4 rounded w-full" style={{ background: "#0F2A4D" }} />
               </div>
             </div>
           ))}
@@ -738,9 +738,9 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
   }
   if (!advice || (!advice.peaceful && !advice.predatory)) {
     return (
-      <div className="rounded-2xl bg-white border border-blue-100 p-5 shadow-sm flex items-center justify-between gap-4">
-        <p className="text-slate-400 text-sm">⚠️ Не вдалось завантажити AI-порадник</p>
-        <button onClick={load} className="text-sm text-blue-500 hover:text-blue-700 font-semibold transition-colors shrink-0">
+      <div className="rounded-2xl p-5 flex items-center justify-between gap-4" style={{ background: "#132F57", border: "1px solid #1E3A5F" }}>
+        <p className="text-sm" style={{ color: "#6F85A8" }}>⚠️ Не вдалось завантажити AI-порадник</p>
+        <button onClick={load} className="text-sm font-semibold transition-colors shrink-0" style={{ color: "#4DA3FF" }}>
           Спробувати ще раз
         </button>
       </div>
@@ -776,7 +776,7 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
 
   return (
     <div className="flex flex-col gap-4">
-    <div className="rounded-2xl overflow-hidden shadow-sm border border-blue-100">
+    <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #1E3A5F" }}>
       {/* Header */}
       <div className="bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex items-center justify-between">
         <div>
@@ -787,7 +787,7 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
 
       {/* Fish tabs */}
       {hasBoth && (
-        <div className="bg-white border-b border-slate-100 px-4 pt-2 pb-0 flex gap-1">
+        <div className="px-4 pt-2 pb-0 flex gap-1" style={{ background: "#132F57", borderBottom: "1px solid #1E3A5F" }}>
           {(["peaceful", "predatory"] as const).map((t) => {
             const s = t === "peaceful" ? advice.peacefulScore : advice.predatoryScore;
             const sc = s >= 7 ? "text-[#15803d] bg-[#f0fdf4]" : s >= 4.5 ? "text-[#92400e] bg-[#fef9c3]" : "text-[#be123c] bg-[#fff1f2]";
@@ -797,8 +797,8 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
                 onClick={() => setTab(t)}
                 className={`px-4 py-2 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
                   tab === t
-                    ? "border-[#0f2a4a] text-[#0f2a4a]"
-                    : "border-transparent text-slate-400 hover:text-slate-600"
+                    ? "border-[#FFC857] text-white"
+                    : "border-transparent text-[#6F85A8] hover:text-[#A9B8D4]"
                 }`}
               >
                 {t === "peaceful" ? "🐟 Мирна риба" : "🦈 Хижа риба"}
@@ -810,13 +810,13 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
       )}
 
       {/* Timeline */}
-      <div className="bg-white px-5 pt-5 pb-2">
+      <div className="px-5 pt-5 pb-2" style={{ background: "#132F57" }}>
         <div className="flex flex-col">
           {timelineItems.map((item, i) => (
             <div key={item.label} className="flex gap-4 relative pb-5">
               {/* Vertical line */}
               {i < timelineItems.length - 1 && (
-                <div className="absolute left-5 top-10 bottom-0 w-0.5 bg-gradient-to-b from-slate-200 to-slate-50" />
+                <div className="absolute left-5 top-10 bottom-0 w-0.5 bg-gradient-to-b from-[#1E3A5F] to-[#132F57]" />
               )}
               {/* Dot */}
               <div className={`w-10 h-10 rounded-[13px] border-2 flex items-center justify-center text-lg shrink-0 z-10 ${dotStyle[item.dot]}`}>
@@ -827,19 +827,19 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
                 <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${labelStyle[item.dot]}`}>
                   {item.label}
                 </p>
-                <p className="text-sm font-semibold text-[#0f2a4a] leading-relaxed">{item.text}</p>
+                <p className="text-sm font-semibold text-white leading-relaxed">{item.text}</p>
                 {"lures" in item && item.lures ? (
                   <div className="grid grid-cols-2 gap-2 mt-3">
                     {item.lures.map((lure) => (
-                      <div key={lure.name} className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                      <div key={lure.name} className="rounded-xl p-3" style={{ background: "#0F2A4D", border: "1px solid #1E3A5F" }}>
                         <div className="flex items-center gap-2 mb-1.5">
                           <span className="text-[17px]">{lure.icon}</span>
-                          <span className="text-xs font-bold text-[#0f2a4a] flex-1">{lure.name}</span>
-                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${lure.top ? "bg-[#fef9c3] text-[#854d0e]" : "bg-slate-100 text-slate-500"}`}>
+                          <span className="text-xs font-bold text-white flex-1">{lure.name}</span>
+                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${lure.top ? "bg-[#fef9c3] text-[#854d0e]" : "text-[#6F85A8]"}`} style={lure.top ? {} : { background: "#132F57" }}>
                             {lure.top ? "⭐ Топ" : "Норм"}
                           </span>
                         </div>
-                        <p className="text-[10px] text-slate-500 leading-snug mb-2">{lure.tip}</p>
+                        <p className="text-[10px] leading-snug mb-2" style={{ color: "#A9B8D4" }}>{lure.tip}</p>
                         <div className="flex flex-wrap gap-1">
                           {lure.colors.map((c) => (
                             <div key={c.name} className="flex items-center gap-1">
@@ -847,11 +847,11 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
                                 className="w-3 h-3 rounded-[3px] flex-shrink-0"
                                 style={{
                                   background: c.hex,
-                                  border: c.hex === "#ffffff" ? "1px solid #e2e8f0" : "1px solid rgba(0,0,0,.1)",
-                                  boxShadow: c.best ? "0 0 0 1.5px #f5c842" : undefined,
+                                  border: c.hex === "#ffffff" ? "1px solid #1E3A5F" : "1px solid rgba(255,255,255,.15)",
+                                  boxShadow: c.best ? "0 0 0 1.5px #FFC857" : undefined,
                                 }}
                               />
-                              <span className={`text-[10px] font-semibold ${c.best ? "text-[#92400e]" : "text-slate-500"}`}>
+                              <span className={`text-[10px] font-semibold ${c.best ? "text-[#FFC857]" : "text-[#6F85A8]"}`}>
                                 {c.name}
                               </span>
                             </div>
@@ -863,7 +863,7 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
                 ) : item.tags.length > 0 ? (
                   <div className="flex flex-wrap gap-1.5 mt-2">
                     {item.tags.map((tag) => (
-                      <span key={tag} className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-slate-600">
+                      <span key={tag} className="text-[11px] font-semibold px-2 py-0.5 rounded-md" style={{ background: "#0F2A4D", border: "1px solid #1E3A5F", color: "#A9B8D4" }}>
                         {tag}
                       </span>
                     ))}
@@ -876,15 +876,16 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
       </div>
 
       {/* Summary + footer */}
-      <div className="bg-[#f8fafc] border-t border-slate-100 px-5 py-3 flex items-center justify-between gap-4">
-        <p className="text-xs text-slate-500 italic leading-relaxed flex-1 border-l-2 border-[#f5c842] pl-3">
+      <div className="px-5 py-3 flex items-center justify-between gap-4" style={{ background: "#0F2A4D", borderTop: "1px solid #1E3A5F" }}>
+        <p className="text-xs italic leading-relaxed flex-1 pl-3" style={{ color: "#A9B8D4", borderLeft: "2px solid #FFC857" }}>
           {advice.summary}
         </p>
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-[11px] text-slate-400">о {advice.updatedAt}</span>
+          <span className="text-[11px]" style={{ color: "#6F85A8" }}>о {advice.updatedAt}</span>
           <button
             onClick={load}
-            className="text-xs font-bold text-[#0f2a4a] bg-white border border-slate-200 hover:bg-slate-50 transition-colors px-3 py-1.5 rounded-lg"
+            className="text-xs font-bold transition-colors px-3 py-1.5 rounded-lg"
+            style={{ color: "#A9B8D4", background: "#132F57", border: "1px solid #1E3A5F" }}
           >
             🔄 Оновити
           </button>
@@ -893,7 +894,7 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
     </div>
 
       {/* Checklist wizard — окремий блок */}
-      <div className="rounded-2xl overflow-hidden shadow-sm border border-blue-100 bg-white">
+      <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #1E3A5F", background: "#132F57" }}>
         {/* Header */}
         <div className="bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex items-center justify-between">
           <div>
@@ -911,18 +912,19 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
         {/* ── INTRO ── */}
         {checklistStep === "intro" && (
           <div className="px-5 py-8 flex flex-col items-center text-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-[#eff6ff] border border-[#bfdbfe] flex items-center justify-center text-3xl">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl" style={{ background: "#0F2A4D", border: "1px solid #1E3A5F" }}>
               🤖
             </div>
             <div>
-              <p className="text-[#0f2a4a] font-bold text-[16px] leading-snug">Зберемо тебе на риболовлю</p>
-              <p className="text-slate-500 text-sm mt-1.5 leading-relaxed max-w-xs">
+              <p className="font-bold text-[16px] leading-snug text-white">Зберемо тебе на риболовлю</p>
+              <p className="text-sm mt-1.5 leading-relaxed max-w-xs" style={{ color: "#A9B8D4" }}>
                 Відповідай на 1 коротке питання — і отримаєш персональний список спорядження під сьогоднішні умови.
               </p>
             </div>
             <button
               onClick={() => setChecklistStep("question")}
-              className="bg-[#0f2a4a] text-white font-bold text-sm px-6 py-2.5 rounded-xl hover:bg-[#1e3f6e] transition-colors"
+              className="font-bold text-sm px-6 py-2.5 rounded-xl transition-colors"
+              style={{ background: "#FFC857", color: "#0B1F3A" }}
             >
               Почати →
             </button>
@@ -933,9 +935,9 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
         {checklistStep === "question" && (
           <div className="px-5 py-6 flex flex-col gap-5">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Крок 1 з 1</p>
-              <p className="text-[#0f2a4a] font-bold text-[15px] leading-snug">Яку рибу плануєш ловити сьогодні?</p>
-              <p className="text-slate-400 text-xs mt-1">Можна обрати кілька</p>
+              <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: "#6F85A8" }}>Крок 1 з 1</p>
+              <p className="font-bold text-[15px] leading-snug text-white">Яку рибу плануєш ловити сьогодні?</p>
+              <p className="text-xs mt-1" style={{ color: "#6F85A8" }}>Можна обрати кілька</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {fishSpecies.map((f) => {
@@ -946,11 +948,12 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
                     onClick={() => setSelectedFish(prev =>
                       prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f]
                     )}
-                    className={`px-3 py-1.5 rounded-xl text-sm font-semibold border-[1.5px] transition-all ${
-                      active
-                        ? "bg-[#0f2a4a] text-white border-[#0f2a4a]"
-                        : "bg-[#f8fafc] text-[#1e293b] border-[#e2e8f0] hover:border-[#94a3b8]"
-                    }`}
+                    className="px-3 py-1.5 rounded-xl text-sm font-semibold transition-all"
+                    style={{
+                      background: active ? "#FFC857" : "#0F2A4D",
+                      color: active ? "#0B1F3A" : "#A9B8D4",
+                      border: active ? "1.5px solid #FFC857" : "1.5px solid #1E3A5F",
+                    }}
                   >
                     {f}
                   </button>
@@ -960,11 +963,12 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
             <button
               disabled={selectedFish.length === 0}
               onClick={() => { setCheckedItems({}); setChecklistStep("result"); }}
-              className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all ${
-                selectedFish.length > 0
-                  ? "bg-[#0f2a4a] text-white hover:bg-[#1e3f6e]"
-                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
-              }`}
+              className="w-full py-2.5 rounded-xl font-bold text-sm transition-all"
+              style={{
+                background: selectedFish.length > 0 ? "#FFC857" : "#1E3A5F",
+                color: selectedFish.length > 0 ? "#0B1F3A" : "#6F85A8",
+                cursor: selectedFish.length === 0 ? "not-allowed" : "pointer",
+              }}
             >
               Показати список →
             </button>
@@ -985,13 +989,14 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
               {/* Selected fish chips */}
               <div className="flex flex-wrap gap-1.5 mb-4">
                 {selectedFish.map(f => (
-                  <span key={f} className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-[#eff6ff] border border-[#bfdbfe] text-[#1d4ed8]">
+                  <span key={f} className="text-[11px] font-semibold px-2 py-0.5 rounded-md" style={{ background: "#0F2A4D", border: "1px solid #1E3A5F", color: "#4DA3FF" }}>
                     🎣 {f}
                   </span>
                 ))}
                 <button
                   onClick={() => setChecklistStep("question")}
-                  className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
+                  className="text-[11px] font-semibold px-2 py-0.5 rounded-md transition-colors"
+                  style={{ background: "#0F2A4D", border: "1px solid #1E3A5F", color: "#6F85A8" }}
                 >
                   ✏️ Змінити
                 </button>
@@ -1009,17 +1014,18 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
                         <button
                           key={item.id}
                           onClick={() => setCheckedItems(prev => ({ ...prev, [item.id]: !prev[item.id] }))}
-                          className={`flex items-center gap-2 px-2.5 py-2 rounded-xl border-[1.5px] text-left transition-all ${
-                            checked
-                              ? "bg-[#f0fdf4] border-[#bbf7d0]"
-                              : item.warn
-                              ? "bg-[#fff1f2] border-[#fecdd3]"
-                              : "bg-[#f8fafc] border-[#f1f5f9]"
-                          }`}
+                          className="flex items-center gap-2 px-2.5 py-2 rounded-xl text-left transition-all"
+                          style={{
+                            background: checked ? "rgba(34,197,94,0.1)" : "#0F2A4D",
+                            border: checked ? "1.5px solid #22c55e" : item.warn ? "1.5px solid #f87171" : "1.5px solid #1E3A5F",
+                          }}
                         >
-                          <div className={`w-4 h-4 rounded-[4px] border-[1.5px] flex-shrink-0 flex items-center justify-center transition-all ${
-                            checked ? "bg-[#22c55e] border-[#22c55e]" : item.warn ? "border-[#fca5a5] bg-white" : "border-[#cbd5e1] bg-white"
-                          }`}>
+                          <div className="w-4 h-4 rounded-[4px] flex-shrink-0 flex items-center justify-center transition-all"
+                            style={{
+                              background: checked ? "#22c55e" : "#132F57",
+                              border: checked ? "1.5px solid #22c55e" : item.warn ? "1.5px solid #f87171" : "1.5px solid #1E3A5F",
+                            }}
+                          >
                             {checked && (
                               <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
                                 <path d="M1 3.5L3.2 5.7L8 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1028,7 +1034,7 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
                           </div>
                           <span className="text-[14px] leading-none flex-shrink-0">{item.icon}</span>
                           <div className="min-w-0">
-                            <p className={`text-[11px] font-bold leading-tight ${checked ? "line-through text-slate-400" : "text-[#1e293b]"}`}>
+                            <p className={`text-[11px] font-bold leading-tight ${checked ? "line-through" : "text-white"}`} style={checked ? { color: "#6F85A8" } : {}}>
                               {item.label}
                             </p>
                             {item.sub && !checked && (
@@ -1045,13 +1051,13 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
               ))}
               {totalCount > 0 && (
                 <div className="flex items-center gap-2 mt-2 mb-1">
-                  <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "#1E3A5F" }}>
                     <div
                       className="h-full bg-gradient-to-r from-[#22c55e] to-[#84cc16] rounded-full transition-all duration-300"
                       style={{ width: `${(doneCount / totalCount) * 100}%` }}
                     />
                   </div>
-                  <span className="text-[10px] text-slate-400 font-semibold whitespace-nowrap">
+                  <span className="text-[10px] font-semibold whitespace-nowrap" style={{ color: "#6F85A8" }}>
                     {doneCount === totalCount ? "✅ Все зібрано!" : `${doneCount} з ${totalCount}`}
                   </span>
                 </div>
