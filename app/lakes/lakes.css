@@ -23,6 +23,7 @@
   color: var(--text-primary);
   font-family: 'Inter', Arial, Helvetica, sans-serif;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* ── NAV ── */

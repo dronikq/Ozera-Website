@@ -111,18 +111,8 @@ export default async function LakesPage({
       <div className="dk-content-area">
         <div className="dk-container">
 
-          {/* AI Banner */}
-          <div className="dk-ai-banner">
-            <div className="dk-ai-banner-left">
-              <span className="dk-ai-banner-icon">🤖</span>
-              <div className="dk-ai-banner-text">
-                <div className="dk-ai-banner-header">
-                  <p className="dk-ai-banner-title">AI-підбір озера</p>
-                  <span className="dk-ai-badge">Безкоштовно · зараз</span>
-                </div>
-                <p className="dk-ai-banner-subtitle">2 питання — отримаєш топ озер з найкращим кльовом</p>
-              </div>
-            </div>
+          {/* AI Picker */}
+          <div style={{ marginBottom: 32 }}>
             <AILakePicker lakes={lakes} />
           </div>
 
