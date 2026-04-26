@@ -1,6 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { supabase, type Lake } from "@/lib/supabase";
 import LandingClient from "./components/LandingClient";
+import { FadeUp, SlideLeft, SlideRight, ScaleIn } from "./components/AnimatedSection";
 import "./landing.css";
 
 async function getLakesCount() {
@@ -51,7 +53,7 @@ export default async function HomePage() {
       <header className="l-header" id="l-header">
         <nav className="l-nav">
           <Link href="/" className="l-logo">
-            <span className="l-logo-icon">🐟</span>
+            <Image src="/icon.png" alt="OZERA" width={36} height={36} className="l-logo-img" />
             <span>до Ozera</span>
           </Link>
 
@@ -74,7 +76,7 @@ export default async function HomePage() {
           <div className="l-hero-grid">
 
             {/* Left: text */}
-            <div className="l-hero-content">
+            <SlideLeft className="l-hero-content">
               {/* Badge */}
               <div className="l-hero-badge">
                 <span className="l-badge-dot" />
@@ -112,10 +114,10 @@ export default async function HomePage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </SlideLeft>
 
             {/* Right: Phone mockup */}
-            <div className="l-hero-phone">
+            <SlideRight delay={0.2} className="l-hero-phone">
               <div className="l-phone-wrap">
                 <div className="l-phone">
                   <div className="l-phone-notch">
@@ -163,7 +165,7 @@ export default async function HomePage() {
                 <div className="l-float-badge">🐟 {count} озер у базі</div>
                 <div className="l-float-notif"><span>🔔</span> Нове озеро!</div>
               </div>
-            </div>
+            </SlideRight>
 
           </div>
         </div>
@@ -174,6 +176,7 @@ export default async function HomePage() {
       ══════════════════════════════════════ */}
       <section className="l-section l-section-bg-secondary" id="about">
         <div className="l-container">
+          <FadeUp>
           <div className="l-section-card">
             <h2>Як було раніше 🤯</h2>
             <div className="l-problems-grid">
@@ -191,6 +194,7 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
+          </FadeUp>
         </div>
       </section>
 
@@ -199,6 +203,7 @@ export default async function HomePage() {
       ══════════════════════════════════════ */}
       <section className="l-section l-section-bg-secondary">
         <div className="l-container">
+          <FadeUp delay={0.1}>
           <div className="l-section-card">
             <h2>Як стало з <span className="l-accent">OZERA</span> ✨</h2>
             <div className="l-benefits-grid">
@@ -216,6 +221,7 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
+          </FadeUp>
         </div>
       </section>
 
@@ -224,6 +230,7 @@ export default async function HomePage() {
       ══════════════════════════════════════ */}
       <section className="l-section" id="catalog">
         <div className="l-container">
+          <FadeUp>
           <div className="l-section-header">
             <h2>Популярні озера</h2>
             <Link href="/lakes" className="l-link-accent">Переглянути всі озера →</Link>
@@ -265,7 +272,7 @@ export default async function HomePage() {
                   </Link>
                 ))
             }
-          </div>
+          </FadeUp>
         </div>
       </section>
 
@@ -274,6 +281,7 @@ export default async function HomePage() {
       ══════════════════════════════════════ */}
       <section className="l-footer-cta" id="download">
         <div className="l-container">
+          <ScaleIn>
           <div className="l-cta-content">
 
             {/* Mini phone */}
@@ -332,6 +340,7 @@ export default async function HomePage() {
             </div>
 
           </div>
+          </ScaleIn>
         </div>
       </section>
 

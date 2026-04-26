@@ -89,10 +89,8 @@
   display: flex; align-items: center; gap: 10px;
   font-weight: 700; font-size: 20px; color: var(--text-primary);
 }
-.l-logo-icon {
-  width: 36px; height: 36px; border-radius: 10px;
-  background: rgba(77,163,255,0.15); border: 1px solid rgba(77,163,255,0.3);
-  display: flex; align-items: center; justify-content: center; font-size: 18px;
+.l-logo-img {
+  width: 36px; height: 36px; border-radius: 10px; display: block; flex-shrink: 0;
 }
 .l-nav-links {
   display: flex; align-items: center; gap: 32px; list-style: none;
@@ -244,6 +242,8 @@
 /* ── SECTIONS ── */
 .l-section { padding: 80px 0; }
 .l-section-bg-secondary { background: var(--bg-secondary); }
+/* Consecutive secondary sections — reduce gap between "Як було" and "Як стало" */
+.l-section-bg-secondary + .l-section-bg-secondary { padding-top: 0; }
 .l-section-card {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: 24px; padding: 48px;
