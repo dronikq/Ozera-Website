@@ -438,6 +438,12 @@
   align-items: start;
 }
 
+/* Prevent grid children from overflowing their column track.
+   Required when a child contains overflow-x: auto content (e.g. hour strip). */
+.dk-detail-grid > * {
+  min-width: 0;
+}
+
 /* Gallery */
 .dk-gallery { display: flex; flex-direction: column; gap: 10px; }
 .dk-gallery-main-wrap { border-radius: 16px; overflow: hidden; height: 380px; background: var(--bg-card); }
