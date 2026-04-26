@@ -102,9 +102,9 @@ export default async function HomePage() {
               {/* Feature icons */}
               <div className="l-hero-features">
                 {[
-                  { icon: "📍", text: "Усі озера в одному місці з цінами та контактами" },
-                  { icon: "📷", text: "Фото, види риб та умови лову" },
-                  { icon: "🧭", text: "Навігація до озера в 1 натиск" },
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>, text: "Усі озера в одному місці з цінами та контактами" },
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>, text: "Фото, види риб та умови лову" },
+                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>, text: "Навігація до озера в 1 натиск" },
                 ].map((f) => (
                   <div className="l-feature-item" key={f.text}>
                     <span className="l-feature-icon">{f.icon}</span>
@@ -203,14 +203,14 @@ export default async function HomePage() {
             <h2>Як стало з <span className="l-accent">OZERA</span> ✨</h2>
             <div className="l-benefits-grid">
               {[
-                { icon: "📍", bg: "rgba(255,200,87,0.15)", text: "Всі озера в одному місці одразу з цінами" },
-                { icon: "👁️", bg: "rgba(77,163,255,0.15)",  text: "Фото, види риб та графік роботи" },
-                { icon: "🧭", bg: "rgba(61,220,151,0.15)",  text: "Навігація одним натиском — Google Maps або Waze" },
-                { icon: "🔔", bg: "rgba(155,140,255,0.15)", text: "Push-сповіщення від улюблених озер" },
-                { icon: "🔄", bg: "rgba(245,166,35,0.15)",  text: "Постійно оновлювана база по всій Україні" },
+                { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>, text: "Всі озера в одному місці одразу з цінами" },
+                { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>, text: "Фото, види риб та графік роботи" },
+                { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>, text: "Навігація одним натиском — Google Maps або Waze" },
+                { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>, text: "Push-сповіщення від улюблених озер" },
+                { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>, text: "Постійно оновлювана база по всій Україні" },
               ].map((b) => (
                 <div className="l-benefit-card" key={b.text}>
-                  <div className="l-benefit-icon" style={{ background: b.bg }}>{b.icon}</div>
+                  <div className="l-benefit-icon">{b.icon}</div>
                   <p className="l-benefit-text">{b.text}</p>
                 </div>
               ))}
