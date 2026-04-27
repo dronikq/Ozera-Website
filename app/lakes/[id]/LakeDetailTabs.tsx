@@ -109,7 +109,13 @@ export default function LakeDetailTabs({
       lakeStructured.stocking?.note,
   );
 
-  const hasQuotaData = Boolean(catchQuotaText || structuredCatchQuotaVisible || catchQuotaEnabled);
+  const hasQuotaData = Boolean(
+    catchQuotaEnabled &&
+      (
+        catchQuotaText ||
+        structuredCatchQuotaVisible
+      ),
+  );
 
   const hasServicesData = Boolean(additionalServicesText || additionalServicesEnabled);
   const hasAmenitiesData = Boolean(amenityNames.length > 0 || structuredAmenities.length > 0 || amenitiesEnabled);
@@ -119,8 +125,8 @@ export default function LakeDetailTabs({
       [
         { key: "desc", label: "Опис" },
         fishEntries.length > 0 ? { key: "fish", label: "🐟 Риби" } : null,
-        priceText || structuredPricing.length > 0 || priceEnabled ? { key: "price", label: "💰 Ціни" } : null,
-        rulesText || rulesVisible.length > 0 || rulesEnabled ? { key: "rules", label: "📋 Правила" } : null,
+        priceEnabled && (priceText || structuredPricing.length > 0) ? { key: "price", label: "💰 Ціни" } : null,
+        rulesEnabled && (rulesText || rulesVisible.length > 0) ? { key: "rules", label: "📋 Правила" } : null,
         hasQuotaData ? { key: "quota", label: "⚖️ Норми вилову" } : null,
         hasScheduleData ? { key: "schedule", label: "🕒 Графік роботи" } : null,
         hasServicesData ? { key: "services", label: "🏕️ Додаткові послуги" } : null,
@@ -142,16 +148,6 @@ export default function LakeDetailTabs({
       structuredPricing.length,
       amenityNames.length,
       structuredAmenities.length,
-      catchQuotaEnabled,
-      catchQuotaText,
-      structuredCatchQuotaVisible,
-      showWorkSchedule,
-      workScheduleSummary,
-      additionalServicesEnabled,
-      additionalServicesText,
-      stockingEnabled,
-      stockingText,
-      amenitiesEnabled,
     ],
   );
 

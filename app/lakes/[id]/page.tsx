@@ -3,11 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { supabase, type Lake, type LakeImage, type LakeUpdate } from "@/lib/supabase";
-import {
-  getLakeStructuredData,
-  getStructuredFishEntries,
-  getStructuredAmenitiesEntries,
-} from "@/lib/lake-structured";
+import { buildLakeDetailData } from "@/lib/lake-detail-data";
 import ImageGallery from "./ImageGallery";
 import WeatherWidget from "./WeatherWidget";
 import AIAdvisor from "./AIAdvisor";
@@ -37,9 +33,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   const baseUrl = "https://www.ozera.in.ua";
   const url = `${baseUrl}/lakes/${id}`;
-  const structured = getLakeStructuredData(lake.extra);
-  const structuredFish = getStructuredFishEntries(structured);
-  const fishNames = structuredFish.length > 0 ? structuredFish.map((item) => item.name) : (lake.fish_species ?? []);
+  const detail = buildLakeDetailData(lake);
+  const fishNames = detail.fishSpecies;
   const fishPart = fishNames.length ? `Риба: ${fishNames.slice(0, 4).join(", ")}.` : "";
   const schedulePart = lake.work_schedule_summary ? `Графік: ${lake.work_schedule_summary}.` : "";
   const locationPart = lake.city ? `, ${lake.city}` : "";
@@ -79,15 +74,7 @@ export default async function LakePage({
   if (!lake) notFound();
 
   const baseUrl = "https://www.ozera.in.ua";
-  const structured = getLakeStructuredData(lake.extra);
-  const structuredFish = getStructuredFishEntries(structured);
-  const publicFishNames = structuredFish.length > 0 ? structuredFish.map((item) => item.name) : (lake.fish_species ?? []);
-  const publicAmenityNames = [
-    ...(lake.amenities ?? []).map((item) => item.name),
-    ...getStructuredAmenitiesEntries(structured)
-      .filter((item) => item.available)
-      .map((item) => item.label),
-  ].filter((value, index, array) => Boolean(value) && array.indexOf(value) === index);
+  const detail = buildLakeDetailData(lake);
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": ["TouristAttraction", "LocalBusiness"],
@@ -104,8 +91,8 @@ export default async function LakePage({
   };
 
   const allImages = lakeImages.length > 0 ? lakeImages.map((img) => img.url) : lake.image_url ? [lake.image_url] : [];
-  const mapsUrl = lake.location_google_url ?? (lake.lat && lake.lng ? `https://maps.google.com/?q=${lake.lat},${lake.lng}` : null);
-  const wazeUrl = lake.location_waze_url;
+  const mapsUrl = detail.mapsUrl;
+  const wazeUrl = detail.wazeUrl;
 
   return (
     <div className="dk-page">
@@ -154,7 +141,7 @@ export default async function LakePage({
               {lake.lat && lake.lng && (
                 <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 16 }}>
                   <WeatherWidget lat={lake.lat} lng={lake.lng} />
-                  <AIAdvisor lat={lake.lat} lng={lake.lng} fishSpecies={publicFishNames} />
+                  <AIAdvisor lat={lake.lat} lng={lake.lng} fishSpecies={detail.fishSpecies} />
                 </div>
               )}
             </div>
@@ -228,22 +215,22 @@ export default async function LakePage({
 
           <LakeDetailTabs
             description={lake.description ?? null}
-            fishSpecies={publicFishNames}
-            priceText={lake.price_details_text ?? null}
-            priceEnabled={lake.price_details_enabled ?? false}
-            rulesText={lake.lake_rules_text ?? null}
-            rulesEnabled={lake.lake_rules_enabled ?? false}
-            catchQuotaText={lake.catch_quota_text ?? null}
-            catchQuotaEnabled={lake.catch_quota_enabled ?? false}
-            workScheduleSummary={lake.work_schedule_summary ?? null}
-            showWorkSchedule={lake.show_work_schedule ?? false}
-            additionalServicesText={lake.additional_services_text ?? null}
-            additionalServicesEnabled={lake.additional_services_enabled ?? false}
-            stockingText={lake.stocking_text ?? null}
-            stockingEnabled={lake.stocking_enabled ?? false}
-            amenitiesEnabled={lake.amenities_enabled ?? false}
-            amenityNames={publicAmenityNames}
-            structured={structured}
+            fishSpecies={detail.fishSpecies}
+            priceText={detail.priceText}
+            priceEnabled={detail.priceEnabled}
+            rulesText={detail.rulesText}
+            rulesEnabled={detail.rulesEnabled}
+            catchQuotaText={detail.catchQuotaText}
+            catchQuotaEnabled={detail.catchQuotaEnabled}
+            workScheduleSummary={detail.workScheduleSummary}
+            showWorkSchedule={detail.showWorkSchedule}
+            additionalServicesText={detail.additionalServicesText}
+            additionalServicesEnabled={detail.additionalServicesEnabled}
+            stockingText={detail.stockingText}
+            stockingEnabled={detail.stockingEnabled}
+            amenitiesEnabled={detail.amenitiesEnabled}
+            amenityNames={detail.amenityNames}
+            structured={detail.structured}
           />
 
           {lake.faq_enabled && lake.faq_items && lake.faq_items.length > 0 && (
