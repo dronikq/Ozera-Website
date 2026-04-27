@@ -27,6 +27,7 @@ interface Props {
   stockingEnabled: boolean;
   amenitiesEnabled: boolean;
   amenityNames: string[];
+  amenityItems?: { key: string; label: string; note: string | null }[];
   structured?: StructuredLakeData;
 }
 
@@ -47,6 +48,7 @@ export default function LakeDetailTabs({
   stockingEnabled,
   amenitiesEnabled,
   amenityNames,
+  amenityItems = [],
   structured,
 }: Props) {
   const lakeStructured = structured ?? getLakeStructuredData(null);
@@ -54,6 +56,20 @@ export default function LakeDetailTabs({
   const structuredPricing = getStructuredPricingEntries(lakeStructured);
   const structuredRules = getStructuredRulesEntries(lakeStructured);
   const structuredAmenities = getStructuredAmenitiesEntries(lakeStructured).filter((item) => item.available);
+  const visibleAmenities =
+    amenityItems.length > 0
+      ? amenityItems
+      : structuredAmenities.length > 0
+        ? structuredAmenities.map((item) => ({
+            key: item.key,
+            label: item.label,
+            note: item.note,
+          }))
+        : amenityNames.map((name) => ({
+            key: name,
+            label: name,
+            note: null,
+          }));
 
   const structuredCatchQuotaVisible = Boolean(
     lakeStructured.catchQuota &&
@@ -118,7 +134,7 @@ export default function LakeDetailTabs({
   );
 
   const hasServicesData = Boolean(additionalServicesText || additionalServicesEnabled);
-  const hasAmenitiesData = Boolean(amenityNames.length > 0 || structuredAmenities.length > 0 || amenitiesEnabled);
+  const hasAmenitiesData = Boolean(amenityNames.length > 0 || visibleAmenities.length > 0 || amenitiesEnabled);
 
   const availableTabs = useMemo(
     () =>
@@ -147,7 +163,7 @@ export default function LakeDetailTabs({
       rulesVisible.length,
       structuredPricing.length,
       amenityNames.length,
-      structuredAmenities.length,
+      visibleAmenities.length,
     ],
   );
 
@@ -360,9 +376,9 @@ export default function LakeDetailTabs({
               {amenityNames.join(", ")}
             </p>
           )}
-          {structuredAmenities.length > 0 ? (
+          {visibleAmenities.length > 0 ? (
             <div className="dk-amenities">
-              {structuredAmenities.map((a) => (
+              {visibleAmenities.map((a) => (
                 <span key={a.key} className="dk-amenity" title={a.note ?? a.label}>
                   {a.label}
                   {a.note ? <small style={{ display: "block", marginTop: 4, fontSize: 11, opacity: 0.72 }}>{a.note}</small> : null}

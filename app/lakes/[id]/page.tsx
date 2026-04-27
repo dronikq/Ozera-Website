@@ -230,6 +230,7 @@ export default async function LakePage({
             stockingEnabled={detail.stockingEnabled}
             amenitiesEnabled={detail.amenitiesEnabled}
             amenityNames={detail.amenityNames}
+            amenityItems={detail.amenityItems}
             structured={detail.structured}
           />
 
