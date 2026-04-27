@@ -37,6 +37,16 @@ export const metadata: Metadata = {
   authors: [{ name: "OZERA", url: BASE_URL }],
   creator: "OZERA",
 
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png", sizes: "any" },
+    ],
+    apple: [
+      { url: "/icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/icon.png",
+  },
+
   openGraph: {
     type: "website",
     locale: "uk_UA",
