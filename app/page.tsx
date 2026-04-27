@@ -61,12 +61,12 @@ export default async function HomePage() {
           <div className="flex items-center gap-3">
             <Image
               src="/icon.png"
-              alt="до Ozera"
+              alt="OZERA"
               width={40}
               height={40}
               className="rounded-xl"
             />
-            <span className="font-bold text-[#0f2a4a] text-lg">до Ozera</span>
+            <span className="font-bold text-[#0f2a4a] text-lg">OZERA</span>
           </div>
           <div className="flex items-center gap-6">
             <a
@@ -144,7 +144,7 @@ export default async function HomePage() {
                 <div className="bg-white px-3 py-2.5 flex items-center justify-between border-b border-blue-100">
                   <div className="flex items-center gap-1.5">
                     <div className="w-5 h-5 rounded-lg bg-[#0f2a4a] flex items-center justify-center text-[8px]">🎣</div>
-                    <span className="text-[9px] font-bold text-[#0f2a4a]">до Ozera</span>
+                    <span className="text-[9px] font-bold text-[#0f2a4a]">OZERA</span>
                   </div>
                   <div className="w-5 h-5 rounded-full bg-blue-50 flex items-center justify-center text-[8px]">📍</div>
                 </div>
@@ -426,7 +426,7 @@ export default async function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-blue-100 py-6 text-center text-slate-400 text-sm bg-white">
-        © {new Date().getFullYear()} до Ozera
+        © {new Date().getFullYear()} OZERA
       </footer>
     </main>
   );

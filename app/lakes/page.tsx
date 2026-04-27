@@ -77,8 +77,8 @@ export default async function LakesPage({
       <nav className="border-b border-blue-100 bg-white/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/icon.png" alt="до Ozera" width={36} height={36} className="rounded-xl" />
-            <span className="font-bold text-[#0f2a4a]">до Ozera</span>
+            <Image src="/icon.png" alt="OZERA" width={36} height={36} className="rounded-xl" />
+            <span className="font-bold text-[#0f2a4a]">OZERA</span>
           </Link>
           <span className="text-sm text-slate-400">Каталог озер</span>
         </div>

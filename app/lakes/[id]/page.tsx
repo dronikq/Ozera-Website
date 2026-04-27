@@ -65,7 +65,7 @@ export default async function LakePage({
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-3">
           <Link href="/">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/ozera_splash.png" alt="до Ozera" className="h-8 object-contain" />
+            <img src="/ozera_splash.png" alt="OZERA" className="h-8 object-contain" />
           </Link>
           <span className="text-slate-300">/</span>
           <Link href="/lakes" className="text-sm text-blue-500 hover:text-blue-700 transition-colors">Каталог</Link>
