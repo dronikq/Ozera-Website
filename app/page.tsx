@@ -1,4 +1,10 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "OZERA — Платна риболовля в Україні | Каталог озер",
+  description: "Знайди ідеальне місце для риболовлі! Понад 40 платних озер України — Київська, Черкаська, Львівська та інші області. Ціни, види риб, графік роботи та GPS-навігація.",
+};
 import Image from "next/image";
 import { supabase, type Lake } from "@/lib/supabase";
 import LandingClient from "./components/LandingClient";
