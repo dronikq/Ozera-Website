@@ -105,6 +105,8 @@ export default async function LakePage({
 
   const allImages = lakeImages.length > 0 ? lakeImages.map((img) => img.url) : lake.image_url ? [lake.image_url] : [];
   const mapsUrl = lake.location_google_url ?? (lake.lat && lake.lng ? `https://maps.google.com/?q=${lake.lat},${lake.lng}` : null);
+  const wazeUrl =
+    lake.location_waze_url ?? (lake.lat && lake.lng ? `https://waze.com/ul?ll=${lake.lat},${lake.lng}&navigate=yes` : null);
 
   return (
     <div className="dk-page">
@@ -201,8 +203,8 @@ export default async function LakePage({
                   🗺️ Прокласти маршрут
                 </a>
               )}
-              {lake.location_waze_url && (
-                <a href={lake.location_waze_url} target="_blank" rel="noopener noreferrer" className="dk-btn-call" style={{ marginTop: 8 }}>
+              {wazeUrl && (
+                <a href={wazeUrl} target="_blank" rel="noopener noreferrer" className="dk-btn-call" style={{ marginTop: 8 }}>
                   🚗 Прокласти у Waze
                 </a>
               )}

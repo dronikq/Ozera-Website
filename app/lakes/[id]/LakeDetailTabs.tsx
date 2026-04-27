@@ -84,33 +84,29 @@ export default function LakeDetailTabs({
   });
 
   const hasScheduleData = Boolean(
-    showWorkSchedule &&
-      (
-        workScheduleSummary ||
-        lakeStructured.schedule?.is24h ||
-        lakeStructured.schedule?.bookingRequired ||
-        lakeStructured.schedule?.seasonal ||
-        lakeStructured.schedule?.winterFishing != null ||
-        lakeStructured.schedule?.nightFishing != null ||
-        lakeStructured.schedule?.nightStart ||
-        lakeStructured.schedule?.nightEnd ||
-        lakeStructured.schedule?.checkInFrom ||
-        lakeStructured.schedule?.checkOutUntil ||
-        lakeStructured.schedule?.note
-      ),
+    workScheduleSummary ||
+      showWorkSchedule ||
+      lakeStructured.schedule?.is24h ||
+      lakeStructured.schedule?.bookingRequired ||
+      lakeStructured.schedule?.seasonal ||
+      lakeStructured.schedule?.winterFishing != null ||
+      lakeStructured.schedule?.nightFishing != null ||
+      lakeStructured.schedule?.nightStart ||
+      lakeStructured.schedule?.nightEnd ||
+      lakeStructured.schedule?.checkInFrom ||
+      lakeStructured.schedule?.checkOutUntil ||
+      lakeStructured.schedule?.note,
   );
 
   const hasStockingData = Boolean(
-    stockingEnabled &&
-      (
-        stockingText ||
-        lakeStructured.stocking?.status != null ||
-        lakeStructured.stocking?.frequency ||
-        lakeStructured.stocking?.lastDate ||
-        (lakeStructured.stocking?.lastSpecies?.length ?? 0) > 0 ||
-        lakeStructured.stocking?.lastAmount ||
-        lakeStructured.stocking?.note
-      ),
+    stockingText ||
+      stockingEnabled ||
+      lakeStructured.stocking?.status != null ||
+      lakeStructured.stocking?.frequency ||
+      lakeStructured.stocking?.lastDate ||
+      (lakeStructured.stocking?.lastSpecies?.length ?? 0) > 0 ||
+      lakeStructured.stocking?.lastAmount ||
+      lakeStructured.stocking?.note,
   );
 
   const hasQuotaData = Boolean(
@@ -121,8 +117,8 @@ export default function LakeDetailTabs({
       ),
   );
 
-  const hasServicesData = Boolean(additionalServicesEnabled && additionalServicesText);
-  const hasAmenitiesData = Boolean(amenitiesEnabled && (amenityNames.length > 0 || structuredAmenities.length > 0));
+  const hasServicesData = Boolean(additionalServicesText || additionalServicesEnabled);
+  const hasAmenitiesData = Boolean(amenityNames.length > 0 || structuredAmenities.length > 0 || amenitiesEnabled);
 
   const availableTabs = useMemo(
     () =>
