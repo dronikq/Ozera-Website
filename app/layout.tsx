@@ -77,10 +77,15 @@ export const metadata: Metadata = {
     languages: { "uk-UA": BASE_URL },
   },
 
-  robots: {
+    robots: {
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+    shortcut: "/icon.png",
   },
 };
 
