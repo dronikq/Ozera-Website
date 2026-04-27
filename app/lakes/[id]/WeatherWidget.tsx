@@ -271,7 +271,7 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
         <span style={{ color: "#6F85A8", fontSize: 18, display: "inline-block", transform: isOpen ? "rotate(0deg)" : "rotate(-90deg)", transition: "transform .2s" }}>▾</span>
       </button>
 
-      {isOpen && <div className="px-5 pb-0">
+      {isOpen && <><div className="px-5 pb-0">
         {/* Day tabs */}
         <div className="flex gap-2 flex-wrap mb-4">
           {data.days.map((d, i) => (
@@ -409,7 +409,7 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
           );
         })}
       </div>
-      </div>}
+      </>}
     </div>
   );
 }

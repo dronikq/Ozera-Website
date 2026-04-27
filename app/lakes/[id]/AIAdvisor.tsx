@@ -909,13 +909,6 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
           <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 18, display: "inline-block", transform: openChecklist ? "rotate(0deg)" : "rotate(-90deg)", transition: "transform .2s" }}>▾</span>
         </button>
         {openChecklist && <>
-        {checklistStep === "result" && (() => {
-            const cl = hourData ? generateChecklist(hourData, selectedFish) : [];
-            const all = cl.flatMap(s => s.items);
-            const done = all.filter(it => checkedItems[it.id]).length;
-            return <span className="text-xs font-bold bg-white/10 text-white/70 px-2.5 py-1 rounded-lg">{done}/{all.length}</span>;
-          })()}
-        </div>
 
         {/* ── INTRO ── */}
         {checklistStep === "intro" && (
