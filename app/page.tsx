@@ -369,9 +369,9 @@ export default async function HomePage() {
           <div className="l-footer-inner">
             <p className="l-footer-copy">© {new Date().getFullYear()} до Ozera. Усі права захищені.</p>
             <nav className="l-footer-nav">
-              <a href="#">Умови використання</a>
-              <a href="#">Конфіденційність</a>
-              <a href="mailto:info@ozera.app">Контакти</a>
+              <Link href="/terms">Умови використання</Link>
+              <Link href="/privacy">Конфіденційність</Link>
+              <a href="mailto:support@ozera.in.ua">Контакти</a>
             </nav>
           </div>
         </div>
