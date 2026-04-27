@@ -503,6 +503,29 @@
 }
 .dk-btn-call:hover { border-color: var(--accent); color: var(--accent); }
 
+.dk-contacts-panel {
+  margin-top: 8px;
+}
+
+.dk-contacts-toggle {
+  margin-top: 0;
+}
+
+.dk-contacts-box {
+  margin-top: 10px;
+  padding: 14px 16px;
+  background: rgba(77,163,255,0.08);
+  border: 1px solid rgba(77,163,255,0.2);
+  border-radius: 12px;
+}
+
+.dk-contacts-summary {
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
 /* Tabs */
 .dk-tabs-section { margin-top: 48px; padding-bottom: 0; }
 .dk-tabs-nav {
@@ -599,9 +622,15 @@
 }
 
 .dk-contact-link {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 15px; color: var(--blue-accent);
-  text-decoration: none; padding: 8px 0; transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--blue-accent);
+  text-decoration: none;
+  padding: 8px 0;
+  transition: color 0.2s;
+  word-break: break-word;
 }
 .dk-contact-link:hover { color: var(--accent); }
 

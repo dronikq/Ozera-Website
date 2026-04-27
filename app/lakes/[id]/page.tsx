@@ -11,6 +11,7 @@ import {
 import ImageGallery from "./ImageGallery";
 import WeatherWidget from "./WeatherWidget";
 import AIAdvisor from "./AIAdvisor";
+import LakeContactsPanel from "./LakeContactsPanel";
 import LakeDetailTabs from "./LakeDetailTabs";
 import "../lakes.css";
 
@@ -65,8 +66,15 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-export default async function LakePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function LakePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ tab?: string }>;
+}) {
   const { id } = await params;
+  const { tab } = await searchParams;
   const [lake, updates, lakeImages] = await Promise.all([getLake(id), getLakeUpdates(id), getLakeImages(id)]);
   if (!lake) notFound();
 
@@ -97,16 +105,6 @@ export default async function LakePage({ params }: { params: Promise<{ id: strin
 
   const allImages = lakeImages.length > 0 ? lakeImages.map((img) => img.url) : lake.image_url ? [lake.image_url] : [];
   const mapsUrl = lake.location_google_url ?? (lake.lat && lake.lng ? `https://maps.google.com/?q=${lake.lat},${lake.lng}` : null);
-  const hasContactsData = Boolean(
-    lake.contacts_enabled &&
-      lake.contacts &&
-      ((lake.contacts.phone?.length ?? 0) > 0 ||
-        Boolean(lake.contacts.email) ||
-        Boolean(lake.contacts.website) ||
-        Boolean(lake.contacts.telegram) ||
-        Boolean(lake.contacts.instagram) ||
-        Boolean(lake.contacts.viber)),
-  );
 
   return (
     <div className="dk-page">
@@ -208,11 +206,12 @@ export default async function LakePage({ params }: { params: Promise<{ id: strin
                   🚗 Прокласти у Waze
                 </a>
               )}
-              {hasContactsData && (
-                <Link href={`/lakes/${lake.id}?tab=contacts`} scroll={false} className="dk-btn-call" style={{ marginTop: 8 }}>
-                  📞 Показати контакти
-                </Link>
-              )}
+              <LakeContactsPanel
+                lakeId={lake.id}
+                contactsEnabled={lake.contacts_enabled ?? false}
+                contacts={lake.contacts}
+                initiallyOpen={tab === "contacts"}
+              />
 
               {lake.scheme_enabled && lake.scheme_image_url && (
                 <div className="dk-section">
@@ -223,7 +222,6 @@ export default async function LakePage({ params }: { params: Promise<{ id: strin
                   </div>
                 </div>
               )}
-
             </div>
           </div>
 
@@ -242,8 +240,6 @@ export default async function LakePage({ params }: { params: Promise<{ id: strin
             additionalServicesEnabled={lake.additional_services_enabled ?? false}
             stockingText={lake.stocking_text ?? null}
             stockingEnabled={lake.stocking_enabled ?? false}
-            contactsEnabled={lake.contacts_enabled ?? false}
-            contacts={lake.contacts}
             amenitiesEnabled={lake.amenities_enabled ?? false}
             amenityNames={publicAmenityNames}
             structured={structured}

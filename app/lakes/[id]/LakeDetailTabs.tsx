@@ -10,16 +10,6 @@ import {
   getStructuredRulesEntries,
   type StructuredLakeData,
 } from "@/lib/lake-structured";
-
-type ContactLinks = {
-  email?: string;
-  phone?: string[];
-  website?: string;
-  telegram?: string;
-  instagram?: string;
-  viber?: string;
-} | null;
-
 interface Props {
   description: string | null;
   fishSpecies: string[];
@@ -35,8 +25,6 @@ interface Props {
   additionalServicesEnabled: boolean;
   stockingText: string | null;
   stockingEnabled: boolean;
-  contactsEnabled: boolean;
-  contacts: ContactLinks;
   amenitiesEnabled: boolean;
   amenityNames: string[];
   structured?: StructuredLakeData;
@@ -57,8 +45,6 @@ export default function LakeDetailTabs({
   additionalServicesEnabled,
   stockingText,
   stockingEnabled,
-  contactsEnabled,
-  contacts,
   amenitiesEnabled,
   amenityNames,
   structured,
@@ -96,19 +82,6 @@ export default function LakeDetailTabs({
     if (rule.type === "number") return typeof rule.value === "number" && Number.isFinite(rule.value);
     return rule.value === true || rule.value === false;
   });
-
-  const hasContactsData = Boolean(
-    contactsEnabled &&
-      contacts &&
-      (
-        (contacts.phone?.length ?? 0) > 0 ||
-        Boolean(contacts.email) ||
-        Boolean(contacts.website) ||
-        Boolean(contacts.telegram) ||
-        Boolean(contacts.instagram) ||
-        Boolean(contacts.viber)
-      ),
-  );
 
   const hasScheduleData = Boolean(
     showWorkSchedule &&
@@ -149,7 +122,7 @@ export default function LakeDetailTabs({
   );
 
   const hasServicesData = Boolean(additionalServicesEnabled && additionalServicesText);
-  const hasAmenitiesData = Boolean(amenityNames.length > 0 || structuredAmenities.length > 0);
+  const hasAmenitiesData = Boolean(amenitiesEnabled && (amenityNames.length > 0 || structuredAmenities.length > 0));
 
   const availableTabs = useMemo(
     () =>
@@ -163,12 +136,10 @@ export default function LakeDetailTabs({
         hasServicesData ? { key: "services", label: "🏕️ Додаткові послуги" } : null,
         hasAmenitiesData ? { key: "amenities", label: "✅ Зручності" } : null,
         hasStockingData ? { key: "stocking", label: "🐠 Зариблення" } : null,
-        hasContactsData ? { key: "contacts", label: "📞 Контакти" } : null,
       ].filter(Boolean) as { key: TabKey; label: string }[],
     [
       fishEntries.length,
       hasAmenitiesData,
-      hasContactsData,
       hasQuotaData,
       hasScheduleData,
       hasServicesData,
@@ -184,7 +155,7 @@ export default function LakeDetailTabs({
     ],
   );
 
-  type TabKey = "desc" | "fish" | "price" | "rules" | "quota" | "schedule" | "services" | "amenities" | "stocking" | "contacts";
+  type TabKey = "desc" | "fish" | "price" | "rules" | "quota" | "schedule" | "services" | "amenities" | "stocking";
   const [tab, setTab] = useState<TabKey>("desc");
 
   useEffect(() => {
@@ -192,33 +163,6 @@ export default function LakeDetailTabs({
       setTab(availableTabs[0]?.key ?? "desc");
     }
   }, [availableTabs, tab]);
-
-  useEffect(() => {
-    const syncContactsTab = () => {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("tab") === "contacts") {
-        setTab("contacts");
-      }
-    };
-
-    syncContactsTab();
-    window.addEventListener("popstate", syncContactsTab);
-    return () => window.removeEventListener("popstate", syncContactsTab);
-  }, []);
-
-  useEffect(() => {
-    if (tab !== "contacts") return;
-
-    const timer = window.setTimeout(() => {
-      document.getElementById("lake-contacts")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      if (window.location.search.includes("tab=contacts")) {
-        window.history.replaceState({}, "", window.location.pathname);
-      }
-    }, 0);
-
-    return () => window.clearTimeout(timer);
-  }, [tab]);
-
   return (
     <div className="dk-tabs-section">
       <div className="dk-tabs-nav">
@@ -456,31 +400,6 @@ export default function LakeDetailTabs({
             {lakeStructured.stocking?.lastAmount && <ServiceItem icon="⚖️" label={lakeStructured.stocking.lastAmount} />}
             {lakeStructured.stocking?.note && <ServiceItem icon="📝" label={lakeStructured.stocking.note} />}
           </div>
-        </div>
-      )}
-
-      {tab === "contacts" && (
-        <div id="lake-contacts">
-          {contacts && (
-            <p style={{ margin: "0 0 14px", color: "var(--text-secondary)", fontSize: 15 }}>
-              {[
-                ...(contacts.phone ?? []),
-                contacts.email ? `Email: ${contacts.email}` : null,
-                contacts.website ? `Сайт: ${contacts.website}` : null,
-                contacts.telegram ? `Telegram: ${contacts.telegram}` : null,
-                contacts.instagram ? `Instagram: ${contacts.instagram}` : null,
-                contacts.viber ? `Viber: ${contacts.viber}` : null,
-              ].filter(Boolean).join(" • ")}
-            </p>
-          )}
-          {contacts?.phone?.map((p) => (
-            <a key={p} href={`tel:${p}`} className="dk-contact-link">📱 {p}</a>
-          ))}
-          {contacts?.email && <a href={`mailto:${contacts.email}`} className="dk-contact-link">✉️ {contacts.email}</a>}
-          {contacts?.website && <a href={contacts.website} target="_blank" rel="noopener noreferrer" className="dk-contact-link">🌐 {contacts.website}</a>}
-          {contacts?.telegram && <a href={contacts.telegram} target="_blank" rel="noopener noreferrer" className="dk-contact-link">💬 Telegram</a>}
-          {contacts?.instagram && <a href={contacts.instagram} target="_blank" rel="noopener noreferrer" className="dk-contact-link">📷 Instagram</a>}
-          {contacts?.viber && <a href={contacts.viber} target="_blank" rel="noopener noreferrer" className="dk-contact-link">💜 Viber</a>}
         </div>
       )}
     </div>
