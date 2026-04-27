@@ -105,8 +105,7 @@ export default async function LakePage({
 
   const allImages = lakeImages.length > 0 ? lakeImages.map((img) => img.url) : lake.image_url ? [lake.image_url] : [];
   const mapsUrl = lake.location_google_url ?? (lake.lat && lake.lng ? `https://maps.google.com/?q=${lake.lat},${lake.lng}` : null);
-  const wazeUrl =
-    lake.location_waze_url ?? (lake.lat && lake.lng ? `https://waze.com/ul?ll=${lake.lat},${lake.lng}&navigate=yes` : null);
+  const wazeUrl = lake.location_waze_url;
 
   return (
     <div className="dk-page">
