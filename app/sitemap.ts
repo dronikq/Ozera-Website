@@ -25,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const { data: lakes } = await supabase
       .from("lakes")
       .select("id, updated_at")
-      .eq("is_active", true);
+      .order("created_at", { ascending: true });
 
     const lakePages: MetadataRoute.Sitemap = (lakes ?? []).map((lake) => ({
       url: `${BASE_URL}/lakes/${lake.id}`,
