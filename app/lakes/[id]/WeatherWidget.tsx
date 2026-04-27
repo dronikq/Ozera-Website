@@ -189,7 +189,6 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
   const [error, setError] = useState(false);
   const [activeDay, setActiveDay] = useState(0);
   const [activeHour, setActiveHour] = useState<number | null>(null);
-  const [isOpen, setIsOpen] = useState(true);
 
   const load = () => {
     setLoading(true);
@@ -262,16 +261,9 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: "#132F57", border: "1px solid #1E3A5F" }}>
-      <button
-        onClick={() => setIsOpen(o => !o)}
-        className="w-full px-5 pt-4 pb-3 flex items-center justify-between"
-        style={{ cursor: "pointer" }}
-      >
-        <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#6F85A8" }}>☁ Погода та умови кльову</p>
-        <span style={{ color: "#6F85A8", fontSize: 18, display: "inline-block", transform: isOpen ? "rotate(0deg)" : "rotate(-90deg)", transition: "transform .2s" }}>▾</span>
-      </button>
+      <div className="px-5 pt-5">
+        <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#6F85A8" }}>☁ Погода та умови кльову</p>
 
-      {isOpen && <><div className="px-5 pb-0">
         {/* Day tabs */}
         <div className="flex gap-2 flex-wrap mb-4">
           {data.days.map((d, i) => (
@@ -361,7 +353,6 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
 
       {/* Hour strip */}
       <div className="flex gap-1.5 overflow-x-auto px-5 pb-5 pt-1 scroll-snap-type-x" style={{ scrollSnapType: "x mandatory" }}>
-
         {day.hours.map((h, i) => {
           const borderColor = h.biteClass === "g" ? "#4ade80" : h.biteClass === "o" ? "#fbbf24" : "#1E3A5F";
           const bg = i === hourIdx ? "#0f2a4a" : "#0F2A4D";
@@ -409,7 +400,6 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
           );
         })}
       </div>
-      </>}
     </div>
   );
 }

@@ -22,7 +22,7 @@ export type Lake = {
   location_google_url: string | null
   location_waze_url: string | null
   contacts_enabled: boolean
-  contacts: { email?: string; phone?: string[] } | null
+  contacts: { email?: string; phone?: string[]; website?: string; telegram?: string; instagram?: string; viber?: string } | null
   price_details_enabled: boolean
   price_details_text: string | null
   catch_quota_enabled: boolean

@@ -173,9 +173,38 @@
   .btn-logout { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); padding: 4px 8px; cursor: pointer; font-size: 11px; white-space: nowrap; }
   .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
 
+  /* STRUCTURED MVP */
+  .structured-note { background: rgba(79,142,247,.08); border: 1px solid rgba(79,142,247,.28); border-radius: var(--radius); padding: 10px 12px; color: var(--muted); font-size: 12px; line-height: 1.45; margin-bottom: 14px; }
+  .structured-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .structured-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px; }
+  .structured-card-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .structured-mini { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.35; }
+  .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
+  .check-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 10px; display: flex; flex-direction: column; gap: 8px; min-height: 70px; }
+  .check-main { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px; }
+  .check-main input, .inline-check input { width: 16px; height: 16px; accent-color: var(--accent); }
+  .check-meta { display: grid; grid-template-columns: 1fr 82px; gap: 6px; align-items: center; }
+  .check-meta label, .inline-check { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .mini-input { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 6px 7px; font-size: 12px; width: 100%; outline: none; }
+  .mini-input:focus { border-color: var(--accent); }
+  .tri-select { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 6px 7px; font-size: 12px; width: 100%; outline: none; }
+  .pricing-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+  .pricing-table { width: 100%; min-width: 760px; border-collapse: collapse; background: var(--surface2); }
+  .pricing-table th, .pricing-table td { border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); padding: 8px; vertical-align: top; }
+  .pricing-table th { text-align: left; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .45px; background: rgba(0,0,0,.12); }
+  .pricing-table tr:last-child td { border-bottom: none; }
+  .pricing-table td:last-child, .pricing-table th:last-child { border-right: none; }
+  .price-cell { display: grid; gap: 6px; min-width: 138px; }
+  .rule-row { display: grid; grid-template-columns: minmax(220px, 1fr) 130px 130px; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .rule-row:last-child { border-bottom: none; }
+  .rule-label { font-size: 13px; font-weight: 600; }
+  .rule-kind { font-size: 11px; color: var(--muted); }
+  .verified-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+
   @media (max-width: 700px) {
     .form-row.cols-2, .form-row.cols-3, .form-row.cols-4 { grid-template-columns: 1fr; }
     .contacts-grid { grid-template-columns: 1fr; }
+    .rule-row { grid-template-columns: 1fr; }
     .sidebar { width: 240px; min-width: 240px; }
   }
 </style>
@@ -295,8 +324,12 @@ function showApp() {
 async function loginWithGoogle() {
   await sbAuth.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.href }
+    options: { redirectTo: getAdminRedirectUrl() }
   });
+}
+
+function getAdminRedirectUrl() {
+  return `${window.location.origin}${window.location.pathname}`;
 }
 
 async function logout() {
@@ -383,6 +416,7 @@ function renderEditor() {
   fishTags = Array.isArray(l.fish_species) ? [...l.fish_species] : [];
   const contacts = l.contacts || {};
   const phones = Array.isArray(contacts.phone) ? contacts.phone.join(', ') : (contacts.phone || '');
+  const structured = getStructured(l);
 
   document.getElementById('mainContent').innerHTML = `
     <div class="editor">
@@ -458,6 +492,8 @@ function renderEditor() {
           </div>
           <div class="hint">Почніть вводити або виберіть зі списку</div>
         </div>
+        <div class="divider"></div>
+        ${structuredFishHtml(structured)}
       `)}
 
       ${section('🕐', 'Графік роботи', 'schedule', true, `
@@ -479,6 +515,8 @@ function renderEditor() {
             <input class="form-control" id="f_work_schedule_summary" value="${esc(l.work_schedule_summary || '')}" placeholder="Щодня 07:00–20:00">
           </div>
         </div>
+        <div class="divider"></div>
+        ${structuredScheduleHtml(structured)}
       `)}
 
       ${section('💰', 'Ціни', 'price', true, `
@@ -490,6 +528,8 @@ function renderEditor() {
           <label>Деталі цін</label>
           <textarea class="form-control" id="f_price_details_text" style="min-height:130px" placeholder="Денна риболовля: 300 грн/особу&#10;Нічна риболовля: 450 грн/особу&#10;...">${esc(l.price_details_text || '')}</textarea>
         </div>
+        <div class="divider"></div>
+        ${pricingMatrixHtml(structured)}
       `)}
 
       ${section('📏', 'Норма вилову', 'quota', false, `
@@ -500,6 +540,8 @@ function renderEditor() {
         <div class="form-group">
           <textarea class="form-control" id="f_catch_quota_text" style="min-height:100px" placeholder="Короп — до 3 кг&#10;Щука — до 1 шт...">${esc(l.catch_quota_text || '')}</textarea>
         </div>
+        <div class="divider"></div>
+        ${structuredQuotaHtml(structured)}
       `)}
 
       ${section('🏕️', 'Додаткові послуги', 'services', false, `
@@ -520,6 +562,8 @@ function renderEditor() {
         <div class="form-group">
           <textarea class="form-control" id="f_lake_rules_text" style="min-height:120px" placeholder="1. Використання не більше 2 снастей&#10;2. Обов'язкові садки&#10;...">${esc(l.lake_rules_text || '')}</textarea>
         </div>
+        <div class="divider"></div>
+        ${structuredRulesHtml(structured)}
       `)}
 
       ${section('🐠', 'Зариблення', 'stocking', false, `
@@ -530,6 +574,16 @@ function renderEditor() {
         <div class="form-group">
           <textarea class="form-control" id="f_stocking_text" style="min-height:90px" placeholder="Водойма регулярно зарибляється коропом, товстолобом...">${esc(l.stocking_text || '')}</textarea>
         </div>
+        <div class="divider"></div>
+        ${structuredStockingHtml(structured)}
+      `)}
+
+      ${section('✅', 'Зручності', 'amenities_structured', false, `
+        ${structuredAmenitiesHtml(structured)}
+      `)}
+
+      ${section('🧾', 'Службове заповнення', 'verified', false, `
+        ${structuredVerifiedHtml(structured)}
       `)}
 
       ${section('📞', 'Контакти', 'contacts', false, `
@@ -634,6 +688,61 @@ const CANONICAL_FISH = [
   'Форель веселкова','Форель струмкова','Чехоня','Щука','Язь',
 ];
 
+const STRUCTURED_FISH = ['Короп','Сазан','Карась','Амур білий','Товстолоб','Щука','Судак','Окунь','Сом','Лин','Плітка','Лящ','Форель веселкова','Осетер','Стерлядь','Білизна','Краснопірка','Рак'];
+const PRICE_CATEGORIES = [
+  { key: 'peaceful', label: 'Мирна риба' },
+  { key: 'predator', label: 'Хижа риба' },
+  { key: 'sport', label: 'C&R / спорт' },
+  { key: 'guest', label: 'Гість без риболовлі' },
+];
+const PRICE_PERIODS = [
+  { key: 'hourly', label: 'Погодинно' },
+  { key: 'half_day', label: 'Півдня' },
+  { key: 'daylight', label: 'Світловий день' },
+  { key: 'night', label: 'Ніч' },
+  { key: 'day_24h', label: 'Доба' },
+];
+const RULE_DEFS = [
+  { key: 'rod_count', label: 'Кількість вудлищ на 1 квиток', type: 'number' },
+  { key: 'hook_count', label: 'Кількість гачків на снасть', type: 'number' },
+  { key: 'spinning_allowed', label: 'Спінінг дозволено', type: 'tri' },
+  { key: 'feeder_allowed', label: 'Фідер дозволено', type: 'tri' },
+  { key: 'carp_tackle_allowed', label: 'Карпові снасті дозволено', type: 'tri' },
+  { key: 'own_boat_allowed', label: 'Власний човен дозволено', type: 'tri' },
+  { key: 'bait_boat_allowed', label: 'Кораблик для закорму дозволено', type: 'tri' },
+  { key: 'landing_net_required', label: 'Підсак обовʼязковий', type: 'tri' },
+  { key: 'carp_mat_required', label: 'Карповий мат обовʼязковий', type: 'tri' },
+  { key: 'keepnet_required', label: 'Садок обовʼязковий', type: 'tri' },
+  { key: 'fire_allowed', label: 'Багаття / мангал', type: 'tri' },
+  { key: 'tents_allowed', label: 'Намети дозволені', type: 'tri' },
+  { key: 'swimming_allowed', label: 'Купання дозволене', type: 'tri' },
+  { key: 'pets_allowed', label: 'Домашні тварини дозволені', type: 'tri' },
+  { key: 'noise_limited', label: 'Музика / шум обмежені', type: 'tri' },
+  { key: 'night_entry_allowed', label: 'Нічний заїзд / виїзд дозволений', type: 'tri' },
+  { key: 'booking_required', label: 'Попередня бронь обовʼязкова', type: 'tri' },
+  { key: 'alcohol_limited', label: 'Алкоголь обмежений або заборонений', type: 'tri' },
+];
+const AMENITY_DEFS = [
+  { key: 'parking', label: 'Парковка' },
+  { key: 'toilet', label: 'Туалет' },
+  { key: 'shower', label: 'Душ' },
+  { key: 'electricity', label: 'Електрика на секторі' },
+  { key: 'drinking_water', label: 'Питна вода' },
+  { key: 'wifi', label: 'Wi‑Fi' },
+  { key: 'gazebos', label: 'Альтанки' },
+  { key: 'houses', label: 'Будиночки' },
+  { key: 'piers', label: 'Містки' },
+  { key: 'grill', label: 'Мангал' },
+  { key: 'firewood', label: 'Дрова' },
+  { key: 'cafe', label: 'Кафе' },
+  { key: 'bait_shop', label: 'Магазин наживки' },
+  { key: 'gear_rental', label: 'Прокат снастей' },
+  { key: 'boat_rental', label: 'Оренда човна' },
+  { key: 'fish_cleaning', label: 'Чистка риби' },
+  { key: 'card_payment', label: 'Оплата картою' },
+  { key: 'playground', label: 'Дитячий майданчик' },
+];
+
 function filterFishSuggestions() {
   const input = document.getElementById('tagInput');
   const dropdown = document.getElementById('fishDropdown');
@@ -696,6 +805,337 @@ function handleTagInput(e) {
 
 function removeTag(i) { fishTags.splice(i, 1); renderTags(); }
 
+// ── STRUCTURED MVP HELPERS ────────────────────────────────────────────────
+function getStructured(l = currentLake) {
+  const stored = l?.extra?.structured || {};
+  return {
+    version: 1,
+    fish: stored.fish || {},
+    pricing: stored.pricing || {},
+    catchQuota: stored.catchQuota || {},
+    schedule: stored.schedule || {},
+    stocking: stored.stocking || {},
+    rules: stored.rules || {},
+    amenities: stored.amenities || {},
+    verified: stored.verified || {},
+  };
+}
+
+function triValue(value) {
+  if (value === true || value === 'true') return 'true';
+  if (value === false || value === 'false') return 'false';
+  return 'unknown';
+}
+
+function triSelectHtml(id, value, label = '') {
+  return `
+    <select class="tri-select" id="${id}" aria-label="${esc(label)}">
+      <option value="unknown" ${triValue(value) === 'unknown' ? 'selected' : ''}>Не уточнено</option>
+      <option value="true" ${triValue(value) === 'true' ? 'selected' : ''}>Є / дозволено</option>
+      <option value="false" ${triValue(value) === 'false' ? 'selected' : ''}>Немає / заборонено</option>
+    </select>
+  `;
+}
+
+function parseTri(value) {
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  return null;
+}
+
+function numOrNull(value) {
+  const n = parseFloat(String(value || '').replace(',', '.'));
+  return Number.isFinite(n) ? n : null;
+}
+
+function structuredFishHtml(st) {
+  const fish = st.fish || {};
+  return `
+    <div class="structured-note">Цей чекліст уніфікує назви риби. Позначені види також потраплять у старе поле fish_species для фільтрів сайту.</div>
+    <div class="checkbox-grid">
+      ${STRUCTURED_FISH.map(name => {
+        const row = fish[name] || {};
+        const present = row.present === true || fishTags.some(f => f.toLowerCase() === name.toLowerCase());
+        return `
+          <div class="check-card">
+            <label class="check-main">
+              <input type="checkbox" class="js-structured-fish" data-fish="${esc(name)}" ${present ? 'checked' : ''}>
+              <span>${name}</span>
+            </label>
+            <div class="check-meta">
+              <label><input type="checkbox" id="sf_fish_trophy_${safeKey(name)}" ${row.trophy ? 'checked' : ''}> трофейна</label>
+              <input class="mini-input" id="sf_fish_release_${safeKey(name)}" value="${esc(row.releaseFromKg || '')}" placeholder="від кг">
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function pricingMatrixHtml(st) {
+  const pricing = st.pricing || {};
+  return `
+    <div class="structured-note">Для кожної клітинки: “є”, “немає” або “не уточнено”. Якщо ціна невідома, лишайте поле ціни порожнім.</div>
+    <div class="pricing-table-wrap">
+      <table class="pricing-table">
+        <thead>
+          <tr><th>Категорія</th>${PRICE_PERIODS.map(p => `<th>${p.label}</th>`).join('')}</tr>
+        </thead>
+        <tbody>
+          ${PRICE_CATEGORIES.map(cat => `
+            <tr>
+              <td><strong>${cat.label}</strong></td>
+              ${PRICE_PERIODS.map(period => {
+                const cell = pricing?.[cat.key]?.[period.key] || {};
+                const id = `sf_price_${cat.key}_${period.key}`;
+                return `
+                  <td>
+                    <div class="price-cell">
+                      ${triSelectHtml(`${id}_available`, cell.available, `${cat.label} ${period.label}`)}
+                      <input class="mini-input" id="${id}_price" value="${esc(cell.price || '')}" placeholder="грн">
+                      <input class="mini-input" id="${id}_note" value="${esc(cell.note || '')}" placeholder="норма / коментар">
+                    </div>
+                  </td>
+                `;
+              }).join('')}
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function structuredQuotaHtml(st) {
+  const q = st.catchQuota || {};
+  return `
+    <div class="structured-grid">
+      <div class="form-group"><label>Загальна норма, кг</label><input class="form-control" id="sf_quota_total" value="${esc(q.totalKg || '')}" placeholder="3"></div>
+      <div class="form-group"><label>Мирна риба, кг</label><input class="form-control" id="sf_quota_peaceful" value="${esc(q.peacefulKg || '')}" placeholder="3"></div>
+      <div class="form-group"><label>Хижа риба, кг</label><input class="form-control" id="sf_quota_predator" value="${esc(q.predatorKg || '')}" placeholder="2"></div>
+      <div class="form-group"><label>Перелов, грн/кг</label><input class="form-control" id="sf_quota_overprice" value="${esc(q.overLimitPriceUah || '')}" placeholder="150"></div>
+      <div class="form-group"><label>Трофей відпускати від, кг</label><input class="form-control" id="sf_quota_trophy" value="${esc(q.trophyReleaseFromKg || '')}" placeholder="5"></div>
+      <div class="form-group"><label>Catch & Release</label>${triSelectHtml('sf_quota_cnr', q.catchAndRelease)}</div>
+    </div>
+    <div class="form-group" style="margin-top:14px">
+      <label>Коментар до норм</label>
+      <textarea class="form-control" id="sf_quota_note" placeholder="Наприклад: короп від 5 кг обовʼязково відпускати">${esc(q.note || '')}</textarea>
+    </div>
+  `;
+}
+
+function structuredScheduleHtml(st) {
+  const s = st.schedule || {};
+  return `
+    <div class="structured-note">Це структурований графік для картки озера. Старий короткий опис вище залишається для сумісності.</div>
+    <div class="structured-grid">
+      <label class="structured-card inline-check"><input type="checkbox" id="sf_schedule_24h" ${s.is24h ? 'checked' : ''}> Цілодобово</label>
+      <label class="structured-card inline-check"><input type="checkbox" id="sf_schedule_booking" ${s.bookingRequired ? 'checked' : ''}> За попередньою бронню</label>
+      <label class="structured-card inline-check"><input type="checkbox" id="sf_schedule_seasonal" ${s.seasonal ? 'checked' : ''}> Працює сезонно</label>
+      <div class="form-group"><label>Зимова риболовля</label>${triSelectHtml('sf_schedule_winter', s.winterFishing)}</div>
+      <div class="form-group"><label>Нічна риболовля</label>${triSelectHtml('sf_schedule_night', s.nightFishing)}</div>
+      <div class="form-group"><label>Початок ночі</label><input class="form-control" type="time" id="sf_schedule_night_start" value="${esc(s.nightStart || '')}"></div>
+      <div class="form-group"><label>Кінець ночі</label><input class="form-control" type="time" id="sf_schedule_night_end" value="${esc(s.nightEnd || '')}"></div>
+      <div class="form-group"><label>Заїзд з</label><input class="form-control" type="time" id="sf_schedule_checkin" value="${esc(s.checkInFrom || '')}"></div>
+      <div class="form-group"><label>Виїзд до</label><input class="form-control" type="time" id="sf_schedule_checkout" value="${esc(s.checkOutUntil || '')}"></div>
+    </div>
+    <div class="form-group" style="margin-top:14px"><label>Коментар до графіку</label><input class="form-control" id="sf_schedule_note" value="${esc(s.note || '')}" placeholder="Нічна риболовля тільки за бронюванням"></div>
+  `;
+}
+
+function structuredStockingHtml(st) {
+  const s = st.stocking || {};
+  return `
+    <div class="structured-grid">
+      <div class="form-group"><label>Статус зариблення</label>${triSelectHtml('sf_stocking_status', s.status)}</div>
+      <div class="form-group">
+        <label>Регулярність</label>
+        <select class="form-control" id="sf_stocking_frequency">
+          ${[['unknown','Не уточнено'],['regular','Регулярно'],['seasonal','Сезонно'],['one_time','Разово'],['none','Не зариблюється']].map(([v,l]) => `<option value="${v}" ${s.frequency===v?'selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label>Останнє зариблення</label><input class="form-control" type="date" id="sf_stocking_last_date" value="${esc(s.lastDate || '')}"></div>
+      <div class="form-group"><label>Вага / кількість</label><input class="form-control" id="sf_stocking_last_amount" value="${esc(s.lastAmount || '')}" placeholder="500 кг"></div>
+    </div>
+    <div class="form-group" style="margin-top:14px"><label>Риба в останньому зарибленні</label><input class="form-control" id="sf_stocking_species" value="${esc((s.lastSpecies || []).join(', '))}" placeholder="Короп, Амур білий, Товстолоб"></div>
+    <div class="form-group" style="margin-top:14px"><label>Коментар</label><textarea class="form-control" id="sf_stocking_note" placeholder="Навесні запускають коропа 1-2 кг">${esc(s.note || '')}</textarea></div>
+  `;
+}
+
+function structuredRulesHtml(st) {
+  const rules = st.rules || {};
+  return `
+    <div class="structured-note">Числові правила заповнюються числом. Для решти використовуйте “є / дозволено”, “немає / заборонено” або “не уточнено”.</div>
+    ${RULE_DEFS.map(rule => {
+      const row = rules[rule.key] || {};
+      return `
+        <div class="rule-row">
+          <div>
+            <div class="rule-label">${rule.label}</div>
+            <div class="rule-kind">${rule.type === 'number' ? 'числове поле' : 'так / ні / не уточнено'}</div>
+          </div>
+          ${rule.type === 'number'
+            ? `<input class="mini-input" id="sf_rule_${rule.key}_value" value="${esc(row.value || '')}" placeholder="число">`
+            : triSelectHtml(`sf_rule_${rule.key}_value`, row.value, rule.label)}
+          <input class="mini-input" id="sf_rule_${rule.key}_note" value="${esc(row.note || '')}" placeholder="коментар">
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+
+function structuredAmenitiesHtml(st) {
+  const amenities = st.amenities || {};
+  return `
+    <div class="checkbox-grid">
+      ${AMENITY_DEFS.map(a => {
+        const row = amenities[a.key] || {};
+        return `
+          <div class="check-card">
+            <label class="check-main">
+              <input type="checkbox" id="sf_amenity_${a.key}" ${row.available ? 'checked' : ''}>
+              <span>${a.label}</span>
+            </label>
+            <input class="mini-input" id="sf_amenity_${a.key}_note" value="${esc(row.note || '')}" placeholder="ціна / деталі">
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function structuredVerifiedHtml(st) {
+  const v = st.verified || {};
+  const completion = v.completion || {};
+  const items = [
+    ['basic','Базова інфа'], ['fish','Риба'], ['pricing','Ціни'], ['quota','Норми'],
+    ['schedule','Графік'], ['stocking','Зариблення'], ['rules','Правила'], ['photos','Фото'], ['called','Перевірено дзвінком']
+  ];
+  return `
+    <div class="verified-grid">
+      <div class="form-group">
+        <label>Джерело</label>
+        <select class="form-control" id="sf_verified_source">
+          ${[['','Не вказано'],['manual','Вручну'],['call','Дзвінок'],['owner','Власник'],['website','Сайт'],['facebook','Facebook'],['instagram','Instagram'],['user','Користувач']].map(([key,label]) => `<option value="${key}" ${v.source===key?'selected':''}>${label}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label>Дата перевірки</label><input class="form-control" type="date" id="sf_verified_date" value="${esc(v.lastVerifiedAt || '')}"></div>
+    </div>
+    <div class="checkbox-grid" style="margin-top:14px">
+      ${items.map(([key,label]) => `<label class="structured-card inline-check"><input type="checkbox" id="sf_completion_${key}" ${completion[key] ? 'checked' : ''}> ${label}</label>`).join('')}
+    </div>
+    <div class="form-group" style="margin-top:14px"><label>Внутрішній коментар</label><textarea class="form-control" id="sf_verified_note" placeholder="Не показується на сайті">${esc(v.internalNote || '')}</textarea></div>
+  `;
+}
+
+function safeKey(value) {
+  return String(value).toLowerCase().replace(/[^a-zа-яіїєґ0-9]+/gi, '_');
+}
+
+function collectStructuredData() {
+  const fish = {};
+  document.querySelectorAll('.js-structured-fish').forEach(input => {
+    const name = input.dataset.fish;
+    const key = safeKey(name);
+    fish[name] = {
+      present: input.checked,
+      trophy: document.getElementById(`sf_fish_trophy_${key}`)?.checked || false,
+      releaseFromKg: document.getElementById(`sf_fish_release_${key}`)?.value.trim() || null,
+    };
+  });
+
+  const pricing = {};
+  PRICE_CATEGORIES.forEach(cat => {
+    pricing[cat.key] = {};
+    PRICE_PERIODS.forEach(period => {
+      const id = `sf_price_${cat.key}_${period.key}`;
+      pricing[cat.key][period.key] = {
+        available: parseTri(document.getElementById(`${id}_available`)?.value),
+        price: numOrNull(document.getElementById(`${id}_price`)?.value),
+        note: document.getElementById(`${id}_note`)?.value.trim() || null,
+      };
+    });
+  });
+
+  const rules = {};
+  RULE_DEFS.forEach(rule => {
+    const raw = document.getElementById(`sf_rule_${rule.key}_value`)?.value;
+    rules[rule.key] = {
+      value: rule.type === 'number' ? numOrNull(raw) : parseTri(raw),
+      note: document.getElementById(`sf_rule_${rule.key}_note`)?.value.trim() || null,
+    };
+  });
+
+  const amenities = {};
+  AMENITY_DEFS.forEach(a => {
+    amenities[a.key] = {
+      label: a.label,
+      available: document.getElementById(`sf_amenity_${a.key}`)?.checked || false,
+      note: document.getElementById(`sf_amenity_${a.key}_note`)?.value.trim() || null,
+    };
+  });
+
+  const completion = {};
+  ['basic','fish','pricing','quota','schedule','stocking','rules','photos','called'].forEach(key => {
+    completion[key] = document.getElementById(`sf_completion_${key}`)?.checked || false;
+  });
+
+  return {
+    version: 1,
+    fish,
+    pricing,
+    catchQuota: {
+      totalKg: numOrNull(document.getElementById('sf_quota_total')?.value),
+      peacefulKg: numOrNull(document.getElementById('sf_quota_peaceful')?.value),
+      predatorKg: numOrNull(document.getElementById('sf_quota_predator')?.value),
+      overLimitPriceUah: numOrNull(document.getElementById('sf_quota_overprice')?.value),
+      trophyReleaseFromKg: numOrNull(document.getElementById('sf_quota_trophy')?.value),
+      catchAndRelease: parseTri(document.getElementById('sf_quota_cnr')?.value),
+      note: document.getElementById('sf_quota_note')?.value.trim() || null,
+    },
+    schedule: {
+      is24h: document.getElementById('sf_schedule_24h')?.checked || false,
+      bookingRequired: document.getElementById('sf_schedule_booking')?.checked || false,
+      seasonal: document.getElementById('sf_schedule_seasonal')?.checked || false,
+      winterFishing: parseTri(document.getElementById('sf_schedule_winter')?.value),
+      nightFishing: parseTri(document.getElementById('sf_schedule_night')?.value),
+      nightStart: document.getElementById('sf_schedule_night_start')?.value || null,
+      nightEnd: document.getElementById('sf_schedule_night_end')?.value || null,
+      checkInFrom: document.getElementById('sf_schedule_checkin')?.value || null,
+      checkOutUntil: document.getElementById('sf_schedule_checkout')?.value || null,
+      note: document.getElementById('sf_schedule_note')?.value.trim() || null,
+    },
+    stocking: {
+      status: parseTri(document.getElementById('sf_stocking_status')?.value),
+      frequency: document.getElementById('sf_stocking_frequency')?.value || 'unknown',
+      lastDate: document.getElementById('sf_stocking_last_date')?.value || null,
+      lastSpecies: (document.getElementById('sf_stocking_species')?.value || '').split(',').map(s => s.trim()).filter(Boolean),
+      lastAmount: document.getElementById('sf_stocking_last_amount')?.value.trim() || null,
+      note: document.getElementById('sf_stocking_note')?.value.trim() || null,
+    },
+    rules,
+    amenities,
+    verified: {
+      source: document.getElementById('sf_verified_source')?.value || null,
+      lastVerifiedAt: document.getElementById('sf_verified_date')?.value || null,
+      completion,
+      internalNote: document.getElementById('sf_verified_note')?.value.trim() || null,
+    },
+  };
+}
+
+function mergeStructuredExtra(oldExtra, structured) {
+  const safeExtra = oldExtra && typeof oldExtra === 'object' && !Array.isArray(oldExtra) ? oldExtra : {};
+  return { ...safeExtra, structured };
+}
+
+function getStructuredFishSpecies() {
+  const checked = Array.from(document.querySelectorAll('.js-structured-fish:checked')).map(i => i.dataset.fish);
+  const legacy = Array.isArray(fishTags) ? fishTags : [];
+  return Array.from(new Set([...legacy, ...checked].filter(Boolean)));
+}
+
 // ── IMAGES ────────────────────────────────────────────────────────────────
 function renderImages() {
   const grid = document.getElementById('imagesGrid');
@@ -752,6 +1192,7 @@ async function saveLake() {
 
   const phones = (document.getElementById('f_contacts_phone')?.value || '').split(',').map(p => p.trim()).filter(Boolean);
 
+  const structuredData = collectStructuredData();
   const payload = {
     name: document.getElementById('f_name').value.trim(),
     description: document.getElementById('f_description').value.trim(),
@@ -765,7 +1206,7 @@ async function saveLake() {
     location_waze_url: document.getElementById('f_location_waze_url').value.trim() || null,
     scheme_enabled: document.getElementById('f_scheme_enabled').checked,
     scheme_image_url: document.getElementById('f_scheme_image_url').value.trim() || null,
-    fish_species: fishTags,
+    fish_species: getStructuredFishSpecies(),
     show_work_schedule: document.getElementById('f_show_work_schedule').checked,
     base_open_time: document.getElementById('f_base_open_time').value || null,
     base_close_time: document.getElementById('f_base_close_time').value || null,
@@ -789,6 +1230,7 @@ async function saveLake() {
       website: document.getElementById('f_contacts_website').value.trim() || null,
     },
     contacts_enabled: document.getElementById('f_contacts_enabled').checked,
+    extra: mergeStructuredExtra(currentLake.extra, structuredData),
   };
 
   if (!payload.name) { toast('Введіть назву озера', 'error'); btn.disabled = false; btn.innerHTML = '💾 Зберегти'; return; }
@@ -807,6 +1249,7 @@ async function saveLake() {
 
   if (error) { toast('Помилка: ' + error.message, 'error'); return; }
 
+  currentLake = { ...currentLake, ...payload };
   toast('✓ Збережено!', 'success');
   await loadLakes();
   document.querySelectorAll('.lake-list-item').forEach(el => {
@@ -843,6 +1286,7 @@ init();
 
 // ── AI MODAL ──────────────────────────────────────────────────────────────
 const AI_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/ai-lake-search`;
+const URL_FILL_API = '/api/admin/fill-from-url';
 let aiData = null;
 
 function openAiModal() {
@@ -866,6 +1310,13 @@ function openAiModal() {
             <label>Регіон (необов'язково)</label>
             <input class="form-control" id="ai_region" value="${esc(lakeCity)}" placeholder="Наприклад: Київська область">
           </div>
+          <div class="form-group" style="margin-top:12px">
+            <label>URL джерела</label>
+            <input class="form-control" id="ai_source_url" placeholder="https://www.avanfish.com/about">
+            <div style="margin-top:6px;font-size:12px;color:var(--muted)">
+              Якщо вкажеш сторінку, я спробую витягнути дані прямо з неї і заповнити форму.
+            </div>
+          </div>
           <div style="margin-top:10px;font-size:12px;color:var(--muted)">
             Claude виконає до 8 веб-пошуків (~40 сек) і заповнить всі поля автоматично.
           </div>
@@ -873,6 +1324,7 @@ function openAiModal() {
         </div>
         <div class="modal-footer" id="aiFooter">
           <button class="btn btn-secondary" onclick="closeAiModal()">Скасувати</button>
+          <button class="btn btn-ai" id="aiUrlBtn" onclick="runAiSearchUrl()">📎 З URL</button>
           <button class="btn btn-ai" id="aiSearchBtn" onclick="runAiSearch()">🔍 Шукати</button>
         </div>
       </div>
@@ -945,11 +1397,142 @@ async function runAiSearch() {
   }
 }
 
+async function runAiSearchUrl() {
+  const lakeName = document.getElementById('ai_lake_name').value.trim();
+  const sourceUrl = document.getElementById('ai_source_url').value.trim();
+
+  if (!sourceUrl) {
+    document.getElementById('ai_source_url').focus();
+    return;
+  }
+
+  const urlBtn = document.getElementById('aiUrlBtn');
+  const searchBtn = document.getElementById('aiSearchBtn');
+  if (urlBtn) urlBtn.disabled = true;
+  if (searchBtn) searchBtn.disabled = true;
+
+  document.getElementById('aiResultArea').innerHTML = `
+    <div class="ai-loading">
+      <div class="ai-spinner"></div>
+      <div><strong>Читаю сторінку...</strong></div>
+      <div style="margin-top:6px;font-size:12px">Парсер аналізує публічний сайт і формує чернетку для форми</div>
+    </div>
+  `;
+  document.getElementById('aiFooter').innerHTML = `
+    <div style="font-size:12px;color:var(--muted);margin:auto 0">Зачекайте кілька секунд...</div>
+  `;
+
+  try {
+    const res = await fetch(URL_FILL_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: sourceUrl, lake_name: lakeName || undefined }),
+    });
+
+    const json = await res.json();
+    if (!json.ok || !json.data) throw new Error(json.error || 'Помилка сервера');
+
+    aiData = json.data;
+    renderAiResult(aiData);
+  } catch (err) {
+    document.getElementById('aiResultArea').innerHTML = `
+      <div style="margin-top:16px;background:rgba(229,83,83,.1);border:1px solid var(--danger);border-radius:8px;padding:14px;color:var(--danger);font-size:13px">
+        ❌ <strong>Помилка:</strong> ${err.message}<br>
+        <span style="font-size:11px;margin-top:4px;display:block;color:var(--muted)">
+          Перевір, що URL публічний і доступний без авторизації.
+        </span>
+      </div>
+    `;
+    document.getElementById('aiFooter').innerHTML = `
+      <button class="btn btn-secondary" onclick="closeAiModal()">Закрити</button>
+      <button class="btn btn-ai" onclick="runAiSearchUrl()">🔄 Спробувати знову</button>
+    `;
+  } finally {
+    if (urlBtn) urlBtn.disabled = false;
+    if (searchBtn) searchBtn.disabled = false;
+  }
+}
+
+function applyStructuredAiData(structured) {
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el && val != null && val !== '') el.value = val; };
+  const setChk = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.checked = !!val; };
+  const setTri = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val === true ? 'true' : val === false ? 'false' : 'unknown'; };
+  const escFish = (name) => CSS.escape(name);
+
+  Object.entries(structured.fish || {}).forEach(([name, row]) => {
+    const key = safeKey(name);
+    const check = document.querySelector(`.js-structured-fish[data-fish="${escFish(name)}"]`);
+    if (check) check.checked = !!row.present;
+    const trophy = document.getElementById(`sf_fish_trophy_${key}`);
+    if (trophy) trophy.checked = !!row.trophy;
+    const rel = document.getElementById(`sf_fish_release_${key}`);
+    if (rel) rel.value = row.releaseFromKg ?? '';
+  });
+
+  Object.entries(structured.pricing || {}).forEach(([catKey, periods]) => {
+    Object.entries(periods || {}).forEach(([periodKey, cell]) => {
+      const id = `sf_price_${catKey}_${periodKey}`;
+      setTri(`${id}_available`, cell?.available);
+      setVal(`${id}_price`, cell?.price);
+      setVal(`${id}_note`, cell?.note);
+    });
+  });
+
+  const quota = structured.catchQuota || {};
+  setVal('sf_quota_total', quota.totalKg);
+  setVal('sf_quota_peaceful', quota.peacefulKg);
+  setVal('sf_quota_predator', quota.predatorKg);
+  setVal('sf_quota_overprice', quota.overLimitPriceUah);
+  setVal('sf_quota_trophy', quota.trophyReleaseFromKg);
+  setTri('sf_quota_cnr', quota.catchAndRelease);
+  setVal('sf_quota_note', quota.note);
+
+  const schedule = structured.schedule || {};
+  setChk('sf_schedule_24h', schedule.is24h);
+  setChk('sf_schedule_booking', schedule.bookingRequired);
+  setChk('sf_schedule_seasonal', schedule.seasonal);
+  setTri('sf_schedule_winter', schedule.winterFishing);
+  setTri('sf_schedule_night', schedule.nightFishing);
+  setVal('sf_schedule_night_start', schedule.nightStart);
+  setVal('sf_schedule_night_end', schedule.nightEnd);
+  setVal('sf_schedule_checkin', schedule.checkInFrom);
+  setVal('sf_schedule_checkout', schedule.checkOutUntil);
+  setVal('sf_schedule_note', schedule.note);
+
+  const stocking = structured.stocking || {};
+  setTri('sf_stocking_status', stocking.status);
+  setVal('sf_stocking_frequency', stocking.frequency);
+  setVal('sf_stocking_last_date', stocking.lastDate);
+  setVal('sf_stocking_species', Array.isArray(stocking.lastSpecies) ? stocking.lastSpecies.join(', ') : '');
+  setVal('sf_stocking_last_amount', stocking.lastAmount);
+  setVal('sf_stocking_note', stocking.note);
+
+  Object.entries(structured.rules || {}).forEach(([key, row]) => {
+    setTri(`sf_rule_${key}_value`, row?.value);
+    setVal(`sf_rule_${key}_note`, row?.note);
+  });
+
+  Object.entries(structured.amenities || {}).forEach(([key, row]) => {
+    setChk(`sf_amenity_${key}`, row?.available);
+    setVal(`sf_amenity_${key}_note`, row?.note);
+  });
+
+  const verified = structured.verified || {};
+  setVal('sf_verified_source', verified.source);
+  setVal('sf_verified_date', verified.lastVerifiedAt);
+  setVal('sf_verified_note', verified.internalNote);
+  const completion = verified.completion || {};
+  ['basic','fish','pricing','quota','schedule','stocking','rules','photos','called'].forEach((key) => {
+    setChk(`sf_completion_${key}`, completion[key]);
+  });
+}
+
 function renderAiResult(d) {
   const meta = d._meta || {};
   const fish = (d.fish_species || []).map(f => `<span class="ai-chip fish">🐟 ${f}</span>`).join('');
   const amenities = (d.amenities || []).map(a => `<span class="ai-chip amenity">✅ ${a.label}</span>`).join('');
   const c = d.contacts || {};
+  const structured = d.structured || null;
   const sources = (d.sources || []).map(s => `<a href="${s}" target="_blank">${s}</a>`).join('');
 
   document.getElementById('aiResultArea').innerHTML = `
@@ -1038,6 +1621,10 @@ function applyAiData() {
   if (Array.isArray(d.fish_species) && d.fish_species.length > 0) {
     fishTags = [...d.fish_species];
     renderTags();
+  }
+
+  if (structured) {
+    applyStructuredAiData(structured);
   }
 
   document.getElementById('aiModal')?.remove();

@@ -506,21 +506,30 @@
 /* Tabs */
 .dk-tabs-section { margin-top: 48px; padding-bottom: 0; }
 .dk-tabs-nav {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
   border-bottom: 2px solid var(--border);
   margin-bottom: 28px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+  gap: 0;
 }
 .dk-tab-btn {
-  padding: 12px 20px;
+  min-width: 0;
+  width: 100%;
+  padding: 12px 10px;
   font-size: 15px; font-weight: 600;
   color: var(--text-muted);
   background: transparent; border: none;
   border-bottom: 2px solid transparent;
   margin-bottom: -2px; cursor: pointer;
-  transition: all 0.2s; white-space: nowrap;
+  transition: all 0.2s; white-space: normal;
   font-family: inherit;
+  text-align: center;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 58px;
 }
 .dk-tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 .dk-tab-btn:hover:not(.active) { color: var(--text-secondary); }
@@ -654,6 +663,7 @@
 /* ══ RESPONSIVE ══ */
 @media (max-width: 1200px) {
   .dk-lakes-grid { grid-template-columns: repeat(3, 1fr); }
+  .dk-tabs-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
 
 @media (max-width: 900px) {
@@ -661,6 +671,7 @@
   .dk-detail-grid { grid-template-columns: 1fr; }
   .dk-info-card { position: static; order: -1; }
   .dk-services-grid { grid-template-columns: repeat(2, 1fr); }
+  .dk-tabs-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 768px) {
@@ -672,14 +683,17 @@
   .dk-gallery-main-wrap { height: 260px; }
   .dk-tabs-section { margin-top: 32px; }
   .dk-container { padding: 0 16px; }
+  .dk-tab-btn { min-height: 52px; font-size: 14px; padding: 10px 8px; }
 }
 
 @media (max-width: 580px) {
   .dk-lakes-grid { grid-template-columns: 1fr; }
+  .dk-tabs-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 480px) {
   .dk-services-grid { grid-template-columns: 1fr; }
   .dk-store-btns { flex-direction: column; }
   .dk-app-cta-inner { flex-direction: column; align-items: flex-start; }
+  .dk-tabs-nav { grid-template-columns: 1fr; }
 }

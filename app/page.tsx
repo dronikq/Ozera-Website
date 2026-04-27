@@ -1,10 +1,4 @@
 import Link from "next/link";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "OZERA — Платна риболовля в Україні | Каталог озер",
-  description: "Знайди ідеальне місце для риболовлі! Понад 40 платних озер України — Київська, Черкаська, Львівська та інші області. Ціни, види риб, графік роботи та GPS-навігація.",
-};
 import Image from "next/image";
 import { supabase, type Lake } from "@/lib/supabase";
 import LandingClient from "./components/LandingClient";
@@ -341,7 +335,7 @@ export default async function HomePage() {
             {/* Text + store buttons */}
             <div className="l-cta-text">
               <h2 className="l-cta-title">
-                Скачай додаток до<br />
+                Скачай додаток OZERA<br />
                 <span className="l-accent">і лови більше риби!</span>
               </h2>
               <div className="l-store-buttons">

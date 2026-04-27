@@ -700,8 +700,6 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
   const [checkedItems, setCheckedItems]     = useState<Record<string, boolean>>({});
   const [checklistStep, setChecklistStep]   = useState<"intro" | "question" | "result">("intro");
   const [selectedFish, setSelectedFish]     = useState<string[]>([]);
-  const [openAdvisor, setOpenAdvisor]       = useState(false);
-  const [openChecklist, setOpenChecklist]   = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -780,15 +778,13 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
     <div className="flex flex-col gap-4">
     <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #1E3A5F" }}>
       {/* Header */}
-      <button onClick={() => setOpenAdvisor(o => !o)} className="w-full bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex items-center justify-between">
-        <div className="text-left">
+      <div className="bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex items-center justify-between">
+        <div>
           <p className="text-white font-bold text-[15px]">🤖 Що робити сьогодні</p>
           <p className="text-white/45 text-xs mt-0.5">AI-порадник на основі погоди та озера</p>
         </div>
-        <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 18, display: "inline-block", transform: openAdvisor ? "rotate(0deg)" : "rotate(-90deg)", transition: "transform .2s" }}>▾</span>
-      </button>
+      </div>
 
-      {openAdvisor && <>
       {/* Fish tabs */}
       {hasBoth && (
         <div className="px-4 pt-2 pb-0 flex gap-1" style={{ background: "#132F57", borderBottom: "1px solid #1E3A5F" }}>
@@ -895,20 +891,23 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
           </button>
         </div>
       </div>
-      </>}
     </div>
 
       {/* Checklist wizard — окремий блок */}
       <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #1E3A5F", background: "#132F57" }}>
         {/* Header */}
-        <button onClick={() => setOpenChecklist(o => !o)} className="w-full bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex items-center justify-between">
-          <div className="text-left">
+        <div className="bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex items-center justify-between">
+          <div>
             <p className="text-white font-bold text-[15px]">🎒 Що взяти сьогодні</p>
             <p className="text-white/45 text-xs mt-0.5">ШІ допоможе зібратися і не забути нічого корисного</p>
           </div>
-          <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 18, display: "inline-block", transform: openChecklist ? "rotate(0deg)" : "rotate(-90deg)", transition: "transform .2s" }}>▾</span>
-        </button>
-        {openChecklist && <>
+          {checklistStep === "result" && (() => {
+            const cl = hourData ? generateChecklist(hourData, selectedFish) : [];
+            const all = cl.flatMap(s => s.items);
+            const done = all.filter(it => checkedItems[it.id]).length;
+            return <span className="text-xs font-bold bg-white/10 text-white/70 px-2.5 py-1 rounded-lg">{done}/{all.length}</span>;
+          })()}
+        </div>
 
         {/* ── INTRO ── */}
         {checklistStep === "intro" && (
@@ -1066,7 +1065,6 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
             </div>
           );
         })()}
-        </>}
       </div>
     </div>
   );
