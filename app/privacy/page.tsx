@@ -18,7 +18,7 @@ export default function PrivacyPage() {
         <div className="dk-nav-inner">
           <Link href="/" className="dk-logo">
             <Image src="/icon.png" alt="OZERA" width={36} height={36} className="dk-logo-img" />
-            <span>до Ozera</span>
+            <span>OZERA</span>
           </Link>
           <span className="dk-nav-label">Конфіденційність</span>
         </div>

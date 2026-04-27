@@ -24,12 +24,12 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <Image
             src="/icon.png"
-            alt="до Ozera"
+            alt="OZERA"
             width={40}
             height={40}
             className="rounded-xl"
           />
-          <span className="font-bold text-[#0f2a4a] text-lg">до Ozera</span>
+          <span className="font-bold text-[#0f2a4a] text-lg">OZERA</span>
         </Link>
 
         <div className="flex items-center gap-6">

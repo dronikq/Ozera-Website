@@ -84,7 +84,7 @@ export default async function LakePage({ params }: { params: Promise<{ id: strin
         <div className="dk-nav-inner">
           <Link href="/" className="dk-logo">
             <Image src="/icon.png" alt="OZERA" width={36} height={36} className="dk-logo-img" />
-            <span>до Ozera</span>
+            <span>OZERA</span>
           </Link>
           <div className="dk-nav-breadcrumb">
             <Link href="/lakes">Каталог</Link>
