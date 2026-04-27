@@ -60,7 +60,7 @@ export default async function HomePage() {
         <nav className="l-nav">
           <Link href="/" className="l-logo">
             <Image src="/icon.png" alt="OZERA" width={36} height={36} className="l-logo-img" />
-            <span>до Ozera</span>
+            <span>OZERA</span>
           </Link>
 
           <ul className="l-nav-links" id="l-nav-links">
@@ -134,7 +134,7 @@ export default async function HomePage() {
                     <div className="l-phone-header">
                       <div className="l-phone-logo">
                         <div className="l-phone-logo-icon">🎣</div>
-                        <span className="l-phone-logo-text">до Ozera</span>
+                        <span className="l-phone-logo-text">OZERA</span>
                       </div>
                       <span>📍</span>
                     </div>
@@ -315,7 +315,7 @@ export default async function HomePage() {
               <div className="l-cta-phone-screen">
                 <div className="l-cta-phone-header">
                   <div className="l-cta-phone-icon">🎣</div>
-                  <span className="l-cta-phone-name">до Ozera</span>
+                  <span className="l-cta-phone-name">OZERA</span>
                 </div>
                 <div className="l-cta-phone-body">
                   {[
@@ -373,7 +373,7 @@ export default async function HomePage() {
       <footer className="l-footer-bottom">
         <div className="l-container">
           <div className="l-footer-inner">
-            <p className="l-footer-copy">© {new Date().getFullYear()} до Ozera. Усі права захищені.</p>
+            <p className="l-footer-copy">© {new Date().getFullYear()} OZERA. Усі права захищені.</p>
             <nav className="l-footer-nav">
               <Link href="/terms">Умови використання</Link>
               <Link href="/privacy">Конфіденційність</Link>
