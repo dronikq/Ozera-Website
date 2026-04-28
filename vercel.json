@@ -1,6 +1,0 @@
-{
-  "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "https://hakinbhfivthqxvkssok.supabase.co",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhha2luYmhmaXZ0aHF4dmtzc29rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4OTkwODksImV4cCI6MjA4MzQ3NTA4OX0.wS1nf7ymNbYZ1AlamiJiAPvcMAdcgIPBXrdpl4RxPzg"
-  }
-}
