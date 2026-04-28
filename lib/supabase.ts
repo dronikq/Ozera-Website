@@ -1,7 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+// Fallback values to ensure the client is always initialized correctly,
+// even when Vercel preview deployments don't have env vars configured.
+// These are public NEXT_PUBLIC_* values (anon key) — safe to expose since
+// they ship in the client bundle anyway. Data access is protected by RLS.
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  'https://hakinbhfivthqxvkssok.supabase.co'
+
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhha2luYmhmaXZ0aHF4dmtzc29rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4OTkwODksImV4cCI6MjA4MzQ3NTA4OX0.wS1nf7ymNbYZ1AlamiJiAPvcMAdcgIPBXrdpl4RxPzg'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
