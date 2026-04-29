@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 const BASE_URL = "https://www.ozera.in.ua";
 
@@ -20,8 +20,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
+  // Якщо env vars не налаштовані (наприклад, Preview-deploy без секретів) —
+  // повертаємо лише статичні сторінки, щоб білд не падав.
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return staticPages;
+  }
+
   // Динамічні сторінки озер
   try {
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
     const { data: lakes } = await supabase
       .from("lakes")
       .select("id, slug, updated_at")

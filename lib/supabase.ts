@@ -1,7 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+// Якщо env vars не задані (наприклад Vercel Preview без секретів),
+// підставляємо валідні placeholder-значення, щоб createClient не кидав помилку
+// під час білду. Реальні запити в такому середовищі повертатимуть помилку,
+// яку code site (sitemap, page.tsx) ловить через try/catch або redirect.
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co'
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? 'placeholder-anon-key'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
