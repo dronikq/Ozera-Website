@@ -113,7 +113,7 @@ function LakeCard({
 }) {
   return (
     <Link
-      href={`/lakes/${lake.id}`}
+      href={`/lakes/${lake.slug ?? lake.id}`}
       onMouseEnter={() => onHover(lake.id)}
       onMouseLeave={() => onHover(null)}
       className={`group rounded-2xl border bg-white overflow-hidden transition-all ${
@@ -146,7 +146,7 @@ function LakeCard({
 function GridCard({ lake }: { lake: Lake }) {
   return (
     <Link
-      href={`/lakes/${lake.id}`}
+      href={`/lakes/${lake.slug ?? lake.id}`}
       className="group rounded-2xl border border-blue-100 bg-white overflow-hidden hover:border-blue-400 hover:shadow-md transition-all"
     >
       <div className="h-44 bg-blue-50 overflow-hidden">

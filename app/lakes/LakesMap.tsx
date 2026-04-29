@@ -31,7 +31,7 @@ const TILE_STYLES = [
 ];
 
 interface Props {
-  lakes: Pick<Lake, "id" | "name" | "lat" | "lng" | "city" | "location_text">[];
+  lakes: Pick<Lake, "id" | "slug" | "name" | "lat" | "lng" | "city" | "location_text">[];
   hoveredId: string | null;
 }
 
@@ -78,7 +78,7 @@ export default function LakesMap({ lakes, hoveredId }: Props) {
           `<div style="min-width:140px">
             <strong style="color:#0f2a4a;font-size:13px">${lake.name}</strong>
             ${location ? `<br/><span style="color:#666;font-size:11px">📍 ${location}</span>` : ""}
-            <br/><a href="/lakes/${lake.id}" target="_blank" rel="noopener noreferrer" style="color:#1d6ee6;font-size:12px;text-decoration:none;display:inline-block;margin-top:4px">Відкрити →</a>
+            <br/><a href="/lakes/${lake.slug ?? lake.id}" target="_blank" rel="noopener noreferrer" style="color:#1d6ee6;font-size:12px;text-decoration:none;display:inline-block;margin-top:4px">Відкрити →</a>
           </div>`,
           { maxWidth: 200, autoPan: false }
         );

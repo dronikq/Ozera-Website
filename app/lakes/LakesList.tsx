@@ -54,7 +54,7 @@ function LakeCard({
 }) {
   return (
     <Link
-      href={`/lakes/${lake.id}`}
+      href={`/lakes/${lake.slug ?? lake.id}`}
       onMouseEnter={() => onHover(lake.id)}
       onMouseLeave={() => onHover(null)}
       className={`group rounded-2xl border bg-white overflow-hidden transition-all ${

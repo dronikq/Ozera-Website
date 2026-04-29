@@ -1,18 +1,36 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { supabase, type Lake, type LakeUpdate, type LakeImage } from "@/lib/supabase";
 import type { Metadata } from "next";
 import ImageGallery from "./ImageGallery";
 import WeatherWidget from "./WeatherWidget";
 import AIAdvisor from "./AIAdvisor";
 
-async function getLake(id: string): Promise<Lake | null> {
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+async function getLakeBySlug(slug: string): Promise<Lake | null> {
+  const { data } = await supabase
+    .from("lakes")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
+  return data;
+}
+
+async function getLakeById(id: string): Promise<Lake | null> {
   const { data } = await supabase
     .from("lakes")
     .select("*")
     .eq("id", id)
-    .single();
+    .maybeSingle();
   return data;
+}
+
+async function getLake(slugOrId: string): Promise<Lake | null> {
+  if (UUID_REGEX.test(slugOrId)) {
+    return getLakeById(slugOrId);
+  }
+  return getLakeBySlug(slugOrId);
 }
 
 async function getLakeImages(id: string): Promise<LakeImage[]> {
@@ -42,9 +60,23 @@ export async function generateMetadata({
   const { id } = await params;
   const lake = await getLake(id);
   if (!lake) return { title: "Озеро не знайдено" };
+
+  const BASE_URL = "https://www.ozera.in.ua";
+  const canonicalSlug = lake.slug ?? lake.id;
+  const canonicalUrl = `${BASE_URL}/lakes/${canonicalSlug}`;
+
   return {
     title: `${lake.name} — OZERA`,
     description: lake.description ?? `Інформація про озеро ${lake.name}`,
+    alternates: { canonical: canonicalUrl },
+    openGraph: {
+      title: `${lake.name} — OZERA`,
+      description: lake.description ?? `Інформація про озеро ${lake.name}`,
+      url: canonicalUrl,
+      type: "website",
+      locale: "uk_UA",
+      siteName: "OZERA",
+    },
   };
 }
 
@@ -54,9 +86,19 @@ export default async function LakePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [lake, updates, lakeImages] = await Promise.all([getLake(id), getLakeUpdates(id), getLakeImages(id)]);
 
+  // Якщо URL містить UUID, але у озера є slug — 301 редирект на slug-URL
+  if (UUID_REGEX.test(id)) {
+    const lakeForRedirect = await getLakeById(id);
+    if (lakeForRedirect?.slug) {
+      redirect(`/lakes/${lakeForRedirect.slug}`);
+    }
+  }
+
+  const lake = await getLake(id);
   if (!lake) notFound();
+
+  const [updates, lakeImages] = await Promise.all([getLakeUpdates(lake.id), getLakeImages(lake.id)]);
 
   return (
     <main className="min-h-screen bg-[#f0f7ff]">

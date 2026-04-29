@@ -337,7 +337,7 @@ export default function AILakePicker({ lakes }: { lakes: Lake[] }) {
             ) : results.map(({ lake, score }, idx) => (
               <Link
                 key={lake.id}
-                href={`/lakes/${lake.id}`}
+                href={`/lakes/${lake.slug ?? lake.id}`}
                 className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-slate-100 hover:border-[#f5c842] transition-all bg-white group"
               >
                 <span className="text-[10px] font-black text-slate-300 w-4 shrink-0">#{idx+1}</span>
