@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Lake } from "@/lib/supabase";
+import { getLakeRouteSlug } from "@/lib/lake-slug";
 
 const TILE_STYLES = [
   {
@@ -26,7 +27,7 @@ const TILE_STYLES = [
 
 type LakePinData = Pick<
   Lake,
-  "id" | "name" | "lat" | "lng" | "city" | "location_text" | "image_url" | "price_uah" | "fish_species"
+  "id" | "slug" | "name" | "lat" | "lng" | "city" | "location_text" | "image_url" | "price_uah" | "fish_species"
 >;
 
 interface Props {
@@ -80,6 +81,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
           : `<div style="width:100%;height:110px;background:linear-gradient(135deg,#e0f0ff,#bfdbff);display:flex;align-items:center;justify-content:center;font-size:32px;">🌊</div>`;
 
         const locationLine = lake.location_text || lake.city || "";
+        const canonicalSlug = getLakeRouteSlug(lake);
         const fishLine = lake.fish_species?.length
           ? `<div style="font-size:11px;color:#64748b;margin-top:2px;">🐟 ${lake.fish_species.slice(0, 2).join(", ")}${lake.fish_species.length > 2 ? ` +${lake.fish_species.length - 2}` : ""}</div>`
           : "";
@@ -96,7 +98,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
               ${locationLine ? `<div style="font-size:11px;color:#94a3b8;margin-top:2px;">📍 ${locationLine}</div>` : ""}
               ${fishLine}
               ${priceLine}
-              <a href="/lakes/${lake.id}" style="display:inline-block;margin-top:8px;font-size:11px;color:#2563eb;font-weight:600;text-decoration:none;">Відкрити →</a>
+              <a href="/lakes/${canonicalSlug}" style="display:inline-block;margin-top:8px;font-size:11px;color:#2563eb;font-weight:600;text-decoration:none;">Відкрити →</a>
             </div>
           </div>`;
 

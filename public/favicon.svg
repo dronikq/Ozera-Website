@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="72" y1="40" x2="440" y2="460" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071A3A"/>
+      <stop offset="1" stop-color="#0E3A78"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="120" y1="128" x2="400" y2="384" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A9F2FF"/>
+      <stop offset="0.45" stop-color="#4BC6FF"/>
+      <stop offset="1" stop-color="#0B7DFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="162" fill="none" stroke="url(#ring)" stroke-width="48" stroke-linecap="round" stroke-dasharray="760 110"/>
+  <circle cx="256" cy="256" r="162" fill="none" stroke="#EAFBFF" stroke-opacity="0.22" stroke-width="12"/>
+  <path d="M384 142C354 150 338 175 338 211C338 247 356 271 376 288C392 301 406 323 406 350C406 382 386 404 354 404C332 404 314 393 303 378C293 365 289 350 289 335C289 318 297 303 309 291C326 274 340 251 340 222C340 186 320 157 294 143" stroke="#F3FDFF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M187 288C172 288 161 297 156 308C150 322 151 338 159 350C170 367 190 375 212 375C244 375 266 357 273 333C275 327 274 320 270 316C261 308 245 304 226 302C214 300 201 298 187 288Z" fill="#F8FDFF"/>
+  <path d="M176 286C194 286 210 279 225 268C236 260 245 249 252 236C258 223 257 207 248 196C240 186 229 180 217 180C205 180 194 185 187 194C180 203 176 214 176 227V286Z" fill="#DFFBFF"/>
+  <circle cx="219" cy="213" r="8" fill="#0C2B5E"/>
+  <path d="M162 311C130 304 112 280 112 248C112 228 120 212 134 202C149 191 168 188 186 192" stroke="#F8FDFF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M209 334C211 341 217 347 225 350C234 353 244 353 252 350" stroke="#0C2B5E" stroke-width="10" stroke-linecap="round"/>
+  <path d="M244 356L259 380" stroke="#F3FDFF" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="228" fill="none" stroke="#F8FDFF" stroke-opacity="0.08" stroke-width="4"/>
+</svg>

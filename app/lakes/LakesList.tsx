@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import type { Lake } from "@/lib/supabase";
+import { getLakeRouteSlug } from "@/lib/lake-slug";
 
 const LakesMap = dynamic(() => import("./LakesMap"), { ssr: false });
 
@@ -54,7 +55,7 @@ function LakeCard({
 }) {
   return (
     <Link
-      href={`/lakes/${lake.id}`}
+      href={`/lakes/${getLakeRouteSlug(lake)}`}
       onMouseEnter={() => onHover(lake.id)}
       onMouseLeave={() => onHover(null)}
       className={`group rounded-2xl border bg-white overflow-hidden transition-all ${

@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
+import { getLakeRouteSlug } from "@/lib/lake-slug";
 
 const BASE_URL = "https://www.ozera.in.ua";
 
@@ -24,11 +25,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { data: lakes } = await supabase
       .from("lakes")
-      .select("id, updated_at")
+      .select("id, name, slug, updated_at")
       .order("created_at", { ascending: true });
 
     const lakePages: MetadataRoute.Sitemap = (lakes ?? []).map((lake) => ({
-      url: `${BASE_URL}/lakes/${lake.id}`,
+      url: `${BASE_URL}/lakes/${getLakeRouteSlug(lake)}`,
       lastModified: lake.updated_at ? new Date(lake.updated_at) : new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.7,

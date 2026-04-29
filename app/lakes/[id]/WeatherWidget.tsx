@@ -252,6 +252,7 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
           onClick={() => setIsOpen((prev) => !prev)}
           className="mb-3 flex w-full items-center justify-between gap-3 text-left"
           aria-expanded={isOpen}
+          aria-controls="weather-widget-content"
         >
           <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#6F85A8" }}>
             Погода та умови кльову
@@ -261,7 +262,19 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
           </span>
         </button>
 
-        {isOpen && (
+        <div
+          id="weather-widget-content"
+          className="space-y-4"
+          aria-hidden={!isOpen}
+          style={{
+            maxHeight: isOpen ? 1800 : 0,
+            opacity: isOpen ? 1 : 0,
+            overflow: "hidden",
+            transform: isOpen ? "translateY(0)" : "translateY(-4px)",
+            transition: "max-height 320ms ease, opacity 220ms ease, transform 220ms ease",
+            pointerEvents: isOpen ? "auto" : "none",
+          }}
+        >
           <div className="space-y-4">
             <div className="flex gap-2 flex-wrap">
               {data.days.map((day, index) => (
@@ -356,10 +369,8 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
               </div>
             )}
           </div>
-        )}
-      </div>
 
-      <div className="flex gap-1.5 overflow-x-auto px-5 pb-5 pt-1" style={{ scrollSnapType: "x mandatory" }}>
+          <div className="flex gap-1.5 overflow-x-auto px-5 pb-5 pt-1" style={{ scrollSnapType: "x mandatory" }}>
         {next.hours.map((h, index) => {
           const borderColor = h.biteClass === "g" ? "#4ade80" : h.biteClass === "o" ? "#fbbf24" : "#1E3A5F";
           const isActive = index === activeHour;
@@ -410,6 +421,8 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
             </button>
           );
         })}
+      </div>
+        </div>
       </div>
     </div>
   );

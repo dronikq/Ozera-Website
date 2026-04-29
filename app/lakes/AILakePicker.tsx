@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { Lake } from "@/lib/supabase";
+import { getLakeRouteSlug } from "@/lib/lake-slug";
 
 const REGIONS = [
   "Київська область","Вінницька область","Волинська область",
@@ -280,7 +281,7 @@ export default function AILakePicker({ lakes }: { lakes: Lake[] }) {
             return (
               <Link
                 key={lake.id}
-                href={`/lakes/${lake.id}`}
+                href={`/lakes/${getLakeRouteSlug(lake)}`}
                 style={{
                   display: "flex", alignItems: "center", gap: 10,
                   padding: "10px 12px", borderRadius: 10,

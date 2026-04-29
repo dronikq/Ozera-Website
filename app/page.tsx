@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { supabase, type Lake } from "@/lib/supabase";
+import { getLakeRouteSlug } from "@/lib/lake-slug";
 import LandingClient from "./components/LandingClient";
 import { FadeUp, SlideLeft, SlideRight, ScaleIn } from "./components/AnimatedSection";
 import "./landing.css";
@@ -255,7 +256,7 @@ export default async function HomePage() {
           <div className="l-lakes-grid">
             {popularLakes.length > 0
               ? popularLakes.map((lake) => (
-                  <Link href={`/lakes/${lake.id}`} className="l-lake-card" key={lake.id}>
+                  <Link href={`/lakes/${getLakeRouteSlug(lake)}`} className="l-lake-card" key={lake.id}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img className="l-lake-img" src={lake.image_url ?? ""} alt={lake.name} />
                     <div className="l-lake-body">

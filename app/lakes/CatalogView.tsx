@@ -5,6 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Lake } from "@/lib/supabase";
+import { getLakeRouteSlug } from "@/lib/lake-slug";
 
 const LakesMap = dynamic(() => import("./LakesMap"), { ssr: false });
 
@@ -152,7 +153,7 @@ export default function CatalogView({ lakes, total }: Props) {
 function GridCard({ lake }: { lake: Lake }) {
   const fish = lake.fish_species ?? [];
   return (
-    <Link href={`/lakes/${lake.id}`} className="dk-lake-card">
+    <Link href={`/lakes/${getLakeRouteSlug(lake)}`} className="dk-lake-card">
       <div className="dk-lake-card-photo">
         {lake.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -220,7 +221,7 @@ function MapBottomCard({
         <p className="dk-map-card-name">{lake.name}</p>
         {lake.city && <p className="dk-map-card-city">{lake.city}</p>}
         <Link
-          href={`/lakes/${lake.id}`}
+          href={`/lakes/${getLakeRouteSlug(lake)}`}
           onClick={(e) => e.stopPropagation()}
           className="dk-map-card-link"
         >
