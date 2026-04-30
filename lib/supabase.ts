@@ -16,6 +16,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export type Lake = {
   id: string
+  slug: string | null
   name: string
   description: string | null
   location_text: string | null

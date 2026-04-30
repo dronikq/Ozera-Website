@@ -70,19 +70,6 @@ export default function LakeContactsPanel({ lakeId, contactsEnabled, contacts, i
 
       {open && (
         <div className="dk-contacts-box">
-          <p className="dk-contacts-summary">
-            {[
-              ...(contacts?.phone ?? []),
-              contacts?.email ? `Email: ${contacts.email}` : null,
-              contacts?.website ? `Сайт: ${contacts.website}` : null,
-              contacts?.telegram ? `Telegram: ${contacts.telegram}` : null,
-              contacts?.instagram ? `Instagram: ${contacts.instagram}` : null,
-              contacts?.viber ? `Viber: ${contacts.viber}` : null,
-            ]
-              .filter(Boolean)
-              .join(" • ")}
-          </p>
-
           {contacts?.phone?.map((p) => (
             <a key={p} href={`tel:${p}`} className="dk-contact-link">
               📱 {p}

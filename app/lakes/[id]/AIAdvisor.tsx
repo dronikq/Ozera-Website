@@ -700,6 +700,8 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
   const [checkedItems, setCheckedItems]     = useState<Record<string, boolean>>({});
   const [checklistStep, setChecklistStep]   = useState<"intro" | "question" | "result">("intro");
   const [selectedFish, setSelectedFish]     = useState<string[]>([]);
+  const [adviceOpen, setAdviceOpen]         = useState(false);
+  const [checklistOpen, setChecklistOpen]   = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -776,15 +778,34 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
 
   return (
     <div className="flex flex-col gap-4">
-    <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #1E3A5F" }}>
+    <section className="rounded-2xl overflow-hidden" style={{ border: "1px solid #1E3A5F" }}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex items-center justify-between">
+      <button
+        type="button"
+        onClick={() => setAdviceOpen((prev) => !prev)}
+        className="bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex w-full items-center justify-between gap-3 text-left"
+        aria-expanded={adviceOpen}
+        aria-controls="ai-advice-content"
+      >
         <div>
           <p className="text-white font-bold text-[15px]">🤖 Що робити сьогодні</p>
           <p className="text-white/45 text-xs mt-0.5">AI-порадник на основі погоди та озера</p>
         </div>
-      </div>
+        <span className="text-xs font-bold text-white/55">{adviceOpen ? "▾" : "▸"}</span>
+      </button>
 
+      <div
+        id="ai-advice-content"
+        aria-hidden={!adviceOpen}
+        style={{
+          maxHeight: adviceOpen ? 2600 : 0,
+          opacity: adviceOpen ? 1 : 0,
+          overflow: "hidden",
+          transform: adviceOpen ? "translateY(0)" : "translateY(-4px)",
+          transition: "max-height 340ms ease, opacity 240ms ease, transform 240ms ease",
+          pointerEvents: adviceOpen ? "auto" : "none",
+        }}
+      >
       {/* Fish tabs */}
       {hasBoth && (
         <div className="px-4 pt-2 pb-0 flex gap-1" style={{ background: "#132F57", borderBottom: "1px solid #1E3A5F" }}>
@@ -891,24 +912,46 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
           </button>
         </div>
       </div>
-    </div>
+      </div>
+    </section>
 
       {/* Checklist wizard — окремий блок */}
-      <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #1E3A5F", background: "#132F57" }}>
+      <section className="rounded-2xl overflow-hidden" style={{ border: "1px solid #1E3A5F", background: "#132F57" }}>
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => setChecklistOpen((prev) => !prev)}
+          className="bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex w-full items-center justify-between gap-3 text-left"
+          aria-expanded={checklistOpen}
+          aria-controls="ai-checklist-content"
+        >
           <div>
             <p className="text-white font-bold text-[15px]">🎒 Що взяти сьогодні</p>
             <p className="text-white/45 text-xs mt-0.5">ШІ допоможе зібратися і не забути нічого корисного</p>
           </div>
+          <div className="flex items-center gap-2">
           {checklistStep === "result" && (() => {
             const cl = hourData ? generateChecklist(hourData, selectedFish) : [];
             const all = cl.flatMap(s => s.items);
             const done = all.filter(it => checkedItems[it.id]).length;
             return <span className="text-xs font-bold bg-white/10 text-white/70 px-2.5 py-1 rounded-lg">{done}/{all.length}</span>;
           })()}
-        </div>
+            <span className="text-xs font-bold text-white/55">{checklistOpen ? "▾" : "▸"}</span>
+          </div>
+        </button>
 
+        <div
+          id="ai-checklist-content"
+          aria-hidden={!checklistOpen}
+          style={{
+            maxHeight: checklistOpen ? 2400 : 0,
+            opacity: checklistOpen ? 1 : 0,
+            overflow: "hidden",
+            transform: checklistOpen ? "translateY(0)" : "translateY(-4px)",
+            transition: "max-height 340ms ease, opacity 240ms ease, transform 240ms ease",
+            pointerEvents: checklistOpen ? "auto" : "none",
+          }}
+        >
         {/* ── INTRO ── */}
         {checklistStep === "intro" && (
           <div className="px-5 py-8 flex flex-col items-center text-center gap-5">
@@ -1065,7 +1108,8 @@ export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng:
             </div>
           );
         })()}
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

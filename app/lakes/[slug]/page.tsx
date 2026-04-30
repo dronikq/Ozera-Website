@@ -1,19 +1,32 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { supabase, type Lake, type LakeImage, type LakeUpdate } from "@/lib/supabase";
+import { getLakeRouteSlug } from "@/lib/lake-slug";
 import { buildLakeDetailData } from "@/lib/lake-detail-data";
-import ImageGallery from "./ImageGallery";
-import WeatherWidget from "./WeatherWidget";
-import AIAdvisor from "./AIAdvisor";
-import LakeContactsPanel from "./LakeContactsPanel";
-import LakeDetailTabs from "./LakeDetailTabs";
+import ImageGallery from "../[id]/ImageGallery";
+import WeatherWidget from "../[id]/WeatherWidget";
+import AIAdvisor from "../[id]/AIAdvisor";
+import LakeContactsPanel from "../[id]/LakeContactsPanel";
+import LakeSchemeViewer from "../[id]/LakeSchemeViewer";
+import LakeDetailTabs from "../[id]/LakeDetailTabs";
 import "../lakes.css";
 
-async function getLake(id: string): Promise<Lake | null> {
-  const { data } = await supabase.from("lakes").select("*").eq("id", id).single();
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+async function getLakeBySlug(slug: string): Promise<Lake | null> {
+  const { data } = await supabase.from("lakes").select("*").eq("slug", slug).maybeSingle();
   return data;
+}
+
+async function getLakeById(id: string): Promise<Lake | null> {
+  const { data } = await supabase.from("lakes").select("*").eq("id", id).maybeSingle();
+  return data;
+}
+
+async function resolveLake(slugOrId: string): Promise<Lake | null> {
+  return (await getLakeBySlug(slugOrId)) ?? (UUID_RE.test(slugOrId) ? await getLakeById(slugOrId) : null);
 }
 
 async function getLakeImages(id: string): Promise<LakeImage[]> {
@@ -26,13 +39,14 @@ async function getLakeUpdates(id: string): Promise<LakeUpdate[]> {
   return data ?? [];
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  const { id } = await params;
-  const lake = await getLake(id);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const lake = await resolveLake(slug);
   if (!lake) return { title: "Озеро не знайдено" };
 
   const baseUrl = "https://www.ozera.in.ua";
-  const url = `${baseUrl}/lakes/${id}`;
+  const canonicalSlug = getLakeRouteSlug(lake);
+  const url = `${baseUrl}/lakes/${canonicalSlug}`;
   const detail = buildLakeDetailData(lake);
   const fishNames = detail.fishSpecies;
   const fishPart = fishNames.length ? `Риба: ${fishNames.slice(0, 4).join(", ")}.` : "";
@@ -65,13 +79,26 @@ export default async function LakePage({
   params,
   searchParams,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
   searchParams: Promise<{ tab?: string }>;
 }) {
-  const { id } = await params;
+  const { slug } = await params;
   const { tab } = await searchParams;
-  const [lake, updates, lakeImages] = await Promise.all([getLake(id), getLakeUpdates(id), getLakeImages(id)]);
+  let lake = await getLakeBySlug(slug);
+  const query = tab ? `?tab=${encodeURIComponent(tab)}` : "";
+
+  if (!lake && UUID_RE.test(slug)) {
+    lake = await getLakeById(slug);
+  }
+
   if (!lake) notFound();
+
+  const canonicalSlug = getLakeRouteSlug(lake);
+  if (canonicalSlug !== slug) {
+    permanentRedirect(`/lakes/${canonicalSlug}${query}`);
+  }
+
+  const [updates, lakeImages] = await Promise.all([getLakeUpdates(lake.id), getLakeImages(lake.id)]);
 
   const baseUrl = "https://www.ozera.in.ua";
   const detail = buildLakeDetailData(lake);
@@ -80,7 +107,7 @@ export default async function LakePage({
     "@type": ["TouristAttraction", "LocalBusiness"],
     name: lake.name,
     description: lake.description ?? `Платна рибалка на ${lake.name}`,
-    url: `${baseUrl}/lakes/${lake.id}`,
+    url: `${baseUrl}/lakes/${canonicalSlug}`,
     image: lake.image_url ?? `${baseUrl}/og-image.png`,
     ...(lake.lat && lake.lng && { geo: { "@type": "GeoCoordinates", latitude: lake.lat, longitude: lake.lng } }),
     ...(lake.city && { address: { "@type": "PostalAddress", addressLocality: lake.city, addressCountry: "UA" } }),
@@ -162,25 +189,33 @@ export default async function LakePage({
               {lake.show_work_schedule && lake.base_open_time && lake.base_close_time && (
                 <div className="dk-info-row">
                   <span className="dk-info-label">🕒 Графік</span>
-                  <span className="dk-info-value">{lake.base_open_time}–{lake.base_close_time}</span>
+                  <span className="dk-info-value">
+                    {lake.base_open_time}–{lake.base_close_time}
+                  </span>
                 </div>
               )}
               {lake.work_schedule_summary && !lake.base_open_time && (
                 <div className="dk-info-row">
                   <span className="dk-info-label">🕒 Графік</span>
-                  <span className="dk-info-value" style={{ fontSize: 13 }}>{lake.work_schedule_summary}</span>
+                  <span className="dk-info-value" style={{ fontSize: 13 }}>
+                    {lake.work_schedule_summary}
+                  </span>
                 </div>
               )}
               {lake.city && (
                 <div className="dk-info-row">
                   <span className="dk-info-label">📍 Регіон</span>
-                  <span className="dk-info-value" style={{ fontSize: 13 }}>{lake.city}</span>
+                  <span className="dk-info-value" style={{ fontSize: 13 }}>
+                    {lake.city}
+                  </span>
                 </div>
               )}
               {lake.location_text && (
                 <div className="dk-info-row">
                   <span className="dk-info-label">🗺 Район</span>
-                  <span className="dk-info-value" style={{ fontSize: 13, textAlign: "right", maxWidth: 160 }}>{lake.location_text}</span>
+                  <span className="dk-info-value" style={{ fontSize: 13, textAlign: "right", maxWidth: 160 }}>
+                    {lake.location_text}
+                  </span>
                 </div>
               )}
 
@@ -205,8 +240,7 @@ export default async function LakePage({
                 <div className="dk-section">
                   <h2 className="dk-section-title">🗺️ Схема озера</h2>
                   <div style={{ borderRadius: 12, overflow: "hidden" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={lake.scheme_image_url} alt="Схема озера" style={{ width: "100%", display: "block" }} />
+                    <LakeSchemeViewer src={lake.scheme_image_url} />
                   </div>
                 </div>
               )}
@@ -260,19 +294,23 @@ export default async function LakePage({
               ))}
             </div>
           )}
+
         </div>
       </div>
 
-      <div className="dk-app-cta">
+      <section className="dk-app-cta">
         <div className="dk-container">
           <div className="dk-app-cta-inner">
             <div>
-              <p className="dk-app-cta-title">Скачай додаток OZERA</p>
+              <h2 className="dk-app-cta-title">
+                Скачай додаток OZERA<br />
+                <span style={{ color: "var(--accent)" }}>і лови більше риби!</span>
+              </h2>
               <p className="dk-app-cta-sub">Обрані озера, push-сповіщення та офлайн-режим</p>
             </div>
             <div className="dk-store-btns">
               <a href="#" className="dk-btn-store">
-                <span className="dk-btn-store-icon">🍎</span>
+                <span className="dk-btn-store-icon">🍑</span>
                 <span>
                   <span className="dk-btn-store-top">Завантажити в</span>
                   <span className="dk-btn-store-main">App Store</span>
@@ -288,9 +326,7 @@ export default async function LakePage({
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
-
-
