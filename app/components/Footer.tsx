@@ -4,58 +4,66 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-b from-blue-50 to-blue-100 border-t border-blue-200 py-12">
+    <footer style={{ backgroundColor: "#0F2A4D", borderTop: "1px solid #1E3A5F" }} className="py-12">
       <div className="max-w-7xl mx-auto px-6">
         {/* Main footer content */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-          {/* Brand & Description */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-xl font-bold text-slate-900">OZERA</h3>
-            <p className="text-sm text-slate-600">
-              Каталог платних озер України для риболовлі. Знаходи ідеальне місце для лову разом з нами.
-            </p>
-            {/* Social Links */}
-            <div className="flex items-center gap-4 mt-4">
+          {/* Brand & Description + Instagram */}
+          <div className="flex flex-col gap-6">
+            <div>
+              <h3 style={{ color: "#FFFFFF" }} className="text-xl font-bold mb-2">OZERA</h3>
+              <p style={{ color: "#A9B8D4" }} className="text-sm">
+                Каталог платних озер України для риболовлі. Знаходи ідеальне місце для лову разом з нами.
+              </p>
+            </div>
+
+            {/* Instagram Link */}
+            <div className="flex items-center gap-3">
               <a
                 href="https://www.instagram.com/ozera.ua/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Стежити за нами на Instagram"
-                className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white border border-blue-200 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 hover:scale-110"
+                className="transition-transform duration-200 hover:scale-110"
                 title="Instagram"
               >
                 <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
+                  width="28"
+                  height="28"
+                  viewBox="0 0 256 256"
                   fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <circle cx="17.5" cy="6.5" r="1.5" />
+                  <defs>
+                    <linearGradient id="instagramGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                      <stop offset="0%" style={{ stopColor: "#FFC857", stopOpacity: 1 }} />
+                      <stop offset="50%" style={{ stopColor: "#FF5C9A", stopOpacity: 1 }} />
+                      <stop offset="100%" style={{ stopColor: "#9B36B7", stopOpacity: 1 }} />
+                    </linearGradient>
+                  </defs>
+                  <rect x="16" y="16" width="224" height="224" rx="32" fill="url(#instagramGradient)" />
+                  <circle cx="128" cy="128" r="40" fill="none" stroke="#FFFFFF" strokeWidth="12" />
+                  <circle cx="170" cy="86" r="12" fill="#FFFFFF" />
                 </svg>
               </a>
+              <span style={{ color: "#6F85A8" }} className="text-sm">@ozera.ua</span>
             </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold text-slate-900 mb-4">Навігація</h4>
-            <nav className="flex flex-col gap-2">
-              <Link href="/lakes" className="text-sm text-slate-600 hover:text-blue-600 transition-colors">
+            <h4 style={{ color: "#FFFFFF" }} className="font-semibold mb-4">Навігація</h4>
+            <nav className="flex flex-col gap-3">
+              <Link href="/lakes" style={{ color: "#A9B8D4" }} className="text-sm hover:text-yellow-400 transition-colors">
                 Каталог озер
               </Link>
-              <a href="mailto:support@ozera.in.ua" className="text-sm text-slate-600 hover:text-blue-600 transition-colors">
+              <a href="mailto:support@ozera.in.ua" style={{ color: "#A9B8D4" }} className="text-sm hover:text-yellow-400 transition-colors">
                 Контакти
               </a>
-              <Link href="/terms" className="text-sm text-slate-600 hover:text-blue-600 transition-colors">
+              <Link href="/terms" style={{ color: "#A9B8D4" }} className="text-sm hover:text-yellow-400 transition-colors">
                 Умови використання
               </Link>
-              <Link href="/privacy" className="text-sm text-slate-600 hover:text-blue-600 transition-colors">
+              <Link href="/privacy" style={{ color: "#A9B8D4" }} className="text-sm hover:text-yellow-400 transition-colors">
                 Конфіденційність
               </Link>
             </nav>
@@ -63,22 +71,22 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-semibold text-slate-900 mb-4">Контакти</h4>
-            <div className="flex flex-col gap-2 text-sm text-slate-600">
-              <a href="mailto:support@ozera.in.ua" className="hover:text-blue-600 transition-colors">
+            <h4 style={{ color: "#FFFFFF" }} className="font-semibold mb-4">Контакти</h4>
+            <div className="flex flex-col gap-3 text-sm">
+              <a href="mailto:support@ozera.in.ua" style={{ color: "#A9B8D4" }} className="hover:text-yellow-400 transition-colors">
                 support@ozera.in.ua
               </a>
-              <p>Україна</p>
+              <p style={{ color: "#A9B8D4" }}>Україна 🇺🇦</p>
             </div>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="border-t border-blue-200 pt-8">
+        <div style={{ borderTop: "1px solid #1E3A5F" }} className="pt-8">
           {/* Bottom footer */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
-            <p>© {currentYear} OZERA. Усі права захищені.</p>
-            <p className="text-center">Знайди своє ідеальне місце для риболовлі</p>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+            <p style={{ color: "#6F85A8" }}>© {currentYear} OZERA. Усі права захищені.</p>
+            <p style={{ color: "#6F85A8" }} className="text-center">Знайди своє ідеальне місце для риболовлі 🎣</p>
           </div>
         </div>
       </div>

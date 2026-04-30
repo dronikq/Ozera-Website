@@ -362,21 +362,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════
-          7. FOOTER BOTTOM
-      ══════════════════════════════════════ */}
-      <footer className="l-footer-bottom">
-        <div className="l-container">
-          <div className="l-footer-inner">
-            <p className="l-footer-copy">© {new Date().getFullYear()} OZERA. Усі права захищені.</p>
-            <nav className="l-footer-nav">
-              <Link href="/terms">Умови використання</Link>
-              <Link href="/privacy">Конфіденційність</Link>
-              <a href="mailto:support@ozera.in.ua">Контакти</a>
-            </nav>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
