@@ -52,10 +52,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const fishPart = fishNames.length ? `Риба: ${fishNames.slice(0, 4).join(", ")}.` : "";
   const schedulePart = lake.work_schedule_summary ? `Графік: ${lake.work_schedule_summary}.` : "";
   const locationPart = lake.city ? `, ${lake.city}` : "";
-  const title = `${lake.name} — Платна риболовля${locationPart}`;
+  const pricePart = lake.price_uah ? `Ціна від ${lake.price_uah} грн.` : "";
+  const title = `${lake.name} — платна рибалка${locationPart}`;
   const description = lake.description
-    ? `${lake.description.slice(0, 120)} ${fishPart} ${schedulePart}`.trim()
-    : `Платна рибалка на ${lake.name}${locationPart}. ${fishPart} ${schedulePart}`.trim();
+    ? `${lake.description.slice(0, 110)} ${pricePart} ${fishPart}`.trim()
+    : `Платна рибалка ${lake.name}${locationPart}. ${pricePart} ${fishPart} ${schedulePart}`.trim();
   const image = lake.image_url ?? `${baseUrl}/og-image.png`;
 
   return {
@@ -113,6 +114,10 @@ export default async function LakePage({
     ...(lake.city && { address: { "@type": "PostalAddress", addressLocality: lake.city, addressCountry: "UA" } }),
     ...(lake.contacts?.phone?.length && { telephone: lake.contacts.phone[0] }),
     ...(lake.base_open_time && lake.base_close_time && { openingHours: `Mo-Su ${lake.base_open_time}-${lake.base_close_time}` }),
+    ...(lake.price_uah && { priceRange: `від ${lake.price_uah} грн` }),
+    ...(detail.fishSpecies.length && {
+      amenityFeature: detail.fishSpecies.map((f) => ({ "@type": "LocationFeatureSpecification", name: f, value: true })),
+    }),
     inLanguage: "uk-UA",
     isAccessibleForFree: false,
   };
@@ -124,6 +129,36 @@ export default async function LakePage({
   return (
     <div className="dk-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Головна", item: baseUrl },
+              { "@type": "ListItem", position: 2, name: "Каталог озер", item: `${baseUrl}/lakes` },
+              { "@type": "ListItem", position: 3, name: lake.name, item: `${baseUrl}/lakes/${canonicalSlug}` },
+            ],
+          }),
+        }}
+      />
+      {lake.faq_enabled && lake.faq_items && lake.faq_items.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: lake.faq_items.map((item) => ({
+                "@type": "Question",
+                name: item.question,
+                acceptedAnswer: { "@type": "Answer", text: item.answer },
+              })),
+            }),
+          }}
+        />
+      )}
 
       <nav className="dk-nav">
         <div className="dk-nav-inner">
