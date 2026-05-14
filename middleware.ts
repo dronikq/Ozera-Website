@@ -8,6 +8,14 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get("host") ?? "";
+
+  // Apex → www redirect (only when host is exactly ozera.in.ua, no www)
+  if (host === "ozera.in.ua") {
+    const wwwUrl = `https://www.ozera.in.ua${pathname}${request.nextUrl.search}`;
+    return NextResponse.redirect(wwwUrl, { status: 308 });
+  }
+
   const match = pathname.match(/^\/lakes\/([^/]+)$/);
 
   if (!match) {
@@ -52,5 +60,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/lakes/:path*"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.png|og-image.png).*)"],
 };
