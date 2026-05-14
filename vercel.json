@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "destination": "https://www.ozera.in.ua/:path*",
+      "statusCode": 308,
+      "regex": "^(?!www\\.).*$"
+    }
+  ]
+}

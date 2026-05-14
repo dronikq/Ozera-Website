@@ -53,7 +53,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const schedulePart = lake.work_schedule_summary ? `Графік: ${lake.work_schedule_summary}.` : "";
   const locationPart = lake.city ? `, ${lake.city}` : "";
   const pricePart = lake.price_uah ? `Ціна від ${lake.price_uah} грн.` : "";
-  const title = `${lake.name} — платна рибалка${locationPart}`;
+  const priceForTitle = lake.price_uah ? ` від ${lake.price_uah}₴` : "";
+  const regionForTitle = lake.city || "Україна";
+  const title = `${lake.name} — Платна риболовля${priceForTitle} | ${regionForTitle} | OZERA`;
   const description = lake.description
     ? `${lake.description.slice(0, 110)} ${pricePart} ${fishPart}`.trim()
     : `Платна рибалка ${lake.name}${locationPart}. ${pricePart} ${fishPart} ${schedulePart}`.trim();
