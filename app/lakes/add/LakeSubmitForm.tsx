@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const INPUT: React.CSSProperties = {
   width: "100%",
-  background: "var(--bg-secondary)",
+  background: "var(--bg-card)",
   border: "1px solid var(--border)",
   borderRadius: 10,
   padding: "12px 16px",
@@ -97,7 +97,7 @@ export default function LakeSubmitForm() {
       <div
         style={{
           background: "var(--bg-card)",
-          border: "1px solid var(--border)",
+          border: "1px solid var(--border-gold)",
           borderRadius: 16,
           padding: "48px 32px",
           textAlign: "center",
@@ -149,7 +149,7 @@ export default function LakeSubmitForm() {
       onSubmit={handleSubmit}
       style={{
         background: "var(--bg-card)",
-        border: "1px solid var(--border)",
+        border: "1px solid var(--border-gold)",
         borderRadius: 16,
         padding: "32px",
       }}
