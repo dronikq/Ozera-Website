@@ -41,6 +41,9 @@ export default function Footer() {
               <Link href="/lakes" style={{ color: "#A9B8D4" }} className="text-sm hover:text-yellow-400 transition-colors">
                 Каталог озер
               </Link>
+              <Link href="/lakes/add" style={{ color: "#A9B8D4" }} className="text-sm hover:text-yellow-400 transition-colors">
+                Додати озеро
+              </Link>
               <a href="mailto:support@ozera.in.ua" style={{ color: "#A9B8D4" }} className="text-sm hover:text-yellow-400 transition-colors">
                 Контакти
               </a>

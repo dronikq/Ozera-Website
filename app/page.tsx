@@ -61,6 +61,7 @@ export default async function HomePage() {
           <ul className="l-nav-links" id="l-nav-links">
             <li><a href="#about">Про нас</a></li>
             <li><Link href="/lakes" className="l-nav-accent">Каталог озер</Link></li>
+            <li><Link href="/lakes/add" className="l-nav-accent">Додати озеро</Link></li>
           </ul>
 
           <button className="l-burger" id="l-burger" aria-label="Меню">
