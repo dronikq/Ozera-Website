@@ -227,8 +227,8 @@ function SubTitle({ children }: { children: React.ReactNode }) {
 
 function Email() {
   return (
-    <a href="mailto:support@ozera.in.ua" style={{ color: "var(--blue-accent)" }}>
-      support@ozera.in.ua
+    <a href="mailto:ozeraapp@gmail.com" style={{ color: "var(--blue-accent)" }}>
+      ozeraapp@gmail.com
     </a>
   );
 }

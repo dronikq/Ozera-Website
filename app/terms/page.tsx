@@ -222,8 +222,8 @@ export default function TermsPage() {
                 З питань щодо Умов використання, скарг або пропозицій звертайтесь:
               </p>
               <p>
-                <a href="mailto:support@ozera.in.ua" style={{ color: "var(--blue-accent)" }}>
-                  support@ozera.in.ua
+                <a href="mailto:ozeraapp@gmail.com" style={{ color: "var(--blue-accent)" }}>
+                  ozeraapp@gmail.com
                 </a>
               </p>
               <p>

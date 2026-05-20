@@ -44,7 +44,7 @@ export default function Footer() {
               <Link href="/lakes/add" style={{ color: "#A9B8D4" }} className="text-sm hover:text-yellow-400 transition-colors">
                 Додати озеро
               </Link>
-              <a href="mailto:support@ozera.in.ua" style={{ color: "#A9B8D4" }} className="text-sm hover:text-yellow-400 transition-colors">
+              <a href="mailto:ozeraapp@gmail.com" style={{ color: "#A9B8D4" }} className="text-sm hover:text-yellow-400 transition-colors">
                 Контакти
               </a>
               <Link href="/terms" style={{ color: "#A9B8D4" }} className="text-sm hover:text-yellow-400 transition-colors">
@@ -60,8 +60,8 @@ export default function Footer() {
           <div>
             <h4 style={{ color: "#FFFFFF" }} className="font-semibold mb-4">Контакти</h4>
             <div className="flex flex-col gap-3 text-sm">
-              <a href="mailto:support@ozera.in.ua" style={{ color: "#A9B8D4" }} className="hover:text-yellow-400 transition-colors">
-                support@ozera.in.ua
+              <a href="mailto:ozeraapp@gmail.com" style={{ color: "#A9B8D4" }} className="hover:text-yellow-400 transition-colors">
+                ozeraapp@gmail.com
               </a>
               <p style={{ color: "#A9B8D4" }}>Україна</p>
             </div>
