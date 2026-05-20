@@ -5,6 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Lake } from "@/lib/supabase";
+import FishIcon from "@/app/components/FishIcon";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
 
 const LakesMap = dynamic(() => import("./LakesMap"), { ssr: false });
@@ -96,7 +97,7 @@ export default function CatalogView({ lakes, total }: Props) {
                   onClick={() => updateFilter("fish", currentFish === f.value ? "" : f.value)}
                   className={`dk-map-fish-chip${currentFish === f.value ? " active" : ""}`}
                 >
-                  <span>{f.emoji}</span> {f.value}
+                  <FishIcon name={f.value} size={13} /> {f.value}
                 </button>
               ))}
               <div style={{ width: 1, height: 20, background: "var(--border)", flexShrink: 0 }} />
@@ -181,7 +182,7 @@ function GridCard({ lake }: { lake: Lake }) {
         {fish.length > 0 && (
           <div className="dk-lake-card-fish">
             {fish.slice(0, 3).map((f) => (
-              <span key={f} className="dk-fish-tag">{f}</span>
+              <span key={f} className="dk-fish-tag"><FishIcon name={f} size={11} /> {f}</span>
             ))}
             {fish.length > 3 && (
               <span className="dk-fish-more">+{fish.length - 3}</span>

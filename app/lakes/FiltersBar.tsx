@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import FishIcon from "@/app/components/FishIcon";
 
 const SORT_OPTIONS = [
   { value: "name_asc",   label: "А→Я",      icon: "🔤" },
@@ -99,7 +100,7 @@ export default function FiltersBar({ vertical = false }: { vertical?: boolean })
                     : "bg-white border-blue-100 text-slate-500 hover:border-blue-400 hover:text-[#0f2a4a]"
                 }`}
               >
-                <span>{f.emoji}</span> {f.value}
+                <FishIcon name={f.value} size={13} /> {f.value}
               </button>
             ))}
           </div>

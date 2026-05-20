@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  FISH_ICONS,
   getLakeStructuredData,
   getStructuredAmenitiesEntries,
   getStructuredFishEntries,
@@ -10,6 +9,8 @@ import {
   getStructuredRulesEntries,
   type StructuredLakeData,
 } from "@/lib/lake-structured";
+import FishIcon from "@/app/components/FishIcon";
+
 interface Props {
   description: string | null;
   fishSpecies: string[];
@@ -211,7 +212,7 @@ export default function LakeDetailTabs({
                   style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6 }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span>{f.icon}</span>
+                    <FishIcon name={f.name} size={20} />
                     <span>{f.name}</span>
                   </div>
                   {(f.trophy || f.releaseFromKg) && (
