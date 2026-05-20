@@ -118,6 +118,39 @@ export default async function LakesPage({
 
           {/* Grid + Map */}
           <CatalogView lakes={lakes} total={lakes.length} />
+
+          {/* Add lake CTA */}
+          <div style={{
+            marginTop: 48,
+            marginBottom: 48,
+            background: "var(--bg-card)",
+            border: "1px solid var(--border)",
+            borderRadius: 16,
+            padding: "32px 24px",
+            textAlign: "center",
+          }}>
+            <p style={{ color: "var(--text-muted)", fontSize: 13, marginBottom: 8 }}>
+              Не знайшли своє озеро?
+            </p>
+            <h3 style={{ color: "var(--text-primary)", marginBottom: 16, fontSize: 20, fontWeight: 700 }}>
+              Запропонуйте озеро — ми додамо його до каталогу
+            </h3>
+            <Link
+              href="/lakes/add"
+              style={{
+                display: "inline-block",
+                background: "var(--accent)",
+                color: "#0B1F3A",
+                fontWeight: 700,
+                padding: "12px 28px",
+                borderRadius: 10,
+                textDecoration: "none",
+                fontSize: 15,
+              }}
+            >
+              + Додати озеро
+            </Link>
+          </div>
         </div>
       </div>
     </div>

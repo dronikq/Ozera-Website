@@ -45,6 +45,12 @@ export default function Navbar() {
           >
             Каталог озер
           </Link>
+          <Link
+            href="/lakes/add"
+            className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+          >
+            Додати озеро
+          </Link>
         </div>
       </div>
     </motion.nav>
