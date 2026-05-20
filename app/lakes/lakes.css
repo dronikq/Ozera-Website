@@ -17,6 +17,7 @@
   --blue-accent:   #4DA3FF;
   --border:        #1E3A5F;
   --border-light:  #2A4D78;
+  --border-gold:   #C49A42;
   --gradient-hero: linear-gradient(135deg, #0B1F3A 0%, #173B6B 100%);
 
   background: var(--bg-primary);
@@ -254,7 +255,7 @@
 /* Lake card */
 .dk-lake-card {
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-gold);
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
@@ -266,7 +267,7 @@
 .dk-lake-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 40px rgba(0,0,0,0.35);
-  border-color: var(--border-light);
+  border-color: var(--accent);
 }
 
 .dk-lake-card-photo { position: relative; height: 200px; flex-shrink: 0; }
@@ -360,7 +361,7 @@
 
 .dk-map-card {
   flex-shrink: 0; width: 200px;
-  background: var(--bg-card); border: 1px solid var(--border);
+  background: var(--bg-card); border: 1px solid var(--border-gold);
   border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.2s;
 }
 .dk-map-card:hover { border-color: var(--border-light); }
@@ -609,7 +610,7 @@
 
 .dk-services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .dk-service-item {
-  background: var(--bg-secondary); border: 1px solid var(--border);
+  background: var(--bg-secondary); border: 1px solid var(--border-gold);
   border-radius: 10px; padding: 14px;
   font-size: 14px; color: var(--text-secondary);
   display: flex; align-items: center; gap: 10px;
@@ -635,14 +636,14 @@
 .dk-contact-link:hover { color: var(--accent); }
 
 .dk-faq-item {
-  background: var(--bg-secondary); border: 1px solid var(--border);
+  background: var(--bg-secondary); border: 1px solid var(--border-gold);
   border-radius: 10px; padding: 16px; margin-bottom: 10px;
 }
 .dk-faq-q { font-size: 15px; font-weight: 600; color: var(--text-primary); margin: 0 0 6px; }
 .dk-faq-a { font-size: 14px; color: var(--text-secondary); margin: 0; }
 
 .dk-update-item {
-  background: var(--bg-secondary); border: 1px solid var(--border);
+  background: var(--bg-secondary); border: 1px solid var(--border-gold);
   border-radius: 12px; padding: 16px; margin-bottom: 10px;
 }
 .dk-update-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
@@ -682,7 +683,7 @@
 /* Quick stats row */
 .dk-stats-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
 .dk-stat {
-  background: var(--bg-card); border: 1px solid var(--border);
+  background: var(--bg-card); border: 1px solid var(--border-gold);
   border-radius: 10px; padding: 12px 16px;
   display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 120px;
 }
