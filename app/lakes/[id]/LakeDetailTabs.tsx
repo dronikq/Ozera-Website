@@ -90,7 +90,6 @@ export default function LakeDetailTabs({
       ? structuredFish
       : fishSpecies.map((name) => ({
           name,
-          icon: FISH_ICONS[name] ?? "🐟",
           trophy: false,
           releaseFromKg: null,
         }));
