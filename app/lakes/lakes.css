@@ -761,9 +761,10 @@
 .dk-launch-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   background: var(--accent); color: #0B1F3A;
-  border-radius: 10px; padding: 12px 18px;
+  border: none; border-radius: 10px; padding: 12px 18px;
   text-decoration: none; font-weight: 800;
   font-size: 14px; white-space: nowrap;
+  cursor: pointer;
   transition: background 0.2s, transform 0.15s; font-family: inherit;
 }
 .dk-launch-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }

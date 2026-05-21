@@ -3,6 +3,7 @@ import Image from "next/image";
 import { supabase, type Lake } from "@/lib/supabase";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
 import LandingClient from "./components/LandingClient";
+import AppLaunchModal from "./components/AppLaunchModal";
 import { FadeUp, SlideLeft, SlideRight, ScaleIn } from "./components/AnimatedSection";
 import "./landing.css";
 
@@ -47,6 +48,7 @@ export default async function HomePage() {
     <div className="lp">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <LandingClient count={count} />
+      <AppLaunchModal />
 
       {/* ══════════════════════════════════════
           1. HEADER
@@ -62,6 +64,11 @@ export default async function HomePage() {
             <li><a href="#about">Про нас</a></li>
             <li><Link href="/lakes" className="l-nav-accent">Каталог озер</Link></li>
             <li><Link href="/lakes/add" className="l-nav-accent">Додати озеро</Link></li>
+            <li>
+              <button type="button" className="l-nav-cta" data-app-launch-trigger data-app-launch-source="header">
+                Отримати сповіщення
+              </button>
+            </li>
           </ul>
 
           <button className="l-burger" id="l-burger" aria-label="Меню">
@@ -98,9 +105,9 @@ export default async function HomePage() {
                 <Link href="/lakes" className="l-btn-primary">
                   Переглянути озера →
                 </Link>
-                <a href="#download" className="l-btn-outline">
-                  Скачати застосунок
-                </a>
+                <button type="button" className="l-btn-outline" data-app-launch-trigger data-app-launch-source="hero">
+                  Отримати сповіщення про застосунок
+                </button>
               </div>
 
               {/* Feature icons */}
@@ -337,24 +344,39 @@ export default async function HomePage() {
             {/* Text + store buttons */}
             <div className="l-cta-text">
               <h2 className="l-cta-title">
-                Скачай додаток OZERA<br />
-                <span className="l-accent">і лови більше риби!</span>
+                Застосунок OZERA скоро{" "}<br />
+                <span className="l-accent">на iOS та Android</span>
               </h2>
-              <div className="l-store-buttons">
-                <a href="#" className="l-store-btn l-store-apple">
-                  <span className="l-store-icon">🍎</span>
-                  <span>
-                    <span className="l-store-sub">Завантажити в</span>
-                    <span className="l-store-name">App Store</span>
+              <p className="l-cta-subtitle">
+                Готуємо мобільний застосунок, щоб озера, ціни, контакти та навігація були під рукою на риболовлі.
+              </p>
+              <div className="l-launch-actions">
+                <button type="button" className="l-launch-btn" data-app-launch-trigger data-app-launch-source="landing-footer">
+                  <span className="l-launch-btn-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
                   </span>
-                </a>
-                <a href="/ozera-release.apk" className="l-store-btn l-store-google">
-                  <span className="l-store-icon">▶</span>
-                  <span>
-                    <span className="l-store-sub">Завантажити в</span>
-                    <span className="l-store-name">Google Play</span>
+                  Повідомити про запуск
+                </button>
+                <span className="l-launch-note">Без спаму. Напишемо, коли застосунок буде доступний.</span>
+              </div>
+              <div className="l-platform-chips" aria-label="Платформи застосунку">
+                {["iOS", "Android"].map((platform) => (
+                  <span className="l-platform-chip" key={platform} aria-label={`${platform} готується`}>
+                    <span className="l-platform-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="12" height="20" x="6" y="2" rx="2" ry="2" />
+                        <path d="M11 18h2" />
+                      </svg>
+                    </span>
+                    <span>
+                      <span className="l-platform-name">{platform}</span>
+                      <span className="l-platform-status">готується</span>
+                    </span>
                   </span>
-                </a>
+                ))}
               </div>
             </div>
 
