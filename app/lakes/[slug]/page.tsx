@@ -328,9 +328,7 @@ export default async function LakePage({
               <div className="lake-app-promo__badge">● Скоро</div>
 
               <h2 className="lake-app-promo__title">
-                Застосунок OZERA скоро
-                <br />
-                <span className="accent">на iOS та Android</span>
+                Застосунок OZERA скоро <span className="accent">на iOS та Android</span>
               </h2>
 
               <p className="lake-app-promo__description">
@@ -361,15 +359,35 @@ export default async function LakePage({
               data-app-launch-trigger
               data-app-launch-source="lake-detail"
             >
+              <span className="lake-app-promo__button-icon" aria-hidden="true">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+              </span>
               Повідомити про запуск
             </button>
 
             <div className="lake-app-promo__platforms">
               <div className="lake-app-promo__platform">
-                iOS <span>· готується</span>
+                <svg className="lake-app-promo__platform-icon" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M16.4 2.2c.1 1.2-.4 2.3-1.1 3.1-.8.9-2 1.5-3.1 1.4-.1-1.1.4-2.2 1.1-3 .8-.9 2-1.5 3.1-1.5ZM20.1 17.1c-.5 1.2-.8 1.7-1.5 2.8-1 1.5-2.3 3.3-4 3.3-1.5 0-1.9-1-3.9-1s-2.5 1-3.9 1c-1.7 0-3-1.6-4-3.1-2.7-4.1-3-9 .3-11.5 1.2-.9 2.7-1.4 4.2-1.4 1.6 0 2.7 1 3.6 1 .8 0 2.3-1.2 4-1 1.4.1 2.7.6 3.7 1.7-3.2 1.8-2.7 6.3 1.5 8.2Z" />
+                </svg>
+                <span>iOS</span>
+                <span className="muted">· готується</span>
               </div>
               <div className="lake-app-promo__platform">
-                Android <span>· готується</span>
+                <svg className="lake-app-promo__platform-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M7 9h10v8a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9Z" />
+                  <path d="M8 9 6.5 6.5" />
+                  <path d="M16 9l1.5-2.5" />
+                  <path d="M9 13h.01" />
+                  <path d="M15 13h.01" />
+                  <path d="M5 10v6" />
+                  <path d="M19 10v6" />
+                </svg>
+                <span>Android</span>
+                <span className="muted">· готується</span>
               </div>
             </div>
           </div>

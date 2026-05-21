@@ -1353,6 +1353,366 @@
   }
 }
 
+/* Lake App Promo Redesign */
+.lake-app-promo {
+  max-width: 1140px;
+  box-sizing: content-box;
+  margin: 56px auto 72px;
+  padding: 0 24px;
+}
+
+.lake-app-promo__card {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 56px;
+  align-items: center;
+  min-height: 220px;
+  padding: 32px 40px;
+  border: 1px solid rgba(255,255,255,0.11);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 12% 50%, rgba(72,112,188,0.24), transparent 36%),
+    radial-gradient(circle at 85% 40%, rgba(245,200,75,0.05), transparent 30%),
+    linear-gradient(135deg, rgba(27,45,80,0.78), rgba(13,26,49,0.84));
+  box-shadow:
+    0 24px 70px rgba(0,0,0,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.lake-app-promo__card::before {
+  content: "";
+  position: absolute;
+  left: -120px;
+  top: 50%;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: rgba(72, 112, 188, 0.16);
+  filter: blur(60px);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.lake-app-promo__card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), transparent 30%);
+  pointer-events: none;
+}
+
+.lake-app-promo__left,
+.lake-app-promo__right {
+  position: relative;
+  z-index: 1;
+}
+
+.lake-app-promo__left {
+  display: grid;
+  grid-template-columns: 136px minmax(0, 1fr);
+  gap: 32px;
+  align-items: center;
+  min-width: 0;
+}
+
+.lake-app-promo__visual {
+  position: relative;
+  width: 136px;
+  height: 160px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(72,112,188,0.24), transparent 45%),
+    linear-gradient(180deg, rgba(26,48,86,0.76), rgba(8,18,34,0.9));
+  box-shadow:
+    0 18px 44px rgba(0,0,0,0.24),
+    0 0 60px rgba(72,112,188,0.16);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.lake-app-promo__visual::before {
+  content: "";
+  position: absolute;
+  inset: 18px 18px auto;
+  height: 64px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 78% 20%, rgba(245, 200, 75, 0.16), transparent 12%),
+    linear-gradient(180deg, rgba(72, 112, 188, 0.22), rgba(6, 15, 31, 0.18));
+  transform: none;
+}
+
+.lake-app-promo__visual-badge {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(245, 200, 75, 0.25);
+  border-radius: 18px;
+  background: rgba(245, 200, 75, 0.10);
+  color: #F5C84B;
+  font-size: 32px;
+  font-weight: 800;
+  box-shadow: none;
+}
+
+.lake-app-promo__content {
+  min-width: 0;
+  max-width: none;
+  display: block;
+}
+
+.lake-app-promo__badge {
+  width: fit-content;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid rgba(245, 200, 75, 0.34);
+  border-radius: 999px;
+  background: rgba(245, 200, 75, 0.06);
+  color: #F5C84B;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lake-app-promo__title {
+  max-width: 620px;
+  margin: 14px 0 0;
+  color: #FFFFFF;
+  font-size: 30px;
+  line-height: 1.12;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.lake-app-promo__title .accent {
+  color: #F5C84B;
+}
+
+.lake-app-promo__description {
+  margin-top: 10px;
+  color: #C8D0E0;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.lake-app-promo__chips {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  max-width: none;
+  margin-top: 20px;
+  overflow: visible;
+}
+
+.lake-app-promo__chip {
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 15px;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.035);
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: none;
+}
+
+.lake-app-promo__chip:hover {
+  background: rgba(255,255,255,0.035);
+  border-color: rgba(255,255,255,0.10);
+}
+
+.lake-app-promo__chip-icon {
+  color: #F5C84B;
+  font-size: 16px;
+}
+
+.lake-app-promo__right {
+  position: relative;
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+  justify-content: center;
+  align-self: center;
+  padding-left: 56px;
+  border-left: none;
+}
+
+.lake-app-promo__right::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20px;
+  bottom: 20px;
+  width: 1px;
+  display: block;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.12), transparent);
+}
+
+.lake-app-promo__button-icon,
+.lake-app-promo__platform-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.lake-app-promo__button {
+  width: 100%;
+  height: 58px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 14px;
+  background: #F5C84B;
+  color: #07111F;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: none;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.lake-app-promo__button:hover {
+  transform: translateY(-1px);
+  background: #FFD86B;
+  box-shadow: 0 14px 30px rgba(245, 200, 75, 0.24);
+}
+
+.lake-app-promo__button:active {
+  transform: translateY(0);
+}
+
+.lake-app-promo__platforms {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin-top: 0;
+}
+
+.lake-app-promo__platform {
+  min-width: 0;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 16px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.035);
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  transition: none;
+}
+
+.lake-app-promo__platform:hover {
+  background: rgba(255,255,255,0.035);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.lake-app-promo__platform span {
+  display: inline;
+}
+
+.lake-app-promo__platform .muted {
+  color: #8F9BB3;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .lake-app-promo__card {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 28px;
+  }
+
+  .lake-app-promo__right {
+    width: 100%;
+    padding-left: 0;
+    padding-top: 24px;
+    border-left: none;
+    border-top: 1px solid rgba(255,255,255,0.10);
+  }
+
+  .lake-app-promo__right::before {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .lake-app-promo {
+    margin-top: 36px;
+    padding: 0 16px;
+  }
+
+  .lake-app-promo__card {
+    border-radius: 24px;
+    padding: 24px;
+  }
+
+  .lake-app-promo__left {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .lake-app-promo__visual {
+    display: none;
+  }
+
+  .lake-app-promo__title {
+    font-size: 26px;
+  }
+
+  .lake-app-promo__chips {
+    flex-direction: column;
+  }
+
+  .lake-app-promo__chip {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .lake-app-promo__platforms {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Quick stats row */
 .dk-stats-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
 .dk-stat {
