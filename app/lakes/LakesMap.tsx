@@ -166,14 +166,27 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
         marker.bindTooltip(tooltipHtml, {
           direction: "top", offset: [0, -8], opacity: 1,
           className: "lake-pin-tooltip", sticky: false,
+          interactive: true,
         });
-        marker.bindPopup(tooltipHtml, {
-          maxWidth: 200, minWidth: 200, autoPan: false,
-          closeButton: true, className: "lake-pin-popup",
+
+        // Keep tooltip open while cursor travels from marker → card
+        let hideTimer: ReturnType<typeof setTimeout> | null = null;
+        marker.on("mouseout", () => {
+          hideTimer = setTimeout(() => marker.closeTooltip(), 300);
         });
+        marker.on("mouseover", () => {
+          if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+        });
+        marker.on("tooltipopen", (e: any) => {
+          const el = e.tooltip.getElement?.();
+          if (!el) return;
+          el.addEventListener("mouseenter", () => {
+            if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+          });
+          el.addEventListener("mouseleave", () => marker.closeTooltip());
+        });
+
         marker.on("click", () => {
-          marker.closeTooltip();
-          marker.openPopup();
           onMarkerClickRef.current?.(lake.id);
         });
         marker.addTo(layer);
