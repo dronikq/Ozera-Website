@@ -11,6 +11,7 @@ import AIAdvisor from "../[id]/AIAdvisor";
 import LakeContactsPanel from "../[id]/LakeContactsPanel";
 import LakeSchemeViewer from "../[id]/LakeSchemeViewer";
 import LakeDetailTabs from "../[id]/LakeDetailTabs";
+import AppLaunchModal from "@/app/components/AppLaunchModal";
 import "../lakes.css";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -130,6 +131,7 @@ export default async function LakePage({
 
   return (
     <div className="dk-page">
+      <AppLaunchModal />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script
         type="application/ld+json"
@@ -340,26 +342,37 @@ export default async function LakePage({
           <div className="dk-app-cta-inner">
             <div>
               <h2 className="dk-app-cta-title">
-                Скачай додаток OZERA<br />
-                <span style={{ color: "var(--accent)" }}>і лови більше риби!</span>
+                Застосунок OZERA скоро{" "}<br />
+                <span style={{ color: "var(--accent)" }}>на iOS та Android</span>
               </h2>
-              <p className="dk-app-cta-sub">Обрані озера, push-сповіщення та офлайн-режим</p>
+              <p className="dk-app-cta-sub">Обрані озера, push-сповіщення та навігація в одному місці</p>
             </div>
-            <div className="dk-store-btns">
-              <a href="#" className="dk-btn-store">
-                <span className="dk-btn-store-icon">🍑</span>
-                <span>
-                  <span className="dk-btn-store-top">Завантажити в</span>
-                  <span className="dk-btn-store-main">App Store</span>
+            <div className="dk-app-actions">
+              <button type="button" className="dk-launch-btn" data-app-launch-trigger data-app-launch-source="lake-detail">
+                <span className="dk-launch-btn-icon" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
                 </span>
-              </a>
-              <a href="/ozera-release.apk" className="dk-btn-store">
-                <span className="dk-btn-store-icon">▶</span>
-                <span>
-                  <span className="dk-btn-store-top">Завантажити в</span>
-                  <span className="dk-btn-store-main">Google Play</span>
-                </span>
-              </a>
+                Повідомити про запуск
+              </button>
+              <div className="dk-platform-chips" aria-label="Платформи застосунку">
+                {["iOS", "Android"].map((platform) => (
+                  <span className="dk-platform-chip" key={platform} aria-label={`${platform} готується`}>
+                    <span className="dk-platform-icon" aria-hidden="true">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="12" height="20" x="6" y="2" rx="2" ry="2" />
+                        <path d="M11 18h2" />
+                      </svg>
+                    </span>
+                    <span>
+                      <span className="dk-platform-name">{platform}</span>
+                      <span className="dk-platform-status">готується</span>
+                    </span>
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
