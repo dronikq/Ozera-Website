@@ -34,6 +34,53 @@ const PHONE_CARDS = [
   { name: "Дзеркальне",    region: "Полтавська обл.", fish: "Короп, Білий амур", img: "https://plus.unsplash.com/premium_photo-1727538367105-13590ea2fec1?w=120&h=90&fit=crop&auto=format&q=80" },
 ];
 
+const FEATURE_CARDS = [
+  {
+    title: "Ціни та контакти в одному місці",
+    text: "Перевіряй умови, графік і контакти перед поїздкою.",
+    icon: "info",
+  },
+  {
+    title: "Риба, фото та правила",
+    text: "Дивись, яка риба є в озері та які діють правила лову.",
+    icon: "fish",
+  },
+  {
+    title: "Навігація в один клік",
+    text: "Відкривай маршрут у Google Maps або Waze без зайвого пошуку.",
+    icon: "route",
+  },
+] as const;
+
+function FeatureIcon({ type }: { type: "info" | "fish" | "route" }) {
+  if (type === "fish") {
+    return (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 12c3-4 8-6 13-5 1.6.3 3 1 4 2-1 1-2.4 1.7-4 2-5 1-10-1-13-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M20 8.5 22 6v4l-2-1.5Z" fill="currentColor" />
+      </svg>
+    );
+  }
+
+  if (type === "route") {
+    return (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 18c2.2 0 3.5-1.8 5.5-4.5S15.3 9 18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        <path d="M15 6l6 3-3 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="6" cy="18" r="1.8" fill="currentColor" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+      <path d="M12 10v5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M12 7.5h.01" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export default async function HomePage() {
   const [count, popularLakes] = await Promise.all([getLakesCount(), getPopularLakes()]);
 
@@ -77,13 +124,7 @@ export default async function HomePage() {
   const featuredLakeCards = popularLakes.length > 0
     ? popularLakes.slice(0, 4).map((lake) => toLakeCardData({
         href: `/lakes/${getLakeRouteSlug(lake)}`,
-        name: lake.name,
-        image_url: lake.image_url,
-        area_ha: lake.area_ha,
-        city: lake.city,
-        location_text: lake.location_text,
-        fish_species: lake.fish_species,
-        price_uah: lake.price_uah,
+        ...lake,
       }))
     : [
         {
@@ -213,6 +254,29 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <section className="l-hero-features-section">
+        <div className="l-container">
+          <FadeUp>
+            <div className="l-benefits-grid">
+              {FEATURE_CARDS.map((card) => (
+                <article className="l-benefit-card" key={card.title}>
+                  <div className="l-benefit-card-inner">
+                    <span className="l-benefit-icon" aria-hidden="true">
+                      <FeatureIcon type={card.icon} />
+                    </span>
+                    <div className="l-benefit-body">
+                      <strong className="l-benefit-title">{card.title}</strong>
+                      <p className="l-benefit-text">{card.text}</p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
       <section className="l-compare-section" id="about">
         <div className="l-container">
           <FadeUp>

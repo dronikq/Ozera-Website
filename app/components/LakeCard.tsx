@@ -16,7 +16,52 @@ export type LakeCardData = {
   priceUah: number | null;
 };
 
-export function toLakeCardData(lake: Pick<Lake, "name" | "image_url" | "area_ha" | "city" | "location_text" | "fish_species" | "price_uah"> & { href: string }): LakeCardData {
+type LakeCardSource = {
+  href: string;
+  name: string;
+  image_url: string | null;
+  area_ha: number | null;
+  city: string | null;
+  location_text: string | null;
+  fish_species: string[] | null;
+  price_uah?: number | string | null;
+  price?: number | string | null;
+  cost?: number | string | null;
+  extra?: Record<string, unknown> | null;
+};
+
+function toNumber(value: unknown): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string") {
+    const normalized = value.replace(/\s/g, "").replace(",", ".");
+    const match = normalized.match(/-?\d+(\.\d+)?/);
+    if (!match) return null;
+    const parsed = Number(match[0]);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
+function resolvePrice(source: LakeCardSource): number | null {
+  const directPrice =
+    toNumber(source.price_uah) ??
+    toNumber(source.price) ??
+    toNumber(source.cost);
+
+  if (directPrice != null) return directPrice;
+
+  const extra = source.extra;
+  if (!extra) return null;
+
+  return (
+    toNumber(extra.price) ??
+    toNumber(extra.cost) ??
+    toNumber(extra.price_uah) ??
+    null
+  );
+}
+
+export function toLakeCardData(lake: LakeCardSource): LakeCardData {
   return {
     href: lake.href,
     name: lake.name,
@@ -25,7 +70,7 @@ export function toLakeCardData(lake: Pick<Lake, "name" | "image_url" | "area_ha"
     city: lake.city,
     locationText: lake.location_text,
     fishSpecies: lake.fish_species ?? [],
-    priceUah: lake.price_uah,
+    priceUah: resolvePrice(lake),
   };
 }
 
@@ -135,7 +180,7 @@ export default function LakeCard({ lake, onMouseEnter, onMouseLeave }: Props) {
             {lake.priceUah != null ? (
               <>
                 <span className="lake-card__price-label">Ціна</span>
-                <strong>від {formatPrice(lake.priceUah)} грн</strong>
+                <strong>{formatPrice(lake.priceUah)} грн</strong>
               </>
             ) : (
               <span className="lake-card__price-muted">Ціна уточнюється</span>

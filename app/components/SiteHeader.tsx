@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -25,7 +25,7 @@ const NAV_LINKS = [
 export default function SiteHeader({ breadcrumbs }: Props) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDetailsElement | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -34,7 +34,7 @@ export default function SiteHeader({ breadcrumbs }: Props) {
   }, []);
 
   useEffect(() => {
-    setMenuOpen(false);
+    if (mobileMenuRef.current) mobileMenuRef.current.open = false;
   }, [pathname]);
 
   const isActive = (href: string) => {
@@ -43,57 +43,114 @@ export default function SiteHeader({ breadcrumbs }: Props) {
     return false;
   };
 
+  const closeMobileMenu = () => {
+    if (mobileMenuRef.current) mobileMenuRef.current.open = false;
+  };
+
   return (
     <>
       <header className={`l-header${scrolled ? " scrolled" : ""}`}>
         <nav className="l-nav">
-          <Link href="/" className="l-logo" onClick={() => setMenuOpen(false)}>
+          <Link href="/" className="l-logo" onClick={closeMobileMenu}>
             <Image src="/icon.png" alt="OZERA" width={42} height={42} className="l-logo-img" />
             <span>OZERA</span>
           </Link>
 
-          <ul className={`l-nav-links${menuOpen ? " open" : ""}`}>
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={`l-nav-link${isActive(link.href) ? " l-nav-link-active" : ""}`}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-            <li className="l-nav-divider" aria-hidden="true" />
-            <li className="l-nav-cta-item">
+          <div className="l-nav-desktop">
+            <ul className="l-nav-links">
+              {NAV_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={`l-nav-link${isActive(link.href) ? " l-nav-link-active" : ""}`}
+                    onClick={closeMobileMenu}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <div className="l-nav-actions">
+              <div className="l-nav-divider" aria-hidden="true" />
               <button
                 type="button"
                 className="l-nav-cta"
                 data-app-launch-trigger
                 data-app-launch-source="header"
-                onClick={() => setMenuOpen(false)}
+                onClick={closeMobileMenu}
               >
                 <span className="l-nav-cta-icon" aria-hidden="true">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
                     <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                   </svg>
                 </span>
                 Повідомити про запуск
               </button>
-            </li>
-          </ul>
+            </div>
+          </div>
 
-          <button
-            className="l-burger"
-            aria-label="Меню"
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((v) => !v)}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
+          <details className="l-nav-menu" ref={mobileMenuRef}>
+            <summary className="l-burger" aria-label="Меню">
+              <span />
+              <span />
+              <span />
+            </summary>
+
+            <div className="l-nav-panel">
+              <ul className="l-nav-links">
+                {NAV_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className={`l-nav-link${isActive(link.href) ? " l-nav-link-active" : ""}`}
+                      onClick={closeMobileMenu}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="l-nav-actions">
+                <div className="l-nav-divider" aria-hidden="true" />
+                <button
+                  type="button"
+                  className="l-nav-cta"
+                  data-app-launch-trigger
+                  data-app-launch-source="header"
+                  onClick={closeMobileMenu}
+                >
+                  <span className="l-nav-cta-icon" aria-hidden="true">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+                  </span>
+                  Повідомити про запуск
+                </button>
+              </div>
+            </div>
+          </details>
         </nav>
       </header>
 

@@ -152,13 +152,7 @@ export default function CatalogView({ lakes, total }: Props) {
               key={lake.id}
               lake={toLakeCardData({
                 href: `/lakes/${getLakeRouteSlug(lake)}`,
-                name: lake.name,
-                image_url: lake.image_url,
-                area_ha: lake.area_ha,
-                city: lake.city,
-                location_text: lake.location_text,
-                fish_species: lake.fish_species,
-                price_uah: lake.price_uah,
+                ...lake,
               })}
               onMouseEnter={() => setHoveredId(lake.id)}
               onMouseLeave={() => setHoveredId(null)}

@@ -240,7 +240,7 @@ export default function AILakePicker({ lakes }: { lakes: Lake[] }) {
     return (
       <section className="dk-ai-picker oz-card">
         <div className="dk-ai-picker__glow" aria-hidden="true" />
-        <div className="dk-ai-picker__intro">
+        <div className="dk-ai-picker__intro dk-ai-picker__intro--clean">
           <div className="dk-ai-picker__copy">
             <span className="dk-ai-picker__badge">
               <SparklesIcon />
@@ -248,41 +248,13 @@ export default function AILakePicker({ lakes }: { lakes: Lake[] }) {
             </span>
             <h2>Не знаєш, куди поїхати?</h2>
             <p>Відповідай на 2 питання — підберемо озера під твою рибу, локацію і формат відпочинку.</p>
-            <div className="dk-ai-picker__meta">
-              <span>
-                <PinIcon />
-                По області
-              </span>
-              <span>
-                <FishIcon />
-                По рибі
-              </span>
-              <span>
-                <SparklesIcon />
-                За умовами
-              </span>
-            </div>
           </div>
 
-          <div className="dk-ai-picker__visual" aria-hidden="true">
-            <div className="dk-ai-picker__visual-card">
-              <div className="dk-ai-picker__visual-top">
-                <span className="dk-ai-picker__visual-badge">OZERA</span>
-                <span className="dk-ai-picker__visual-small">2 кроки до ідеального озера</span>
-              </div>
-              <div className="dk-ai-picker__visual-lines">
-                <span />
-                <span />
-                <span />
-              </div>
-              <div className="dk-ai-picker__visual-chip">
-                <PinIcon />
-                Київська область
-              </div>
-            </div>
-          </div>
-
-          <button type="button" className="oz-btn-primary dk-ai-picker__button" onClick={() => setStep("region")}>
+          <button
+            type="button"
+            className="oz-btn-primary dk-ai-picker__button dk-ai-picker__button--clean"
+            onClick={() => setStep("region")}
+          >
             Підібрати озеро
           </button>
         </div>

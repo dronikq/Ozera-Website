@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { supabase, type Lake } from "@/lib/supabase";
 import SiteHeader from "@/app/components/SiteHeader";
+import CatalogSearch from "./CatalogSearch";
 import AILakePicker from "./AILakePicker";
 import CatalogView from "./CatalogView";
 import DarkFiltersBar from "./DarkFiltersBar";
@@ -90,21 +91,18 @@ export default async function LakesPage({
                 <span className="dk-catalog-stats-badge">{lakes.length} озеро знайдено</span>
                 <h1>Каталог платних озер</h1>
                 <p>Обери область, рибу або знайди озеро за назвою.</p>
-              </div>
-              <div className="dk-catalog-hero__aside">
-                <p className="dk-catalog-hero__aside-label">Швидкий пошук</p>
-                <p className="dk-catalog-hero__aside-text">
-                  Відкривай озера з фото, цінами, рибою та маршрутом в один клік.
-                </p>
+                <Suspense fallback={null}>
+                  <CatalogSearch currentQ={q} hasFilters={Boolean(q || region || fish)} />
+                </Suspense>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="dk-catalog-section">
+        <section className="dk-catalog-section dk-catalog-section--filters">
           <div className="dk-container">
             <Suspense fallback={null}>
-              <DarkFiltersBar currentQ={q} currentRegion={region} currentFish={fish} />
+              <DarkFiltersBar currentRegion={region} currentFish={fish} />
             </Suspense>
           </div>
         </section>

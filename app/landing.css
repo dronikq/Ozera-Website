@@ -148,6 +148,13 @@
   flex-shrink: 0;
   box-shadow: 0 8px 18px rgba(11, 47, 74, 0.14);
 }
+.l-nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1;
+  min-width: 0;
+}
 .l-nav-links {
   display: flex;
   align-items: center;
@@ -189,12 +196,20 @@
   border-radius: 999px;
   background: rgba(30, 95, 122, 0.42);
 }
+.l-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-shrink: 0;
+}
+.l-nav-menu {
+  display: none;
+}
 .l-nav-divider {
   width: 1px;
   height: 32px;
   background: rgba(11, 47, 74, 0.10);
 }
-.l-nav-cta-item { margin-left: auto; }
 .l-nav-cta {
   height: 52px;
   display: inline-flex;
@@ -234,7 +249,12 @@
   border-radius: 12px; padding: 0;
   cursor: pointer;
 }
+.l-nav-menu > summary {
+  list-style: none;
+}
 .l-burger span { display: block; width: 24px; height: 2px; background: var(--color-primary); border-radius: 2px; transition: all 0.3s; }
+.l-burger::-webkit-details-marker { display: none; }
+.l-burger::marker { content: ""; }
 
 /* ── BREADCRUMB BAR (used on internal pages below the header) ── */
 .l-breadcrumb-bar {
@@ -1609,7 +1629,18 @@
     width: 38px;
     height: 38px;
   }
-  .l-nav-links {
+  .l-nav-desktop {
+    display: none;
+  }
+  .l-nav-menu {
+    display: block;
+    margin-left: auto;
+    position: relative;
+  }
+  .l-nav-menu[open] .l-nav-panel {
+    display: flex;
+  }
+  .l-nav-panel {
     display: none;
     position: absolute;
     top: 72px;
@@ -1627,7 +1658,10 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
-  .l-nav-links.open { display: flex; }
+  .l-nav-links {
+    flex-direction: column;
+    align-items: stretch;
+  }
   .l-nav-links li { display: flex; }
   .l-nav-links .l-nav-link {
     width: 100%;
@@ -1640,10 +1674,11 @@
   }
   .l-nav-links .l-nav-link-active::after { display: none; }
   .l-nav-divider { display: none !important; }
-  .l-nav-cta-item {
-    margin-left: 0;
-    margin-top: 4px;
+  .l-nav-actions {
     width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
   }
   .l-nav-cta {
     width: 100%;
@@ -2013,6 +2048,10 @@
   color: #7A4E00;
   font-size: 12px;
   font-weight: 700;
+}
+
+.l-hero-features-section {
+  padding: 0 0 8px;
 }
 
 .l-benefits-grid {
