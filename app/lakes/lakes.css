@@ -743,7 +743,7 @@
 /* Lake App Promo Card */
 .lake-app-promo {
   max-width: 1140px;
-  margin: 60px auto;
+  margin: 60px auto 72px;
   padding: 0 24px;
 }
 
@@ -752,12 +752,13 @@
   overflow: hidden;
 
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 380px;
-  gap: 48px;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 56px;
   align-items: center;
 
   padding: 40px 48px;
   min-height: 240px;
+  width: 100%;
 
   border-radius: 28px;
 
@@ -822,17 +823,25 @@
 
 .lake-app-promo__left {
   display: grid;
-  grid-template-columns: 110px minmax(0, 1fr);
+  grid-template-columns: 120px minmax(0, 1fr);
   gap: 32px;
-  align-items: flex-start;
-  padding-top: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.lake-app-promo__content {
+  min-width: 0;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .lake-app-promo__visual {
   position: relative;
 
-  width: 110px;
-  height: 200px;
+  width: 120px;
+  height: 150px;
 
   border-radius: 26px;
   flex-shrink: 0;
@@ -888,12 +897,13 @@
 }
 
 .lake-app-promo__badge {
+  width: fit-content;
   display: inline-flex;
   align-items: center;
   gap: 5px;
 
-  height: 28px;
-  padding: 0 11px;
+  height: 30px;
+  padding: 0 12px;
 
   border-radius: 999px;
 
@@ -910,22 +920,16 @@
   margin: 0;
 }
 
-.lake-app-promo__content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
 .lake-app-promo__title {
   margin: 0;
 
   color: #FFFFFF;
 
   font-size: 30px;
-  line-height: 1.20;
+  line-height: 1.12;
   font-weight: 800;
   letter-spacing: -0.02em;
-  max-width: 100%;
+  max-width: 540px;
 }
 
 .lake-app-promo__title .accent {
@@ -946,9 +950,11 @@
 .lake-app-promo__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
 
   margin-top: 20px;
+  max-width: 520px;
+  justify-content: flex-start;
 }
 
 .lake-app-promo__chip {
@@ -956,8 +962,8 @@
   align-items: center;
   gap: 8px;
 
-  height: 36px;
-  padding: 0 14px;
+  height: 34px;
+  padding: 0 12px;
 
   border-radius: 999px;
 
@@ -980,7 +986,7 @@
 
 .lake-app-promo__chip-icon {
   color: #F5C84B;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .lake-app-promo__right {
@@ -990,8 +996,11 @@
   flex-direction: column;
   gap: 18px;
   align-items: stretch;
+  align-self: center;
+  justify-content: center;
 
-  padding-left: 36px;
+  width: 360px;
+  padding-left: 56px;
 }
 
 .lake-app-promo__right::before {
@@ -1030,6 +1039,8 @@
 
   cursor: pointer;
 
+  box-shadow: 0 10px 24px rgba(245, 200, 75, 0.16);
+
   transition:
     transform 0.2s ease,
     background 0.2s ease,
@@ -1039,7 +1050,7 @@
 .lake-app-promo__button:hover {
   transform: translateY(-2px);
   background: #FFD86B;
-  box-shadow: 0 16px 40px rgba(245, 200, 75, 0.28);
+  box-shadow: 0 14px 30px rgba(245, 200, 75, 0.24);
 }
 
 .lake-app-promo__button:active {
@@ -1049,18 +1060,19 @@
 .lake-app-promo__platforms {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 12px;
   margin-top: 8px;
 }
 
 .lake-app-promo__platform {
-  height: 52px;
+  height: 50px;
+  padding: 0 16px;
 
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  flex-direction: column;
+  gap: 6px;
 
   border-radius: 14px;
 
@@ -1071,6 +1083,8 @@
 
   font-size: 14px;
   font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
 
   transition: all 0.2s ease;
 }
@@ -1080,33 +1094,11 @@
   border-color: rgba(255,255,255,0.18);
 }
 
-.lake-app-promo__platform-icon {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.lake-app-promo__platform-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.lake-app-promo__platform-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: #FFFFFF;
-}
-
-.lake-app-promo__platform-status {
+.lake-app-promo__platform span {
+  display: inline;
   color: #8F9BB3;
+  font-size: 14px;
   font-weight: 500;
-  font-size: 11px;
-  letter-spacing: 0.02em;
 }
 
 /* Lake App Promo Mobile Adaptation */
@@ -1119,31 +1111,44 @@
   }
 
   .lake-app-promo__left {
-    grid-template-columns: 100px minmax(0, 1fr);
-    gap: 24px;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 28px;
     align-items: flex-start;
   }
 
   .lake-app-promo__visual {
-    width: 100px;
-    height: 180px;
+    width: 110px;
+    height: 140px;
+  }
+
+  .lake-app-promo__content {
+    max-width: 100%;
+  }
+
+  .lake-app-promo__title {
+    max-width: 100%;
   }
 
   .lake-app-promo__right {
+    width: 100%;
     padding-left: 0;
     gap: 16px;
-    border: none;
-    padding-top: 0;
+    align-self: auto;
+    justify-content: auto;
   }
 
   .lake-app-promo__right::before {
     display: none;
   }
+
+  .lake-app-promo__platforms {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 640px) {
   .lake-app-promo {
-    margin: 48px auto;
+    margin: 48px auto 60px;
     padding: 0 16px;
   }
 
@@ -1159,18 +1164,22 @@
     grid-template-columns: 90px minmax(0, 1fr);
     gap: 20px;
     align-items: flex-start;
-    padding-top: 0;
+  }
+
+  .lake-app-promo__content {
+    max-width: 100%;
   }
 
   .lake-app-promo__visual {
     width: 90px;
-    height: 160px;
+    height: 130px;
     border-radius: 20px;
   }
 
   .lake-app-promo__title {
     font-size: 24px;
-    line-height: 1.25;
+    line-height: 1.2;
+    max-width: 100%;
   }
 
   .lake-app-promo__description {
@@ -1196,12 +1205,13 @@
 
   .lake-app-promo__platforms {
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 10px;
   }
 
   .lake-app-promo__platform {
     height: 48px;
     font-size: 13px;
+    padding: 0 12px;
   }
 }
 
