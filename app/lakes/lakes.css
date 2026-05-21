@@ -329,7 +329,7 @@
 .dk-empty-sub { font-size: 15px; color: var(--text-muted); }
 
 /* Map overlay */
-.dk-map-overlay { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; background: var(--bg-primary); }
+.dk-map-overlay { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; background: var(--bg-primary); }
 .dk-map-topbar {
   flex-shrink: 0;
   background: rgba(11,31,58,0.98);
