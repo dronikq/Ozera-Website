@@ -160,30 +160,39 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
           ? { radius: 12, fillColor: "#f5c842", color: "#0f2a4a", weight: 3, fillOpacity: 1   }
           : { radius: 9,  fillColor: "#f5c842", color: "#0f2a4a", weight: 2, fillOpacity: 0.9 };
 
-        const marker      = L.circleMarker([lat, lng], style);
-        const tooltipHtml = buildTooltipHtml(lake);
+        const marker   = L.circleMarker([lat, lng], style);
+        const cardHtml = buildTooltipHtml(lake);
 
-        marker.bindTooltip(tooltipHtml, {
-          direction: "top", offset: [0, -8], opacity: 1,
-          className: "lake-pin-tooltip", sticky: false,
-          interactive: true,
+        // Use popup (not tooltip) for hover card — Leaflet never auto-closes
+        // a popup on mouseout, so we can safely delay the close ourselves.
+        marker.bindPopup(cardHtml, {
+          maxWidth: 200, minWidth: 200,
+          autoPan: false,
+          closeButton: false,
+          className: "lake-pin-tooltip",
+          autoClose: true,    // opening another popup closes this one
+          closeOnClick: false,
+          offset: [0, -6],
         });
 
-        // Keep tooltip open while cursor travels from marker → card
         let hideTimer: ReturnType<typeof setTimeout> | null = null;
-        marker.on("mouseout", () => {
-          hideTimer = setTimeout(() => marker.closeTooltip(), 300);
-        });
+
         marker.on("mouseover", () => {
           if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+          marker.openPopup();
         });
-        marker.on("tooltipopen", (e: any) => {
-          const el = e.tooltip.getElement?.();
+        marker.on("mouseout", () => {
+          hideTimer = setTimeout(() => marker.closePopup(), 300);
+        });
+
+        // Once popup is in the DOM, attach enter/leave to keep it alive
+        marker.on("popupopen", (e: any) => {
+          const el = e.popup.getElement?.();
           if (!el) return;
           el.addEventListener("mouseenter", () => {
             if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
           });
-          el.addEventListener("mouseleave", () => marker.closeTooltip());
+          el.addEventListener("mouseleave", () => marker.closePopup());
         });
 
         marker.on("click", () => {
