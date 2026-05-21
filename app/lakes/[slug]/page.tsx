@@ -324,41 +324,58 @@ export default async function LakePage({
         </div>
       </div>
 
-      <section className="dk-app-cta">
-        <div className="dk-container">
-          <div className="dk-app-cta-inner">
-            <div>
-              <h2 className="dk-app-cta-title">
-                Застосунок OZERA скоро{" "}<br />
-                <span style={{ color: "var(--accent)" }}>на iOS та Android</span>
-              </h2>
-              <p className="dk-app-cta-sub">Обрані озера, push-сповіщення та навігація в одному місці</p>
+      <section className="lake-app-promo">
+        <div className="lake-app-promo__card">
+          <div className="lake-app-promo__left">
+            <div className="lake-app-promo__visual" aria-hidden="true">
+              <div className="lake-app-promo__visual-badge">O</div>
             </div>
-            <div className="dk-app-actions">
-              <button type="button" className="dk-launch-btn" data-app-launch-trigger data-app-launch-source="lake-detail">
-                <span className="dk-launch-btn-icon" aria-hidden="true">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                  </svg>
-                </span>
-                Повідомити про запуск
-              </button>
-              <div className="dk-platform-chips" aria-label="Платформи застосунку">
-                {["iOS", "Android"].map((platform) => (
-                  <span className="dk-platform-chip" key={platform} aria-label={`${platform} готується`}>
-                    <span className="dk-platform-icon" aria-hidden="true">
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="12" height="20" x="6" y="2" rx="2" ry="2" />
-                        <path d="M11 18h2" />
-                      </svg>
-                    </span>
-                    <span>
-                      <span className="dk-platform-name">{platform}</span>
-                      <span className="dk-platform-status">готується</span>
-                    </span>
-                  </span>
-                ))}
+
+            <div className="lake-app-promo__content">
+              <div className="lake-app-promo__badge">● Скоро</div>
+
+              <h2 className="lake-app-promo__title">
+                Застосунок OZERA скоро{" "}
+                <span className="accent">на iOS та Android</span>
+              </h2>
+
+              <p className="lake-app-promo__description">
+                Обрані озера, push-сповіщення та навігація в одному місці.
+              </p>
+
+              <div className="lake-app-promo__chips">
+                <div className="lake-app-promo__chip">
+                  <span className="lake-app-promo__chip-icon">⭐</span>
+                  Обрані озера
+                </div>
+                <div className="lake-app-promo__chip">
+                  <span className="lake-app-promo__chip-icon">🔔</span>
+                  Push-сповіщення
+                </div>
+                <div className="lake-app-promo__chip">
+                  <span className="lake-app-promo__chip-icon">🧭</span>
+                  Навігація
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="lake-app-promo__right">
+            <button
+              type="button"
+              className="lake-app-promo__button"
+              data-app-launch-trigger
+              data-app-launch-source="lake-detail"
+            >
+              🔔 Повідомити про запуск
+            </button>
+
+            <div className="lake-app-promo__platforms">
+              <div className="lake-app-promo__platform">
+                🍎 iOS <span>· готується</span>
+              </div>
+              <div className="lake-app-promo__platform">
+                🤖 Android <span>· готується</span>
               </div>
             </div>
           </div>
