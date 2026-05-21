@@ -81,56 +81,100 @@
 
 /* ── HEADER ── */
 .l-header {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  height: 64px; background: var(--bg-primary);
-  border-bottom: 1px solid var(--border);
-  transition: background 0.3s, backdrop-filter 0.3s;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 76px;
+  background: rgba(13, 25, 46, 0.88);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 .l-header.scrolled {
-  background: rgba(11, 31, 58, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(13, 25, 46, 0.94);
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: 0 16px 44px rgba(0,0,0,0.18);
 }
 .l-nav {
-  max-width: 1200px; margin: 0 auto; padding: 0 24px;
-  height: 64px; display: flex; align-items: center; justify-content: space-between;
+  max-width: 1240px; margin: 0 auto; padding: 0 24px;
+  height: 100%; display: flex; align-items: center; justify-content: space-between;
   position: relative;
 }
 .l-logo {
-  display: flex; align-items: center; gap: 10px;
-  font-weight: 700; font-size: 20px; color: var(--text-primary);
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 800; font-size: 24px; color: #FFFFFF;
 }
 .l-logo-img {
-  width: 36px; height: 36px; border-radius: 10px; display: block; flex-shrink: 0;
+  width: 44px; height: 44px; border-radius: 12px; display: block; flex-shrink: 0;
+  box-shadow: 0 0 24px rgba(77, 163, 255, 0.28);
 }
 .l-nav-links {
-  display: flex; align-items: center; gap: 32px; list-style: none;
+  display: flex; align-items: center; gap: 38px; list-style: none;
 }
-.l-nav-links a,
-.l-nav-links button {
-  color: var(--text-secondary); font-size: 15px; font-weight: 500; transition: color 0.2s;
-  font-family: 'Inter', sans-serif;
+.l-nav-links .l-nav-link {
+  position: relative;
+  color: #C8D0E0;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  white-space: nowrap;
 }
-.l-nav-links button {
-  background: none; border: none; padding: 0; cursor: pointer;
+.l-nav-links .l-nav-link:hover { color: #FFFFFF; }
+.l-nav-links .l-nav-link-active { color: #F5C84B; }
+.l-nav-links .l-nav-link-active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  width: 54px;
+  height: 3px;
+  border-radius: 999px;
+  background: #F5C84B;
+  transform: translateX(-50%);
 }
-.l-nav-links a:hover,
-.l-nav-links button:hover { color: var(--text-primary); }
-.l-nav-accent { color: var(--accent) !important; font-weight: 600 !important; }
-.l-nav-accent:hover { color: var(--accent-hover) !important; }
-.l-nav-links .l-nav-cta {
-  color: #0B1F3A;
-  background: var(--accent);
+.l-nav-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255,255,255,0.08);
+}
+.l-nav-cta {
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 24px;
   border: none;
-  border-radius: 10px;
-  padding: 10px 16px;
-  font-weight: 700;
+  border-radius: 14px;
+  background: #F5C84B;
+  color: #07111F;
   cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
-.l-nav-links .l-nav-cta:hover { color: #0B1F3A; background: var(--accent-hover); }
+.l-nav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(245, 200, 75, 0.24);
+}
+.l-nav-cta:active { transform: translateY(0); }
+.l-nav-cta-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #07111F;
+}
 .l-burger {
   display: none; flex-direction: column; gap: 5px;
-  background: none; border: none; padding: 4px; cursor: pointer;
+  width: 42px; height: 42px; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 0;
+  cursor: pointer;
 }
 .l-burger span { display: block; width: 24px; height: 2px; background: var(--text-primary); border-radius: 2px; transition: all 0.3s; }
 
@@ -139,8 +183,7 @@
   background:
     linear-gradient(135deg, rgba(11,31,58,0.85) 0%, rgba(23,59,107,0.80) 100%),
     url('/fishing-hero.jpg.png') center/cover no-repeat;
-  min-height: calc(100vh - 64px);
-  padding-top: 64px;
+  min-height: calc(100vh - 76px);
   display: flex; align-items: center;
 }
 .l-hero-grid {
@@ -742,12 +785,47 @@
 @media (max-width: 768px) {
   .l-hero-grid { grid-template-columns: 1fr; }
   .l-hero-phone { display: none; }
+  .l-header { height: 68px; }
+  .l-nav { padding: 0 18px; }
+  .l-logo { font-size: 22px; }
+  .l-logo-img {
+    width: 40px;
+    height: 40px;
+  }
   .l-nav-links {
-    display: none; position: absolute; top: 64px; left: 0; right: 0;
-    background: var(--bg-primary); border-bottom: 1px solid var(--border);
-    padding: 20px 24px; flex-direction: column; gap: 16px; z-index: 99;
+    display: none;
+    position: absolute;
+    top: 68px;
+    left: 16px;
+    right: 16px;
+    padding: 18px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    z-index: 99;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    background: rgba(13, 25, 46, 0.96);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.36);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
   .l-nav-links.open { display: flex; }
+  .l-nav-links li { display: flex; }
+  .l-nav-links .l-nav-link {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+  }
+  .l-nav-links .l-nav-link-active::after { display: none; }
+  .l-nav-divider { display: none !important; }
+  .l-nav-cta-item { margin-top: 4px; }
+  .l-nav-cta {
+    width: 100%;
+    height: 52px;
+  }
   .l-burger { display: flex; }
   .l-hero-features { grid-template-columns: 1fr; gap: 12px; }
   .l-section-card { padding: 28px 20px; }

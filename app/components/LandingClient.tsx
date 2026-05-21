@@ -11,8 +11,15 @@ export default function LandingClient({ count }: { count: number }) {
     // Burger menu toggle
     const burger = document.getElementById("l-burger");
     const navLinks = document.getElementById("l-nav-links");
-    const onBurger = () => navLinks?.classList.toggle("open");
+    const setMenuOpen = (open: boolean) => {
+      navLinks?.classList.toggle("open", open);
+      burger?.setAttribute("aria-expanded", String(open));
+    };
+    const onBurger = () => setMenuOpen(!navLinks?.classList.contains("open"));
     burger?.addEventListener("click", onBurger);
+    const menuItems = navLinks?.querySelectorAll<HTMLAnchorElement | HTMLButtonElement>("a, button");
+    const onMenuItem = () => setMenuOpen(false);
+    menuItems?.forEach((item) => item.addEventListener("click", onMenuItem));
 
     // Smooth scroll for anchor links
     const anchors = document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]');
@@ -26,6 +33,7 @@ export default function LandingClient({ count }: { count: number }) {
     return () => {
       window.removeEventListener("scroll", onScroll);
       burger?.removeEventListener("click", onBurger);
+      menuItems?.forEach((item) => item.removeEventListener("click", onMenuItem));
       anchors.forEach((a) => a.removeEventListener("click", onAnchor));
     };
   }, []);

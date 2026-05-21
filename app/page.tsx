@@ -57,22 +57,29 @@ export default async function HomePage() {
       <header className="l-header" id="l-header">
         <nav className="l-nav">
           <Link href="/" className="l-logo">
-            <Image src="/icon.png" alt="OZERA" width={36} height={36} className="l-logo-img" />
+            <Image src="/icon.png" alt="OZERA" width={44} height={44} className="l-logo-img" />
             <span>OZERA</span>
           </Link>
 
           <ul className="l-nav-links" id="l-nav-links">
-            <li><a href="#about">Про нас</a></li>
-            <li><Link href="/lakes" className="l-nav-accent">Каталог озер</Link></li>
-            <li><Link href="/lakes/add" className="l-nav-accent">Додати озеро</Link></li>
-            <li>
+            <li><a href="#about" className="l-nav-link">Про нас</a></li>
+            <li><Link href="/lakes" className="l-nav-link l-nav-link-active">Каталог озер</Link></li>
+            <li><Link href="/lakes/add" className="l-nav-link">Додати озеро</Link></li>
+            <li className="l-nav-divider" aria-hidden="true" />
+            <li className="l-nav-cta-item">
               <button type="button" className="l-nav-cta" data-app-launch-trigger data-app-launch-source="header">
+                <span className="l-nav-cta-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                </span>
                 Отримати сповіщення
               </button>
             </li>
           </ul>
 
-          <button className="l-burger" id="l-burger" aria-label="Меню">
+          <button className="l-burger" id="l-burger" aria-label="Меню" aria-controls="l-nav-links" aria-expanded="false">
             <span /><span /><span />
           </button>
         </nav>
