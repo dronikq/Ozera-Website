@@ -743,7 +743,7 @@
 /* Lake App Promo Card */
 .lake-app-promo {
   max-width: 1140px;
-  margin: 48px auto 0;
+  margin: 60px auto;
   padding: 0 24px;
 }
 
@@ -752,28 +752,29 @@
   overflow: hidden;
 
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 40px;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 48px;
   align-items: center;
 
-  padding: 32px 40px;
-  min-height: 210px;
+  padding: 40px 48px;
+  min-height: 240px;
 
   border-radius: 28px;
 
   background:
-    radial-gradient(circle at 15% 50%, rgba(72, 112, 188, 0.12), transparent 40%),
-    radial-gradient(circle at 85% 20%, rgba(72, 112, 188, 0.08), transparent 50%),
-    linear-gradient(135deg, rgba(22, 38, 70, 0.50), rgba(12, 24, 45, 0.58));
+    radial-gradient(circle at 10% 50%, rgba(72, 112, 188, 0.20), transparent 45%),
+    radial-gradient(circle at 90% 15%, rgba(72, 112, 188, 0.12), transparent 55%),
+    linear-gradient(135deg, rgba(22, 38, 70, 0.35), rgba(12, 24, 45, 0.45));
 
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 
   box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.26),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    0 32px 80px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 60px rgba(72, 112, 188, 0.15);
 
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .lake-app-promo__card::before {
@@ -821,103 +822,133 @@
 
 .lake-app-promo__left {
   display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
-  gap: 24px;
-  align-items: center;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 32px;
+  align-items: flex-start;
+  padding-top: 12px;
 }
 
 .lake-app-promo__visual {
   position: relative;
 
-  width: 120px;
-  height: 140px;
+  width: 110px;
+  height: 200px;
 
-  border-radius: 22px;
+  border-radius: 26px;
+  flex-shrink: 0;
 
   background:
-    linear-gradient(180deg, rgba(35, 58, 95, 0.55), rgba(18, 28, 48, 0.70));
+    linear-gradient(180deg, rgba(45, 70, 120, 0.45), rgba(15, 25, 45, 0.65));
 
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 
   box-shadow:
-    0 14px 32px rgba(0,0,0,0.20),
-    0 0 50px rgba(72, 112, 188, 0.12);
+    0 20px 50px rgba(0,0,0,0.30),
+    0 0 80px rgba(72, 112, 188, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.lake-app-promo__visual::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
 }
 
 .lake-app-promo__visual-badge {
   position: absolute;
-  right: 16px;
-  bottom: 16px;
+  right: 12px;
+  bottom: 14px;
 
-  width: 58px;
-  height: 58px;
+  width: 52px;
+  height: 52px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 18px;
+  border-radius: 16px;
 
-  background: rgba(245, 200, 75, 0.10);
-  border: 1px solid rgba(245, 200, 75, 0.25);
+  background: rgba(245, 200, 75, 0.12);
+  border: 1px solid rgba(245, 200, 75, 0.28);
 
   color: #F5C84B;
-  font-size: 34px;
+  font-size: 30px;
   font-weight: 800;
+
+  box-shadow: 0 8px 20px rgba(245, 200, 75, 0.15);
 }
 
 .lake-app-promo__badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 
-  height: 30px;
-  padding: 0 12px;
+  height: 28px;
+  padding: 0 11px;
 
   border-radius: 999px;
 
-  background: rgba(245, 200, 75, 0.06);
-  border: 1px solid rgba(245, 200, 75, 0.34);
+  background: rgba(245, 200, 75, 0.10);
+  border: 1px solid rgba(245, 200, 75, 0.40);
 
   color: #F5C84B;
 
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+
+  margin: 0;
+}
+
+.lake-app-promo__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .lake-app-promo__title {
-  margin-top: 14px;
+  margin: 0;
 
   color: #FFFFFF;
 
-  font-size: 28px;
-  line-height: 1.15;
+  font-size: 30px;
+  line-height: 1.20;
   font-weight: 800;
-  letter-spacing: -0.03em;
-  max-width: 520px;
+  letter-spacing: -0.02em;
+  max-width: 100%;
 }
 
 .lake-app-promo__title .accent {
   color: #F5C84B;
+  display: inline;
 }
 
 .lake-app-promo__description {
-  margin-top: 10px;
+  margin: 0;
 
-  color: #C8D0E0;
+  color: #B4BDCD;
 
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 .lake-app-promo__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
 .lake-app-promo__chip {
@@ -930,17 +961,26 @@
 
   border-radius: 999px;
 
-  background: rgba(255,255,255,0.035);
-  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
 
   color: #FFFFFF;
 
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
+}
+
+.lake-app-promo__chip:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
 }
 
 .lake-app-promo__chip-icon {
   color: #F5C84B;
+  font-size: 16px;
 }
 
 .lake-app-promo__right {
@@ -948,45 +988,45 @@
 
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
+  align-items: stretch;
 
-  padding-left: 32px;
+  padding-left: 36px;
 }
 
 .lake-app-promo__right::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 0;
-  bottom: 0;
+  top: 15%;
+  bottom: 15%;
   width: 1px;
   background: linear-gradient(
     to bottom,
     rgba(245, 200, 75, 0.0),
-    rgba(245, 200, 75, 0.35),
+    rgba(245, 200, 75, 0.40),
     rgba(245, 200, 75, 0.0)
   );
 }
 
 .lake-app-promo__button {
   width: 100%;
-  max-width: 280px;
-  height: 56px;
-  margin: 0 auto;
+  height: 60px;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
 
   border: none;
-  border-radius: 14px;
+  border-radius: 16px;
 
   background: #F5C84B;
   color: #07111F;
 
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
+  line-height: 1;
 
   cursor: pointer;
 
@@ -997,9 +1037,9 @@
 }
 
 .lake-app-promo__button:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   background: #FFD86B;
-  box-shadow: 0 14px 30px rgba(245, 200, 75, 0.24);
+  box-shadow: 0 16px 40px rgba(245, 200, 75, 0.28);
 }
 
 .lake-app-promo__button:active {
@@ -1009,85 +1049,159 @@
 .lake-app-promo__platforms {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
+  margin-top: 8px;
 }
 
 .lake-app-promo__platform {
-  height: 48px;
+  height: 52px;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
+  flex-direction: column;
 
-  border-radius: 12px;
+  border-radius: 14px;
 
-  background: rgba(255,255,255,0.035);
+  background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.12);
 
   color: #FFFFFF;
 
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+
+  transition: all 0.2s ease;
 }
 
-.lake-app-promo__platform span {
+.lake-app-promo__platform:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.18);
+}
+
+.lake-app-promo__platform-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lake-app-promo__platform-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.lake-app-promo__platform-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.lake-app-promo__platform-status {
   color: #8F9BB3;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 11px;
+  letter-spacing: 0.02em;
 }
 
 /* Lake App Promo Mobile Adaptation */
 @media (max-width: 900px) {
   .lake-app-promo__card {
     grid-template-columns: 1fr;
-    gap: 28px;
-    padding: 28px;
+    gap: 36px;
+    padding: 36px 40px;
+    min-height: auto;
+  }
+
+  .lake-app-promo__left {
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  .lake-app-promo__visual {
+    width: 100px;
+    height: 180px;
   }
 
   .lake-app-promo__right {
     padding-left: 0;
-    border-left: none;
-    padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,0.10);
+    gap: 16px;
+    border: none;
+    padding-top: 0;
+  }
+
+  .lake-app-promo__right::before {
+    display: none;
   }
 }
 
 @media (max-width: 640px) {
   .lake-app-promo {
-    margin-top: 36px;
+    margin: 48px auto;
     padding: 0 16px;
   }
 
   .lake-app-promo__card {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 32px 24px;
     border-radius: 24px;
-    padding: 24px;
+    min-height: auto;
   }
 
   .lake-app-promo__left {
-    grid-template-columns: 1fr;
-    gap: 22px;
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 20px;
+    align-items: flex-start;
+    padding-top: 0;
   }
 
   .lake-app-promo__visual {
-    display: none;
+    width: 90px;
+    height: 160px;
+    border-radius: 20px;
   }
 
   .lake-app-promo__title {
-    font-size: 26px;
+    font-size: 24px;
+    line-height: 1.25;
+  }
+
+  .lake-app-promo__description {
+    font-size: 14px;
   }
 
   .lake-app-promo__chips {
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
   }
 
   .lake-app-promo__chip {
-    width: 100%;
-    justify-content: center;
+    height: 32px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .lake-app-promo__button {
+    height: 56px;
+    font-size: 15px;
   }
 
   .lake-app-promo__platforms {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .lake-app-promo__platform {
+    height: 48px;
+    font-size: 13px;
   }
 }
 

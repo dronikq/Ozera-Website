@@ -372,10 +372,28 @@ export default async function LakePage({
 
             <div className="lake-app-promo__platforms">
               <div className="lake-app-promo__platform">
-                iOS <span>· готується</span>
+                <div className="lake-app-promo__platform-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.38-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.38C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8.905-.09 1.85-.57 2.93-.81 1.32-.41 2.52-.29 3.41 1.48-3.2 1.92-2.48 5.97.48 7.13-.57 1.5-1.31 2.28-2.9 2.97l-.54.07z" fill="currentColor"/>
+                    <path d="M12.03 7.25C12.11 5.31 13.75 3.8 15.73 3.65c.29 2.58-1.88 4.6-3.7 4.6z" fill="currentColor"/>
+                  </svg>
+                </div>
+                <div className="lake-app-promo__platform-text">
+                  <div className="lake-app-promo__platform-name">iOS</div>
+                  <div className="lake-app-promo__platform-status">готується</div>
+                </div>
               </div>
               <div className="lake-app-promo__platform">
-                Android <span>· готується</span>
+                <div className="lake-app-promo__platform-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9.5l1.414-1.414a2 2 0 112.828 0L9 9.586l6.586-6.586a2 2 0 112.828 2.828l-8 8a2 2 0 01-2.828 0l-5-5a2 2 0 010-2.828z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M3 9h6v6H3z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>
+                </div>
+                <div className="lake-app-promo__platform-text">
+                  <div className="lake-app-promo__platform-name">Android</div>
+                  <div className="lake-app-promo__platform-status">готується</div>
+                </div>
               </div>
             </div>
           </div>
