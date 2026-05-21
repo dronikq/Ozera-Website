@@ -406,6 +406,27 @@
    MAP — Cluster markers & controls
 ════════════════════════════════ */
 
+/* Tooltip wrapper — transparent bottom padding bridges the ~8px gap between
+   the card and the marker so the cursor doesn't exit the hover zone */
+.lake-pin-tooltip {
+  padding: 0 0 10px 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+/* Hide the default Leaflet tooltip triangle tip (we have our own card design) */
+.leaflet-tooltip.lake-pin-tooltip::before {
+  display: none !important;
+}
+/* The actual card inside the tooltip */
+.lake-pin-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+  width: 200px;
+}
+
 /* Cluster bubble */
 .map-cluster-icon {
   background: #f5c842;
