@@ -752,17 +752,19 @@
   overflow: hidden;
 
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
-  gap: 48px;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 40px;
   align-items: center;
 
-  padding: 32px 36px;
+  padding: 32px 40px;
+  min-height: 210px;
 
   border-radius: 28px;
 
   background:
-    radial-gradient(circle at 8% 50%, rgba(72, 112, 188, 0.18), transparent 34%),
-    linear-gradient(135deg, rgba(22, 38, 70, 0.78), rgba(12, 24, 45, 0.88));
+    radial-gradient(circle at 15% 50%, rgba(72, 112, 188, 0.12), transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(72, 112, 188, 0.08), transparent 50%),
+    linear-gradient(135deg, rgba(22, 38, 70, 0.50), rgba(12, 24, 45, 0.58));
 
   border: 1px solid rgba(255, 255, 255, 0.10);
 
@@ -819,27 +821,27 @@
 
 .lake-app-promo__left {
   display: grid;
-  grid-template-columns: 136px minmax(0, 1fr);
-  gap: 28px;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 24px;
   align-items: center;
 }
 
 .lake-app-promo__visual {
   position: relative;
 
-  width: 136px;
-  height: 150px;
+  width: 120px;
+  height: 140px;
 
-  border-radius: 24px;
+  border-radius: 22px;
 
   background:
-    linear-gradient(180deg, rgba(24, 44, 80, 0.75), rgba(7, 17, 31, 0.95));
+    linear-gradient(180deg, rgba(35, 58, 95, 0.55), rgba(18, 28, 48, 0.70));
 
   border: 1px solid rgba(255, 255, 255, 0.10);
 
   box-shadow:
-    0 18px 40px rgba(0,0,0,0.28),
-    0 0 60px rgba(72, 112, 188, 0.16);
+    0 14px 32px rgba(0,0,0,0.20),
+    0 0 50px rgba(72, 112, 188, 0.12);
 }
 
 .lake-app-promo__visual-badge {
@@ -890,10 +892,11 @@
 
   color: #FFFFFF;
 
-  font-size: 30px;
+  font-size: 28px;
   line-height: 1.15;
   font-weight: 800;
   letter-spacing: -0.03em;
+  max-width: 520px;
 }
 
 .lake-app-promo__title .accent {
@@ -922,7 +925,7 @@
   align-items: center;
   gap: 8px;
 
-  height: 38px;
+  height: 36px;
   padding: 0 14px;
 
   border-radius: 999px;
@@ -945,21 +948,36 @@
 
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 
-  padding-left: 40px;
+  padding-left: 32px;
+}
 
-  border-left: 1px solid rgba(255,255,255,0.10);
+.lake-app-promo__right::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgba(245, 200, 75, 0.0),
+    rgba(245, 200, 75, 0.35),
+    rgba(245, 200, 75, 0.0)
+  );
 }
 
 .lake-app-promo__button {
   width: 100%;
-  height: 58px;
+  max-width: 280px;
+  height: 56px;
+  margin: 0 auto;
 
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
 
   border: none;
   border-radius: 14px;
@@ -967,7 +985,7 @@
   background: #F5C84B;
   color: #07111F;
 
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
 
   cursor: pointer;
@@ -995,27 +1013,28 @@
 }
 
 .lake-app-promo__platform {
-  height: 50px;
+  height: 48px;
 
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
 
-  border-radius: 14px;
+  border-radius: 12px;
 
   background: rgba(255,255,255,0.035);
   border: 1px solid rgba(255,255,255,0.12);
 
   color: #FFFFFF;
 
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .lake-app-promo__platform span {
   color: #8F9BB3;
   font-weight: 500;
+  font-size: 12px;
 }
 
 /* Lake App Promo Mobile Adaptation */

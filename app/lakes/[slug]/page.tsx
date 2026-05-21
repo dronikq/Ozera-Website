@@ -367,15 +367,15 @@ export default async function LakePage({
               data-app-launch-trigger
               data-app-launch-source="lake-detail"
             >
-              🔔 Повідомити про запуск
+              Повідомити про запуск
             </button>
 
             <div className="lake-app-promo__platforms">
               <div className="lake-app-promo__platform">
-                🍎 iOS <span>· готується</span>
+                iOS <span>· готується</span>
               </div>
               <div className="lake-app-promo__platform">
-                🤖 Android <span>· готується</span>
+                Android <span>· готується</span>
               </div>
             </div>
           </div>
