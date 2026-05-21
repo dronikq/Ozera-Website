@@ -588,21 +588,26 @@
 .l-app-coming {
   position: relative;
   overflow: hidden;
-  padding: 96px 0 88px;
+  padding: 104px 0;
   background:
-    radial-gradient(circle at 25% 45%, rgba(37, 68, 120, 0.18), transparent 35%),
-    radial-gradient(circle at 75% 35%, rgba(245, 200, 75, 0.06), transparent 28%),
-    linear-gradient(180deg, #13213B 0%, #0E1A31 60%, #0B1426 100%);
-  border-top: 1px solid rgba(255,255,255,0.06);
+    radial-gradient(circle at 20% 40%, rgba(60, 110, 180, 0.14), transparent 34%),
+    linear-gradient(180deg, #13213B 0%, #101D36 100%);
 }
-.l-app-coming .l-container { max-width: 1140px; }
+.l-app-coming .l-container { max-width: 1120px; }
 .l-app-coming-grid {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 64px;
+  grid-template-columns: 300px 1fr;
+  gap: 72px;
   align-items: center;
+  padding: 56px 64px;
+  border-radius: 32px;
+  background: rgba(9, 20, 38, 0.42);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.28);
 }
 .l-app-phone-stage {
   position: relative;
@@ -792,13 +797,11 @@
 }
 .l-app-email-card {
   max-width: 560px;
-  margin-top: 34px;
-  padding: 24px;
+  margin-top: 32px;
+  padding: 20px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.035);
   border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 24px;
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 .l-app-email-card-head {
   display: flex;
@@ -897,23 +900,26 @@
 .l-app-email-status-error { color: #FFAAA9; }
 .l-app-benefits {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
-  max-width: 760px;
   margin-top: 36px;
 }
-.l-app-benefit { min-width: 0; }
+.l-app-benefit {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
 .l-app-benefit-icon {
   width: 48px;
   height: 48px;
+  flex: 0 0 48px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 14px;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
-  background: rgba(245,200,75,0.12);
-  color: #F5C84B;
+  background: rgba(245, 200, 75, 0.10);
+  border: 1px solid rgba(245, 200, 75, 0.20);
+  color: var(--accent);
 }
 .l-app-benefit strong {
   display: block;
@@ -923,9 +929,65 @@
 }
 .l-app-benefit p {
   margin-top: 6px;
-  color: #8F9BB3;
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.45;
+}
+
+/* ── FOOTER ── */
+.l-footer {
+  padding: 72px 0 32px;
+  background: #0B1426;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.l-footer__inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.l-footer__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 0.8fr;
+  gap: 80px;
+}
+.l-footer__brand {
+  color: #FFFFFF;
+  font-size: 22px;
+  font-weight: 800;
+}
+.l-footer__description {
+  max-width: 360px;
+  margin-top: 16px;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.l-footer__heading {
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+.l-footer__link {
+  display: block;
+  color: var(--text-muted);
+  font-size: 15px;
+  text-decoration: none;
+  margin-bottom: 12px;
+  transition: color 0.2s ease;
+}
+.l-footer__link:hover {
+  color: var(--accent);
+}
+.l-footer__bottom {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  color: rgba(255,255,255,0.38);
+  font-size: 14px;
 }
 
 /* ── RESPONSIVE ── */
@@ -947,7 +1009,7 @@
 }
 
 @media (max-width: 768px) {
-  .l-hero-grid { grid-template-columns: 1fr; }
+  .l-hero-grid { grid-template-columns: 1fr; gap: 48px; padding: 72px 0 80px; }
   .l-hero-phone { display: none; }
   .l-header { height: 68px; }
   .l-nav { padding: 0 18px; }
@@ -996,8 +1058,9 @@
   .l-app-coming { padding: 72px 0; }
   .l-app-coming-grid {
     grid-template-columns: 1fr;
-    gap: 38px;
-    text-align: center;
+    gap: 40px;
+    padding: 32px 24px;
+    border-radius: 28px;
   }
   .l-app-phone-stage { min-height: auto; }
   .l-app-phone {
