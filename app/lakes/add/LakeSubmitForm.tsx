@@ -1,41 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+import Link from "next/link";
 
-const INPUT: React.CSSProperties = {
-  width: "100%",
-  background: "var(--bg-card)",
-  border: "1px solid var(--border)",
-  borderRadius: 10,
-  padding: "12px 16px",
-  color: "var(--text-primary)",
-  fontSize: 15,
-  fontFamily: "inherit",
-  outline: "none",
-  boxSizing: "border-box",
-  transition: "border-color 0.2s",
-};
+type FormStatus =
+  | { type: "idle"; message: "" }
+  | { type: "success"; message: string }
+  | { type: "error"; message: string };
 
-const LABEL: React.CSSProperties = {
-  display: "block",
-  color: "var(--text-secondary)",
-  fontSize: 14,
-  fontWeight: 600,
-  marginBottom: 8,
-};
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const FIELD: React.CSSProperties = {
-  marginBottom: 20,
-};
+function CheckIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="m20 6-11 11-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
-const REQUIRED = <span style={{ color: "#FF5C5C" }}> *</span>;
+function InfoIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+      <path d="M12 10v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M12 7.5h.01" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" strokeWidth="2" />
+      <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function AddIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 export default function LakeSubmitForm() {
   const [pending, setPending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setPending(true);
     setError("");
@@ -61,7 +76,7 @@ export default function LakeSubmitForm() {
       "ДОДАТКОВА ІНФОРМАЦІЯ:",
       info || "—",
       "",
-      "——————————————",
+      "--------------------------------",
       `Заявка від: ${submitterContact}`,
     ].join("\n");
 
@@ -83,10 +98,10 @@ export default function LakeSubmitForm() {
       if (json.success) {
         setSuccess(true);
       } else {
-        setError("Не вдалося надіслати. Спробуйте ще раз.");
+        setError("Не вдалося надіслати заявку. Спробуйте ще раз.");
       }
     } catch {
-      setError("Помилка зʼєднання. Перевірте інтернет і спробуйте ще раз.");
+      setError("Помилка з'єднання. Перевірте інтернет і спробуйте ще раз.");
     } finally {
       setPending(false);
     }
@@ -94,181 +109,143 @@ export default function LakeSubmitForm() {
 
   if (success) {
     return (
-      <div
-        style={{
-          background: "var(--bg-card)",
-          border: "1px solid var(--border-gold)",
-          borderRadius: 16,
-          padding: "48px 32px",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            width: 64,
-            height: 64,
-            background: "var(--success-bg)",
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            margin: "0 auto 24px",
-            fontSize: 28,
-            color: "var(--success)",
-          }}
-        >
-          ✓
+      <div className="dk-add-success">
+        <div className="dk-add-success__icon" aria-hidden="true">
+          <CheckIcon />
         </div>
-        <h2 style={{ color: "var(--text-primary)", marginBottom: 12, fontSize: 24 }}>
-          Дякуємо!
-        </h2>
-        <p style={{ color: "var(--text-secondary)", marginBottom: 32, lineHeight: 1.6 }}>
-          Заявку отримано. Ми розглянемо її та додамо озеро до каталогу.
-        </p>
-        <a
-          href="/lakes"
-          style={{
-            display: "inline-block",
-            background: "var(--accent)",
-            color: "#0B1F3A",
-            fontWeight: 700,
-            padding: "12px 28px",
-            borderRadius: 10,
-            textDecoration: "none",
-            fontSize: 15,
-          }}
-        >
-          Повернутись до каталогу
-        </a>
+        <h2>Дякуємо!</h2>
+        <p>Заявку отримано. Ми розглянемо її та додамо озеро до каталогу.</p>
+        <div className="dk-add-success__actions">
+          <Link href="/lakes" className="oz-btn-secondary">
+            Повернутись до каталогу
+          </Link>
+          <Link href="/lakes/add" className="oz-btn-primary">
+            Додати ще одне озеро
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        background: "var(--bg-card)",
-        border: "1px solid var(--border-gold)",
-        borderRadius: 16,
-        padding: "32px",
-      }}
-    >
-      <div style={FIELD}>
-        <label style={LABEL} htmlFor="name">
-          Назва озера{REQUIRED}
-        </label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          required
-          placeholder="Наприклад: Озеро Тихе"
-          style={INPUT}
-        />
+    <form className="dk-add-form" onSubmit={handleSubmit}>
+      <div className="dk-form-head">
+        <div className="dk-form-head__icon" aria-hidden="true">
+          <MailIcon />
+        </div>
+        <div>
+          <p className="dk-form-head__title">Надішліть інформацію про водойму</p>
+          <p className="dk-form-head__description">
+            Можна заповнити не все. Навіть часткова інформація допоможе нам швидше перевірити озеро.
+          </p>
+        </div>
       </div>
 
-      <div style={FIELD}>
-        <label style={LABEL} htmlFor="city">
-          Регіон / Місто{REQUIRED}
-        </label>
-        <input
-          id="city"
-          name="city"
-          type="text"
-          required
-          placeholder="Наприклад: Київська обл., Бориспіль"
-          style={INPUT}
-        />
-      </div>
+      <div className="dk-form-grid">
+        <div className="dk-form-field">
+          <label className="dk-form-label" htmlFor="name">
+            Назва озера
+          </label>
+          <input
+            className="oz-input"
+            id="name"
+            name="name"
+            type="text"
+            required
+            placeholder="Наприклад: Озеро Тихе"
+          />
+        </div>
 
-      <div style={FIELD}>
-        <label style={LABEL} htmlFor="address">
-          Адреса або посилання Google Maps
-        </label>
-        <input
-          id="address"
-          name="address"
-          type="text"
-          placeholder="Адреса або https://maps.google.com/..."
-          style={INPUT}
-        />
-      </div>
+        <div className="dk-form-field">
+          <label className="dk-form-label" htmlFor="city">
+            Регіон / місто
+          </label>
+          <input
+            className="oz-input"
+            id="city"
+            name="city"
+            type="text"
+            required
+            placeholder="Наприклад: Київська область, Бориспіль"
+          />
+        </div>
 
-      <div style={FIELD}>
-        <label style={LABEL} htmlFor="contacts">
-          Контакти озера (телефон, сайт, Instagram)
-        </label>
-        <textarea
-          id="contacts"
-          name="contacts"
-          rows={3}
-          placeholder={"+380 XX XXX XX XX\nhttps://instagram.com/...\nhttps://..."}
-          style={{ ...INPUT, resize: "vertical", minHeight: 80 }}
-        />
-      </div>
+        <div className="dk-form-field">
+          <label className="dk-form-label" htmlFor="address">
+            Адреса або посилання Google Maps
+          </label>
+          <input
+            className="oz-input"
+            id="address"
+            name="address"
+            type="text"
+            placeholder="Адреса або https://maps.google.com/..."
+          />
+          <p className="dk-form-hint">Якщо є точка на карті, додайте її сюди.</p>
+        </div>
 
-      <div style={FIELD}>
-        <label style={LABEL} htmlFor="info">
-          Що відомо про озеро
-        </label>
-        <textarea
-          id="info"
-          name="info"
-          rows={5}
-          placeholder="Яка риба водиться, ціна за добу, зручності (парковка, альтанки), графік роботи..."
-          style={{ ...INPUT, resize: "vertical", minHeight: 120 }}
-        />
-      </div>
+        <div className="dk-form-field">
+          <label className="dk-form-label" htmlFor="contacts">
+            Контакти озера
+          </label>
+          <textarea
+            className="oz-input dk-form-textarea"
+            id="contacts"
+            name="contacts"
+            rows={3}
+            placeholder="+380 XX XXX XX XX
+https://instagram.com/...
+https://..."
+          />
+          <p className="dk-form-hint">Телефон, сайт або соцмережі — будь-що, що допоможе нас перевірити.</p>
+        </div>
 
-      <div style={{ ...FIELD, marginBottom: 28 }}>
-        <label style={LABEL} htmlFor="submitter_contact">
-          Ваш контакт{REQUIRED}
-        </label>
-        <input
-          id="submitter_contact"
-          name="submitter_contact"
-          type="text"
-          required
-          placeholder="Email або телефон — якщо виникнуть питання"
-          style={INPUT}
-        />
+        <div className="dk-form-field">
+          <label className="dk-form-label" htmlFor="info">
+            Що відомо про озеро
+          </label>
+          <textarea
+            className="oz-input dk-form-textarea dk-form-textarea--tall"
+            id="info"
+            name="info"
+            rows={5}
+            placeholder="Яка риба водиться, ціна за добу, зручності, графік роботи, парковка..."
+          />
+          <p className="dk-form-hint">Можна описати своїми словами, без структури.</p>
+        </div>
+
+        <div className="dk-form-field">
+          <label className="dk-form-label" htmlFor="submitter_contact">
+            Ваш контакт
+          </label>
+          <input
+            className="oz-input"
+            id="submitter_contact"
+            name="submitter_contact"
+            type="text"
+            required
+            placeholder="Email або телефон"
+          />
+          <p className="dk-form-hint">Потрібен лише для уточнення деталей, якщо вони виникнуть.</p>
+        </div>
       </div>
 
       {error && (
-        <p
-          style={{
-            color: "#FF5C5C",
-            background: "rgba(255,92,92,0.1)",
-            border: "1px solid rgba(255,92,92,0.3)",
-            borderRadius: 10,
-            padding: "12px 16px",
-            marginBottom: 20,
-            fontSize: 14,
-          }}
-        >
-          {error}
-        </p>
+        <div className="dk-form-error" role="alert">
+          <span className="dk-form-error__icon" aria-hidden="true">
+            <InfoIcon />
+          </span>
+          <p>{error}</p>
+        </div>
       )}
 
-      <button
-        type="submit"
-        disabled={pending}
-        style={{
-          width: "100%",
-          background: pending ? "var(--bg-hover)" : "var(--accent)",
-          color: pending ? "var(--text-muted)" : "#0B1F3A",
-          fontWeight: 700,
-          fontSize: 16,
-          padding: "14px 28px",
-          borderRadius: 10,
-          border: "none",
-          cursor: pending ? "not-allowed" : "pointer",
-          fontFamily: "inherit",
-          transition: "all 0.2s",
-        }}
-      >
-        {pending ? "Надсилаємо..." : "Надіслати заявку"}
+      <button type="submit" className="oz-btn-primary dk-add-submit" disabled={pending}>
+        {pending ? "Надсилаємо..." : (
+          <>
+            <AddIcon />
+            <span>Надіслати озеро</span>
+          </>
+        )}
       </button>
     </form>
   );

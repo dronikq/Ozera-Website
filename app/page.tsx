@@ -1,10 +1,11 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { supabase, type Lake } from "@/lib/supabase";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
 import LandingClient from "./components/LandingClient";
 import SiteHeader from "./components/SiteHeader";
 import AppComingSoonForm from "./components/AppComingSoonForm";
+import LakeCard, { toLakeCardData } from "./components/LakeCard";
 import { FadeUp, SlideLeft, SlideRight } from "./components/AnimatedSection";
 import "./landing.css";
 
@@ -45,6 +46,87 @@ export default async function HomePage() {
     inLanguage: "uk-UA",
   };
 
+  const heroPreviewItems = popularLakes.length > 0
+    ? popularLakes.slice(0, 3).map((lake) => ({
+        name: lake.name,
+        city: lake.city ?? "Україна",
+        fish: (lake.fish_species ?? []).slice(0, 2),
+        image: lake.image_url || "/icon.png",
+      }))
+    : [
+        {
+          name: "Тихий Берег",
+          city: "Київська обл.",
+          fish: ["Короп", "Амур"],
+          image: "https://plus.unsplash.com/premium_photo-1668203985517-99c47113e5e6?w=240&h=180&fit=crop&auto=format&q=80",
+        },
+        {
+          name: "Соснове Озеро",
+          city: "Черкаська обл.",
+          fish: ["Щука", "Карась"],
+          image: "https://plus.unsplash.com/premium_photo-1663091623349-3dc639c79363?w=240&h=180&fit=crop&auto=format&q=80",
+        },
+        {
+          name: "Дзеркальне",
+          city: "Полтавська обл.",
+          fish: ["Короп", "Білий амур"],
+          image: "https://plus.unsplash.com/premium_photo-1727538367105-13590ea2fec1?w=240&h=180&fit=crop&auto=format&q=80",
+        },
+      ];
+
+  const featuredLakeCards = popularLakes.length > 0
+    ? popularLakes.slice(0, 4).map((lake) => toLakeCardData({
+        href: `/lakes/${getLakeRouteSlug(lake)}`,
+        name: lake.name,
+        image_url: lake.image_url,
+        area_ha: lake.area_ha,
+        city: lake.city,
+        location_text: lake.location_text,
+        fish_species: lake.fish_species,
+        price_uah: lake.price_uah,
+      }))
+    : [
+        {
+          href: "/lakes",
+          name: "Тихий Берег",
+          imageUrl: "/fishing-hero.jpg.png",
+          areaHa: 6,
+          city: "Київська обл.",
+          locationText: "Київська область",
+          fishSpecies: ["Короп", "Амур", "Карась"],
+          priceUah: 300,
+        },
+        {
+          href: "/lakes",
+          name: "Соснове Озеро",
+          imageUrl: "/fishing-hero.jpg.png",
+          areaHa: 8,
+          city: "Черкаська обл.",
+          locationText: "Черкаська область",
+          fishSpecies: ["Щука", "Карась", "Лящ"],
+          priceUah: 350,
+        },
+        {
+          href: "/lakes",
+          name: "Дзеркальне",
+          imageUrl: "/fishing-hero.jpg.png",
+          areaHa: 5,
+          city: "Полтавська обл.",
+          locationText: "Полтавська область",
+          fishSpecies: ["Короп", "Білий амур"],
+          priceUah: 280,
+        },
+        {
+          href: "/lakes",
+          name: "Кленове",
+          imageUrl: "/fishing-hero.jpg.png",
+          areaHa: 7,
+          city: "Вінницька обл.",
+          locationText: "Вінницька область",
+          fishSpecies: ["Щука", "Окунь", "Карась"],
+          priceUah: 320,
+        },
+      ];
   return (
     <div className="lp">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -57,309 +139,213 @@ export default async function HomePage() {
       <section className="l-hero">
         <div className="l-container">
           <div className="l-hero-grid">
-
-            {/* Left: text */}
             <SlideLeft className="l-hero-content">
-              {/* Badge */}
               <div className="l-hero-badge">
                 <span className="l-badge-dot" />
-                {count} озер у базі
+                41 озеро у базі
               </div>
 
-              {/* H1 */}
-              <h1>Знайди своє ідеальне місце для риболовлі</h1>
+              <h1 className="l-hero-title">Знайди платне озеро для риболовлі поруч</h1>
 
-              {/* Subtitle */}
               <p className="l-hero-subtitle">
-                Актуальна інформація про озера України — ціни, види риб, розклад та контакти.
+                Ціни, риба, правила, контакти та навігація — все в одному місці.
               </p>
 
-              {/* CTA buttons */}
               <div className="l-hero-cta">
                 <Link href="/lakes" className="l-btn-primary">
-                  Переглянути озера →
+                  Знайти озеро
                 </Link>
                 <button type="button" className="l-btn-outline" data-app-launch-trigger data-app-launch-source="hero">
-                  Отримати сповіщення про застосунок
+                  Повідомити про запуск
                 </button>
-              </div>
-
-              {/* Feature icons */}
-              <div className="l-hero-features">
-                {[
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>, text: "Усі озера в одному місці з цінами та контактами" },
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>, text: "Фото, види риб та умови лову" },
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>, text: "Навігація до озера в 1 натиск" },
-                ].map((f) => (
-                  <div className="l-feature-item" key={f.text}>
-                    <span className="l-feature-icon">{f.icon}</span>
-                    <span className="l-feature-text">{f.text}</span>
-                  </div>
-                ))}
               </div>
             </SlideLeft>
 
-            {/* Right: Phone mockup */}
-            <SlideRight delay={0.2} className="l-hero-phone">
-              <div className="l-phone-wrap">
-                <div className="l-phone">
-                  <div className="l-phone-notch">
-                    <div className="l-phone-notch-inner" />
+            <SlideRight delay={0.2} className="l-hero-preview-wrap">
+              <div className="l-hero-preview-glow" aria-hidden="true" />
+              <div className="l-hero-preview">
+                <div className="l-hero-preview-inner">
+                  <div className="l-hero-preview-head">
+                    <div>
+                      <p className="l-hero-preview-kicker">Підбір озер</p>
+                      <h2 className="l-hero-preview-title">Швидкий пошук поруч</h2>
+                    </div>
+                    <div className="l-hero-route-badge">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M14 3l7 7-7 7" />
+                        <path d="M21 10H3" />
+                      </svg>
+                      Маршрут в один клік
+                    </div>
                   </div>
-                  <div className="l-phone-screen">
-                    {/* Header */}
-                    <div className="l-phone-header">
-                      <div className="l-phone-logo">
-                        <div className="l-phone-logo-icon">🎣</div>
-                        <span className="l-phone-logo-text">OZERA</span>
-                      </div>
-                      <span>📍</span>
-                    </div>
-                    {/* Search */}
-                    <div className="l-phone-search">
-                      <div className="l-phone-search-inner">
-                        🔍&nbsp; Пошук озера...
-                      </div>
-                    </div>
-                    {/* Lake cards */}
-                    <div className="l-phone-list">
-                      {PHONE_CARDS.map((c) => (
-                        <div className="l-phone-card" key={c.name}>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img className="l-phone-card-img" src={c.img} alt={c.name} />
-                          <div className="l-phone-card-info">
-                            <span className="l-phone-card-name">{c.name}</span>
-                            <span className="l-phone-card-loc">📍 {c.region}</span>
-                            <span className="l-phone-card-fish">🐟 {c.fish}</span>
+
+                  <div className="l-hero-search">
+                    <svg className="l-hero-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="11" cy="11" r="7" />
+                      <path d="M20 20l-3.5-3.5" />
+                    </svg>
+                    <span>Пошук озера, риби або області</span>
+                  </div>
+
+                  <div className="l-hero-lake-list">
+                    {heroPreviewItems.map((lake, index) => (
+                      <article className="l-hero-lake-card" key={lake.name}>
+                        <div className={`l-hero-lake-thumb l-hero-lake-thumb--${index % 3}`} aria-hidden="true">
+                          <span>{lake.name.slice(0, 1)}</span>
+                        </div>
+                        <div className="l-hero-lake-content">
+                          <p className="l-hero-lake-name">{lake.name}</p>
+                          <p className="l-hero-lake-meta">📍 {lake.city}</p>
+                          <div className="l-hero-lake-fish">
+                            {lake.fish.map((fish) => (
+                              <span className="l-hero-chip" key={fish}>{fish}</span>
+                            ))}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                    {/* Bottom nav */}
-                    <div className="l-phone-nav">
-                      {["🏠", "🗺️", "❤️", "👤"].map((ic) => (
-                        <span className="l-phone-nav-icon" key={ic}>{ic}</span>
-                      ))}
-                    </div>
+                      </article>
+                    ))}
                   </div>
-                </div>
 
-                {/* Floating badges */}
-                <div className="l-float-badge">🐟 {count} озер у базі</div>
-                <div className="l-float-notif"><span>🔔</span> Нове озеро!</div>
+                  <div className="l-hero-preview-note">Google Maps / Waze</div>
+                </div>
               </div>
             </SlideRight>
-
           </div>
         </div>
       </section>
-
-      {/* ══════════════════════════════════════
-          3. ПРО НАС
-      ══════════════════════════════════════ */}
-      <section className="l-about-section">
-        <div className="l-container">
-          <SlideLeft>
-            <span className="l-about-badge">Про нас</span>
-            <h2 className="l-about-title">
-              Ми зробили цей сервіс,<br />
-              <span className="l-accent">бо самі постійно шукали,</span><br />
-              де рибалити.
-            </h2>
-          </SlideLeft>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════
-          4. ЯК БУЛО РАНІШЕ
-      ══════════════════════════════════════ */}
-      <section className="l-section l-section-bg-secondary" id="about">
+      <section className="l-compare-section" id="about">
         <div className="l-container">
           <FadeUp>
-          <div className="l-section-card">
-            <h2>Як було раніше 🤯</h2>
-            <div className="l-problems-grid">
-              {[
-                "Годинами гуглити озера по районах",
-                "Телефонувати щоб дізнатися ціну та рибу",
-                "Їхати і дізнаватися що озеро закрите",
-                "Збирати контакти по групах у Viber і Telegram",
-                "Питати знайомих — і не отримувати відповіді",
-              ].map((text) => (
-                <div className="l-problem-card" key={text}>
-                  <div className="l-problem-icon">❌</div>
-                  <p className="l-problem-text">{text}</p>
-                </div>
-              ))}
+            <div className="l-compare-header">
+              <h2>Ми зробили OZERA, бо самі постійно шукали, де рибалити</h2>
+              <p>Тепер вся важлива інформація про озера зібрана в одному місці.</p>
             </div>
-          </div>
+
+            <div className="l-compare-grid">
+              <article className="l-compare-card l-compare-card--before">
+                <div className="l-compare-card-head">
+                  <span className="l-compare-card-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M12 8v4" />
+                      <path d="M12 16h.01" />
+                    </svg>
+                  </span>
+                  <strong>Як було раніше</strong>
+                </div>
+                <ul className="l-compare-list">
+                  {[
+                    "годинами шукати озера по групах і форумах;",
+                    "телефонувати, щоб уточнити ціну та рибу;",
+                    "їхати й дізнаватися, що озеро закрите;",
+                    "збирати контакти по Viber і Telegram;",
+                    "питати знайомих і не отримувати відповіді.",
+                  ].map((item) => (
+                    <li key={item}>
+                      <span className="l-compare-bullet" aria-hidden="true" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+
+              <article className="l-compare-card l-compare-card--after">
+                <div className="l-compare-card-head">
+                  <span className="l-compare-card-icon l-compare-card-icon--check" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                  </span>
+                  <strong>Як стало з OZERA</strong>
+                </div>
+                <ul className="l-compare-list">
+                  {[
+                    "озера, ціни та контакти в одному каталозі;",
+                    "фото, види риб і графік роботи;",
+                    "Google Maps або Waze в один клік;",
+                    "збереження улюблених озер у застосунку;",
+                    "постійно оновлювана база по Україні.",
+                  ].map((item) => (
+                    <li key={item}>
+                      <span className="l-compare-bullet" aria-hidden="true" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </div>
           </FadeUp>
         </div>
       </section>
-
-      {/* ══════════════════════════════════════
-          4. ЯК СТАЛО З OZERA
-      ══════════════════════════════════════ */}
-      <section className="l-section l-section-bg-secondary">
-        <div className="l-container">
-          <FadeUp delay={0.1}>
-          <div className="l-section-card">
-            <h2>Як стало з <span className="l-accent">OZERA</span> ✨</h2>
-            <div className="l-benefits-grid">
-              {[
-                { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>, text: "Всі озера в одному місці одразу з цінами" },
-                { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>, text: "Фото, види риб та графік роботи" },
-                { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>, text: "Навігація одним натиском — Google Maps або Waze" },
-                { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>, text: "Push-сповіщення від улюблених озер" },
-                { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>, text: "Постійно оновлювана база по всій Україні" },
-              ].map((b) => (
-                <div className="l-benefit-card" key={b.text}>
-                  <div className="l-benefit-icon">{b.icon}</div>
-                  <p className="l-benefit-text">{b.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          </FadeUp>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════
-          5. ПОПУЛЯРНІ ОЗЕРА
-      ══════════════════════════════════════ */}
-      <section className="l-section" id="catalog">
+      <section className="l-popular-section" id="catalog">
         <div className="l-container">
           <FadeUp>
-          <div className="l-section-header">
-            <h2>Популярні озера</h2>
-            <Link href="/lakes" className="l-link-accent">Переглянути всі озера →</Link>
-          </div>
+            <div className="l-popular-header">
+              <h2>Популярні озера</h2>
+              <Link href="/lakes" className="l-btn-outline l-popular-all">
+                Переглянути всі озера
+              </Link>
+            </div>
 
-          <div className="l-lakes-grid">
-            {popularLakes.length > 0
-              ? popularLakes.map((lake) => (
-                  <Link href={`/lakes/${getLakeRouteSlug(lake)}`} className="l-lake-card" key={lake.id}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img className="l-lake-img" src={lake.image_url ?? ""} alt={lake.name} />
-                    <div className="l-lake-body">
-                      <p className="l-lake-name">{lake.name}</p>
-                      {lake.city && <p className="l-lake-loc">📍 {lake.city}</p>}
-                      {lake.fish_species && lake.fish_species.length > 0 && (
-                        <p className="l-lake-fish">
-                          🐟 {lake.fish_species.slice(0, 3).join(", ")}
-                          {lake.fish_species.length > 3 ? ` +${lake.fish_species.length - 3}` : ""}
-                        </p>
-                      )}
-                    </div>
-                  </Link>
-                ))
-              : /* Fallback static cards — real fishing lake photos */
-                [
-                  { name: "Тихий Берег",   city: "Київська обл.",   fish: "Короп, Амур, Карась",  img: "https://plus.unsplash.com/premium_photo-1668203985517-99c47113e5e6?w=600&h=400&fit=crop&auto=format&q=80" },
-                  { name: "Соснове Озеро", city: "Черкаська обл.",  fish: "Щука, Карась, Лящ",   img: "https://plus.unsplash.com/premium_photo-1663091623349-3dc639c79363?w=600&h=400&fit=crop&auto=format&q=80" },
-                  { name: "Дзеркальне",    city: "Полтавська обл.", fish: "Короп, Білий амур",    img: "https://plus.unsplash.com/premium_photo-1727538367105-13590ea2fec1?w=600&h=400&fit=crop&auto=format&q=80" },
-                  { name: "Кленове",       city: "Вінницька обл.",  fish: "Щука, Окунь, Карась",  img: "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80" },
-                ].map((l) => (
-                  <Link href="/lakes" className="l-lake-card" key={l.name}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img className="l-lake-img" src={l.img} alt={l.name} />
-                    <div className="l-lake-body">
-                      <p className="l-lake-name">{l.name}</p>
-                      <p className="l-lake-loc">📍 {l.city}</p>
-                      <p className="l-lake-fish">🐟 {l.fish}</p>
-                    </div>
-                  </Link>
-                ))
-            }
-          </div>
+            <div className="l-popular-grid">
+              {featuredLakeCards.map((lake) => (
+                <LakeCard lake={lake} key={lake.name} />
+              ))}
+            </div>
           </FadeUp>
         </div>
       </section>
 
       {/* ══════════════════════════════════════
-          6. OZERA APP COMING SOON
+          6. OZERA APP LAUNCH
       ══════════════════════════════════════ */}
-      <section className="l-app-coming" id="download">
+      <section className="l-app-launch" id="download">
         <div className="l-container">
-          <div className="l-app-coming-grid">
-            <SlideLeft className="l-app-phone-stage">
-              <div className="l-app-phone-decor" aria-hidden="true" />
-              <div className="l-app-phone" aria-label="Попередній вигляд мобільного застосунку OZERA">
-                <div className="l-app-phone-notch" />
-                <div className="l-app-phone-status">
-                  <span>9:41</span>
-                  <span>▮▮ ◡</span>
-                </div>
-                <div className="l-app-phone-screen">
-                  <div className="l-app-phone-header">
-                    <Image src="/icon.png" alt="" width={28} height={28} className="l-app-phone-logo" />
+          <div className="l-app-launch-card">
+            <SlideLeft className="l-app-launch-content">
+              <span className="l-app-launch-badge">Скоро</span>
+              <h2 className="l-app-launch-title">OZERA скоро буде в телефоні</h2>
+              <p className="l-app-launch-subtitle">
+                Збережені озера, карта, ціни, правила та навігація — навіть перед поїздкою на риболовлю.
+              </p>
+
+              <AppComingSoonForm />
+            </SlideLeft>
+
+            <SlideRight delay={0.1} className="l-app-launch-preview-wrap">
+              <div className="l-app-launch-preview" aria-label="Попередній вигляд мобільного застосунку OZERA">
+                <div className="l-app-launch-phone">
+                  <div className="l-app-launch-phone-top">
+                    <Image src="/icon.png" alt="" width={28} height={28} className="l-app-launch-phone-logo" />
                     <span>OZERA</span>
                   </div>
-                  <div className="l-app-phone-list">
+                  <div className="l-app-launch-phone-search">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="11" cy="11" r="7" />
+                      <path d="M20 20l-3.5-3.5" />
+                    </svg>
+                    <span>Пошук озера...</span>
+                  </div>
+                  <div className="l-app-launch-phone-list">
                     {[
-                      { name: "Тихий Берег", region: "Київська обл.", img: "https://plus.unsplash.com/premium_photo-1668203985517-99c47113e5e6?w=96&h=72&fit=crop&auto=format&q=80" },
-                      { name: "Соснове", region: "Черкаська обл.", img: "https://plus.unsplash.com/premium_photo-1663091623349-3dc639c79363?w=96&h=72&fit=crop&auto=format&q=80" },
-                      { name: "Кленове", region: "Полтавська обл.", img: "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=96&h=72&fit=crop&auto=format&q=80" },
+                      { name: "Тихий Берег", region: "Київська обл." },
+                      { name: "Соснове Озеро", region: "Черкаська обл." },
                     ].map((lake) => (
-                      <div className="l-app-phone-card" key={lake.name}>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={lake.img} alt={lake.name} />
-                        <div>
+                      <div className="l-app-launch-phone-card" key={lake.name}>
+                        <div className="l-app-launch-phone-thumb" aria-hidden="true">{lake.name.slice(0, 1)}</div>
+                        <div className="l-app-launch-phone-copy">
                           <strong>{lake.name}</strong>
                           <span>📍 {lake.region}</span>
                         </div>
                       </div>
                     ))}
                   </div>
-                  <div className="l-app-phone-nav" aria-hidden="true">
-                    <span>⌂<small>Головна</small></span>
-                    <span>◇<small>Карта</small></span>
-                    <span>♡<small>Вибране</small></span>
+                  <div className="l-app-launch-phone-nav" aria-hidden="true">
+                    <span>Головна</span>
+                    <span>Карта</span>
+                    <span>Вибране</span>
                   </div>
                 </div>
-              </div>
-            </SlideLeft>
-
-            <SlideRight delay={0.1} className="l-app-coming-content">
-              <span className="l-app-coming-badge">СКОРО</span>
-              <h2 className="l-app-coming-title">
-                Застосунок OZERA скоро<br />
-                <span>на iOS та Android</span>
-              </h2>
-              <p className="l-app-coming-description">
-                Готуємо мобільний застосунок, щоб озера, ціни, контакти та навігація були під рукою на риболовлі.
-              </p>
-
-              <AppComingSoonForm />
-
-              <div className="l-app-benefits">
-                {[
-                  {
-                    title: "Карта платних водойм",
-                    text: "Озера на карті, фото та контакти",
-                    icon: <><path d="M14 18.5 9 20l-5-1.5v-13L9 7l6-1.5 5 1.5v8" /><path d="M9 7v13" /><path d="M15 5.5v5" /><path d="M18 22s4-3.2 4-7a4 4 0 0 0-8 0c0 3.8 4 7 4 7Z" /><circle cx="18" cy="15" r="1" /></>,
-                  },
-                  {
-                    title: "Умови, ціни та правила",
-                    text: "Вся важлива інформація перед поїздкою",
-                    icon: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" /><path d="M14 2v6h6" /><path d="M8 13h8" /><path d="M8 17h5" /></>,
-                  },
-                  {
-                    title: "Поради для риболовлі",
-                    text: "Корисні поради та рекомендації",
-                    icon: <><path d="M19.5 13.5C17 19 11 21 5 19c-2-6 0-12 5.5-14.5C12 8 16 12 19.5 13.5Z" /><path d="M9 15c3.5-1 6-3.5 7.5-7.5" /></>,
-                  },
-                ].map((benefit) => (
-                  <div className="l-app-benefit" key={benefit.title}>
-                    <span className="l-app-benefit-icon" aria-hidden="true">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        {benefit.icon}
-                      </svg>
-                    </span>
-                    <strong>{benefit.title}</strong>
-                    <p>{benefit.text}</p>
-                  </div>
-                ))}
               </div>
             </SlideRight>
           </div>
@@ -369,3 +355,6 @@ export default async function HomePage() {
     </div>
   );
 }
+
+
+

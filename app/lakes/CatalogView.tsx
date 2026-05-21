@@ -1,35 +1,93 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Lake } from "@/lib/supabase";
 import FishIcon from "@/app/components/FishIcon";
+import LakeCard, { toLakeCardData } from "@/app/components/LakeCard";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
 
 const LakesMap = dynamic(() => import("./LakesMap"), { ssr: false });
 
 const FISH_CHIPS = [
-  { value: "Короп", emoji: "🐟" }, { value: "Щука", emoji: "🦈" },
-  { value: "Судак", emoji: "🐡" }, { value: "Карась", emoji: "🫧" },
-  { value: "Лящ",   emoji: "🐠" }, { value: "Окунь", emoji: "🎣" },
-  { value: "Амур",  emoji: "🌿" }, { value: "Сом",   emoji: "🐋" },
-  { value: "Форель",emoji: "🏔️"}, { value: "Товстолоб", emoji: "🐟" },
+  "Короп",
+  "Щука",
+  "Судак",
+  "Карась",
+  "Лящ",
+  "Окунь",
+  "Амур",
+  "Сом",
+  "Форель",
+  "Товстолоб",
 ];
 
 const REGIONS = [
-  "Київ","Київська область","Вінницька область","Волинська область",
-  "Дніпропетровська область","Донецька область","Житомирська область",
-  "Закарпатська область","Запорізька область","Івано-Франківська область",
-  "Кіровоградська область","Луганська область","Львівська область",
-  "Миколаївська область","Одеська область","Полтавська область",
-  "Рівненська область","Сумська область","Тернопільська область",
-  "Харківська область","Херсонська область","Хмельницька область",
-  "Черкаська область","Чернівецька область","Чернігівська область",
+  "Київ",
+  "Київська область",
+  "Вінницька область",
+  "Волинська область",
+  "Дніпропетровська область",
+  "Донецька область",
+  "Житомирська область",
+  "Закарпатська область",
+  "Запорізька область",
+  "Івано-Франківська область",
+  "Кіровоградська область",
+  "Луганська область",
+  "Львівська область",
+  "Миколаївська область",
+  "Одеська область",
+  "Полтавська область",
+  "Рівненська область",
+  "Сумська область",
+  "Тернопільська область",
+  "Харківська область",
+  "Херсонська область",
+  "Хмельницька область",
+  "Черкаська область",
+  "Чернівецька область",
+  "Чернігівська область",
 ];
 
-interface Props { lakes: Lake[]; total: number; }
+interface Props {
+  lakes: Lake[];
+  total: number;
+}
+
+function MapIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M9 4 3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6 9 4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M9 4v13M15 6v13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function DotIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+      <circle cx="6" cy="6" r="6" />
+    </svg>
+  );
+}
+
+function EmptyState({ onReset }: { onReset: () => void }) {
+  return (
+    <div className="dk-empty-state oz-card">
+      <div className="dk-empty-state__icon" aria-hidden="true">
+        <MapIcon />
+      </div>
+      <h3>Нічого не знайшли</h3>
+      <p>Спробуйте змінити область, рибу або пошуковий запит.</p>
+      <button type="button" className="oz-btn-primary" onClick={onReset}>
+        Скинути фільтри
+      </button>
+    </div>
+  );
+}
 
 export default function CatalogView({ lakes, total }: Props) {
   const [showMap, setShowMap] = useState(false);
@@ -39,13 +97,15 @@ export default function CatalogView({ lakes, total }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const currentFish   = searchParams.get("fish")   ?? "";
+  const currentFish = searchParams.get("fish") ?? "";
   const currentRegion = searchParams.get("region") ?? "";
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (value) params.set(key, value); else params.delete(key);
-    router.push(`/lakes?${params.toString()}`);
+    if (value) params.set(key, value);
+    else params.delete(key);
+    const nextUrl = params.toString() ? `/lakes?${params.toString()}` : "/lakes";
+    router.push(nextUrl);
   };
 
   useEffect(() => {
@@ -56,81 +116,108 @@ export default function CatalogView({ lakes, total }: Props) {
 
   useEffect(() => {
     document.body.style.overflow = showMap ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [showMap]);
 
   return (
     <>
-      {/* ── Grid header row: count + map button ── */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-        <p style={{ fontSize: 14, color: "var(--text-muted)" }}>{total} озер знайдено</p>
-        <button onClick={() => setShowMap(true)} className="dk-btn-map">
-          🗺️ На карті
-        </button>
+      <div className="dk-catalog-toolbar">
+        <div className="dk-catalog-toolbar__count">{total} озер знайдено</div>
+        <div className="dk-segmented" role="tablist" aria-label="Режим перегляду каталогу">
+          <button
+            type="button"
+            className={`dk-segmented__button${showMap ? "" : " is-active"}`}
+            onClick={() => setShowMap(false)}
+          >
+            Список
+          </button>
+          <button
+            type="button"
+            className={`dk-segmented__button${showMap ? " is-active" : ""}`}
+            onClick={() => setShowMap(true)}
+          >
+            На карті
+          </button>
+        </div>
       </div>
 
-      {/* ── GRID ── */}
       {lakes.length === 0 ? (
-        <div className="dk-empty">
-          <span className="dk-empty-icon">🎣</span>
-          <p className="dk-empty-title">Нічого не знайдено</p>
-          <p className="dk-empty-sub">Спробуй змінити фільтри</p>
-        </div>
+        <EmptyState onReset={() => router.push("/lakes")} />
       ) : (
         <div className="dk-lakes-grid">
           {lakes.map((lake) => (
-            <GridCard key={lake.id} lake={lake} />
+            <LakeCard
+              key={lake.id}
+              lake={toLakeCardData({
+                href: `/lakes/${getLakeRouteSlug(lake)}`,
+                name: lake.name,
+                image_url: lake.image_url,
+                area_ha: lake.area_ha,
+                city: lake.city,
+                location_text: lake.location_text,
+                fish_species: lake.fish_species,
+                price_uah: lake.price_uah,
+              })}
+              onMouseEnter={() => setHoveredId(lake.id)}
+              onMouseLeave={() => setHoveredId(null)}
+            />
           ))}
         </div>
       )}
 
-      {/* ── MAP OVERLAY ── */}
       {showMap && (
         <div className="dk-map-overlay">
-          {/* Top filter bar */}
           <div className="dk-map-topbar">
-            <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, overflowX: "auto" }} className="no-scrollbar">
-              <span style={{ fontSize: 13, color: "var(--text-muted)", flexShrink: 0 }}>Риба:</span>
-              {FISH_CHIPS.map((f) => (
+            <div className="dk-map-filters no-scrollbar">
+              <span className="dk-map-filters__label">Риба:</span>
+              {FISH_CHIPS.map((fishName) => (
                 <button
-                  key={f.value}
-                  onClick={() => updateFilter("fish", currentFish === f.value ? "" : f.value)}
-                  className={`dk-map-fish-chip${currentFish === f.value ? " active" : ""}`}
+                  key={fishName}
+                  type="button"
+                  onClick={() => updateFilter("fish", currentFish === fishName ? "" : fishName)}
+                  className={`dk-map-fish-chip${currentFish === fishName ? " active" : ""}`}
                 >
-                  <FishIcon name={f.value} size={13} /> {f.value}
+                  <FishIcon name={fishName} size={13} />
+                  <span>{fishName}</span>
                 </button>
               ))}
-              <div style={{ width: 1, height: 20, background: "var(--border)", flexShrink: 0 }} />
+
+              <div className="dk-map-divider" aria-hidden="true" />
+
               <select
                 value={currentRegion}
                 onChange={(e) => updateFilter("region", e.target.value)}
                 className="dk-map-region-select"
               >
-                <option value="">🌍 Регіон</option>
-                {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+                <option value="">Регіон</option>
+                {REGIONS.map((region) => (
+                  <option key={region} value={region}>
+                    {region}
+                  </option>
+                ))}
               </select>
-              {(currentFish || currentRegion) && (
-                <button
-                  onClick={() => { updateFilter("fish", ""); updateFilter("region", ""); }}
-                  style={{ flexShrink: 0, padding: "6px 10px", borderRadius: 8, border: "1px solid #FF5C5C", background: "transparent", color: "#FF5C5C", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}
-                >✕</button>
-              )}
             </div>
-            <button onClick={() => setShowMap(false)} className="dk-map-close">✕ Закрити</button>
+
+            <button type="button" onClick={() => setShowMap(false)} className="dk-map-close">
+              Закрити
+            </button>
           </div>
 
-          {/* Map */}
-          <div style={{ flex: 1, position: "relative" }}>
+          <div className="dk-map-stage">
             <LakesMap
               lakes={lakes}
               hoveredId={hoveredId}
               selectedId={selectedId}
               onMarkerClick={(id) => setSelectedId(id === selectedId ? null : id)}
             />
-            <div className="dk-map-count">📍 {lakes.filter(l => l.lat && l.lng).length} озер на карті</div>
+            <div className="dk-map-count">
+              <DotIcon />
+              <span>{lakes.filter((lake) => lake.lat && lake.lng).length} озер на карті</span>
+            </div>
           </div>
 
-          {/* Bottom cards panel */}
           <div className="dk-map-bottom">
             <div ref={bottomPanelRef} className="dk-map-cards no-scrollbar">
               {lakes.map((lake) => (
@@ -150,57 +237,14 @@ export default function CatalogView({ lakes, total }: Props) {
   );
 }
 
-/* ── Dark grid card ── */
-function GridCard({ lake }: { lake: Lake }) {
-  const fish = lake.fish_species ?? [];
-  return (
-    <Link href={`/lakes/${getLakeRouteSlug(lake)}`} className="dk-lake-card">
-      <div className="dk-lake-card-photo">
-        {lake.image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={lake.image_url} alt={lake.name} className="dk-lake-card-img" />
-        ) : (
-          <div className="dk-lake-card-placeholder">🌊</div>
-        )}
-        {lake.area_ha && (
-          <span className="dk-area-badge">{lake.area_ha} га</span>
-        )}
-      </div>
-
-      <div className="dk-lake-card-body">
-        <p className="dk-lake-card-name">{lake.name}</p>
-
-        {lake.city && (
-          <p className="dk-lake-card-region">
-            <span>📍</span> {lake.city}
-          </p>
-        )}
-        {lake.location_text && (
-          <p className="dk-lake-card-location">🗺 {lake.location_text}</p>
-        )}
-
-        {fish.length > 0 && (
-          <div className="dk-lake-card-fish">
-            {fish.slice(0, 3).map((f) => (
-              <span key={f} className="dk-fish-tag"><FishIcon name={f} size={11} /> {f}</span>
-            ))}
-            {fish.length > 3 && (
-              <span className="dk-fish-more">+{fish.length - 3}</span>
-            )}
-          </div>
-        )}
-
-        <span className="dk-btn-card">Переглянути →</span>
-      </div>
-    </Link>
-  );
-}
-
-/* ── Dark horizontal card in map bottom panel ── */
 function MapBottomCard({
-  lake, isSelected, onHover, onClick,
+  lake,
+  isSelected,
+  onHover,
+  onClick,
 }: {
-  lake: Lake; isSelected: boolean;
+  lake: Lake;
+  isSelected: boolean;
   onHover: (id: string | null) => void;
   onClick: () => void;
 }) {
@@ -216,7 +260,9 @@ function MapBottomCard({
         // eslint-disable-next-line @next/next/no-img-element
         <img src={lake.image_url} alt={lake.name} className="dk-map-card-img" />
       ) : (
-        <div className="dk-map-card-placeholder">🌊</div>
+        <div className="dk-map-card-placeholder" aria-hidden="true">
+          <MapIcon />
+        </div>
       )}
       <div className="dk-map-card-body">
         <p className="dk-map-card-name">{lake.name}</p>

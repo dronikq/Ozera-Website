@@ -1,11 +1,15 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import "../landing.css";
 
-interface Crumb { label: string; href?: string }
+interface Crumb {
+  label: string;
+  href?: string;
+}
 
 interface Props {
   /** Optional breadcrumb shown below the header bar (e.g. on detail pages) */
@@ -13,43 +17,41 @@ interface Props {
 }
 
 const NAV_LINKS = [
-  { href: "/#about",    label: "Про нас"      },
-  { href: "/lakes",     label: "Каталог озер" },
+  { href: "/lakes", label: "Каталог" },
+  { href: "/#about", label: "Про нас" },
   { href: "/lakes/add", label: "Додати озеро" },
 ];
 
 export default function SiteHeader({ breadcrumbs }: Props) {
-  const pathname  = usePathname();
-  const [scrolled,  setScrolled]  = useState(false);
-  const [menuOpen,  setMenuOpen]  = useState(false);
+  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  /* Scroll shadow */
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* Close mobile menu on route change */
-  useEffect(() => { setMenuOpen(false); }, [pathname]);
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   const isActive = (href: string) => {
-    if (href === "/lakes")     return pathname === "/lakes" || (pathname.startsWith("/lakes/") && pathname !== "/lakes/add");
+    if (href === "/lakes") return pathname === "/lakes" || (pathname.startsWith("/lakes/") && pathname !== "/lakes/add");
     if (href === "/lakes/add") return pathname === "/lakes/add";
-    return false; // "Про нас" is an anchor on the homepage — never "active" on other pages
+    return false;
   };
 
   return (
     <>
       <header className={`l-header${scrolled ? " scrolled" : ""}`}>
         <nav className="l-nav">
-          {/* Logo */}
           <Link href="/" className="l-logo" onClick={() => setMenuOpen(false)}>
-            <Image src="/icon.png" alt="OZERA" width={44} height={44} className="l-logo-img" />
+            <Image src="/icon.png" alt="OZERA" width={42} height={42} className="l-logo-img" />
             <span>OZERA</span>
           </Link>
 
-          {/* Desktop + Mobile nav */}
           <ul className={`l-nav-links${menuOpen ? " open" : ""}`}>
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
@@ -77,24 +79,24 @@ export default function SiteHeader({ breadcrumbs }: Props) {
                     <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                   </svg>
                 </span>
-                Отримати сповіщення
+                Повідомити про запуск
               </button>
             </li>
           </ul>
 
-          {/* Burger */}
           <button
             className="l-burger"
             aria-label="Меню"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
           >
-            <span /><span /><span />
+            <span />
+            <span />
+            <span />
           </button>
         </nav>
       </header>
 
-      {/* Breadcrumb bar (optional, for detail pages) */}
       {breadcrumbs && breadcrumbs.length > 0 && (
         <div className="l-breadcrumb-bar">
           <div className="l-breadcrumb-inner">
@@ -102,11 +104,7 @@ export default function SiteHeader({ breadcrumbs }: Props) {
             {breadcrumbs.map((crumb, i) => (
               <span key={i} className="l-breadcrumb-entry">
                 <span className="l-breadcrumb-sep">/</span>
-                {crumb.href ? (
-                  <Link href={crumb.href}>{crumb.label}</Link>
-                ) : (
-                  <span className="l-breadcrumb-cur">{crumb.label}</span>
-                )}
+                {crumb.href ? <Link href={crumb.href}>{crumb.label}</Link> : <span className="l-breadcrumb-cur">{crumb.label}</span>}
               </span>
             ))}
           </div>

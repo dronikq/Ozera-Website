@@ -47,8 +47,8 @@ export default function AppComingSoonForm() {
     const message = [
       `EMAIL: ${normalizedEmail}`,
       "",
-      "——————————————",
-      "Джерело: нижній блок OZERA App Coming Soon",
+      "------------------------------",
+      "Джерело: нижній блок OZERA App Launch",
       `Сторінка: ${window.location.pathname}`,
     ].join("\n");
 
@@ -59,7 +59,7 @@ export default function AppComingSoonForm() {
         body: JSON.stringify({
           access_key: "b35a5e4d-41fd-4b10-a3d3-9bcc48cb7ccc",
           subject: `OZERA — email для запуску застосунку: ${normalizedEmail}`,
-          from_name: "OZERA — App Coming Soon",
+          from_name: "OZERA — App Launch",
           message,
           replyto: normalizedEmail,
         }),
@@ -71,7 +71,7 @@ export default function AppComingSoonForm() {
       }
 
       setEmail("");
-      setStatus({ type: "success", message: "Дякуємо! Повідомимо, щойно застосунок буде доступний." });
+      setStatus({ type: "success", message: "Дякуємо! Ми напишемо вам, щойно застосунок буде доступний." });
     } catch (error) {
       setStatus({
         type: "error",
@@ -83,21 +83,21 @@ export default function AppComingSoonForm() {
   }
 
   return (
-    <div className="l-app-email-card">
-      <div className="l-app-email-card-head">
-        <span className="l-app-email-card-icon" aria-hidden="true">
+    <div className="l-app-launch-form">
+      <div className="l-app-launch-form-head">
+        <span className="l-app-launch-form-icon" aria-hidden="true">
           <BellIcon />
         </span>
         <div>
-          <p className="l-app-email-title">Дізнайтесь першими про запуск</p>
-          <p className="l-app-email-description">
+          <p className="l-app-launch-form-title">Дізнайтесь першими про запуск</p>
+          <p className="l-app-launch-form-description">
             Залиште email — ми повідомимо, щойно застосунок буде доступний.
           </p>
         </div>
       </div>
 
-      <form className="l-app-email-form" onSubmit={handleSubmit} noValidate>
-        <label className="l-app-email-field">
+      <form className="l-app-launch-form-row" onSubmit={handleSubmit} noValidate>
+        <label className="l-app-launch-field">
           <span className="sr-only">Ваш email</span>
           <input
             type="email"
@@ -112,18 +112,18 @@ export default function AppComingSoonForm() {
             }}
           />
         </label>
-        <button type="submit" className="l-app-email-submit" disabled={isSubmitting}>
-          {isSubmitting ? "Надсилаємо..." : "Повідомити мене"}
+        <button type="submit" className="l-app-launch-submit" disabled={isSubmitting}>
+          {isSubmitting ? "Надсилаємо..." : "Повідомити про запуск"}
         </button>
       </form>
 
-      <p className="l-app-email-note">
+      <p className="l-app-launch-note">
         <LockIcon />
-        Без спаму. Лише повідомлення про запуск.
+        Без спаму. Напишемо лише про запуск застосунку.
       </p>
 
       {status.message && (
-        <p className={`l-app-email-status l-app-email-status-${status.type}`} aria-live="polite">
+        <p className={`l-app-launch-status l-app-launch-status-${status.type}`} aria-live="polite">
           {status.message}
         </p>
       )}
