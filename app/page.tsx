@@ -4,7 +4,8 @@ import { supabase, type Lake } from "@/lib/supabase";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
 import LandingClient from "./components/LandingClient";
 import AppLaunchModal from "./components/AppLaunchModal";
-import { FadeUp, SlideLeft, SlideRight, ScaleIn } from "./components/AnimatedSection";
+import AppComingSoonForm from "./components/AppComingSoonForm";
+import { FadeUp, SlideLeft, SlideRight } from "./components/AnimatedSection";
 import "./landing.css";
 
 async function getLakesCount() {
@@ -303,85 +304,92 @@ export default async function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════
-          6. FOOTER CTA
+          6. OZERA APP COMING SOON
       ══════════════════════════════════════ */}
-      <section className="l-footer-cta" id="download">
+      <section className="l-app-coming" id="download">
         <div className="l-container">
-          <ScaleIn>
-          <div className="l-cta-content">
-
-            {/* Mini phone */}
-            <div className="l-cta-phone">
-              <div className="l-cta-phone-notch">
-                <div className="l-cta-phone-notch-inner" />
-              </div>
-              <div className="l-cta-phone-screen">
-                <div className="l-cta-phone-header">
-                  <div className="l-cta-phone-icon">🎣</div>
-                  <span className="l-cta-phone-name">OZERA</span>
+          <div className="l-app-coming-grid">
+            <SlideLeft className="l-app-phone-stage">
+              <div className="l-app-phone-decor" aria-hidden="true" />
+              <div className="l-app-phone" aria-label="Попередній вигляд мобільного застосунку OZERA">
+                <div className="l-app-phone-notch" />
+                <div className="l-app-phone-status">
+                  <span>9:41</span>
+                  <span>▮▮ ◡</span>
                 </div>
-                <div className="l-cta-phone-body">
-                  {[
-                    { name: "Тихий Берег", img: "https://plus.unsplash.com/premium_photo-1668203985517-99c47113e5e6?w=80&h=64&fit=crop&auto=format&q=80" },
-                    { name: "Соснове",     img: "https://plus.unsplash.com/premium_photo-1663091623349-3dc639c79363?w=80&h=64&fit=crop&auto=format&q=80" },
-                    { name: "Кленове",     img: "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=80&h=64&fit=crop&auto=format&q=80" },
-                  ].map((c) => (
-                    <div className="l-cta-mini-card" key={c.name}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img className="l-cta-mini-img" src={c.img} alt={c.name} />
-                      <div className="l-cta-mini-info">
-                        <span className="l-cta-mini-name">{c.name}</span>
+                <div className="l-app-phone-screen">
+                  <div className="l-app-phone-header">
+                    <Image src="/icon.png" alt="" width={28} height={28} className="l-app-phone-logo" />
+                    <span>OZERA</span>
+                  </div>
+                  <div className="l-app-phone-list">
+                    {[
+                      { name: "Тихий Берег", region: "Київська обл.", img: "https://plus.unsplash.com/premium_photo-1668203985517-99c47113e5e6?w=96&h=72&fit=crop&auto=format&q=80" },
+                      { name: "Соснове", region: "Черкаська обл.", img: "https://plus.unsplash.com/premium_photo-1663091623349-3dc639c79363?w=96&h=72&fit=crop&auto=format&q=80" },
+                      { name: "Кленове", region: "Полтавська обл.", img: "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=96&h=72&fit=crop&auto=format&q=80" },
+                    ].map((lake) => (
+                      <div className="l-app-phone-card" key={lake.name}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={lake.img} alt={lake.name} />
+                        <div>
+                          <strong>{lake.name}</strong>
+                          <span>📍 {lake.region}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="l-cta-phone-nav">
-                  {["🏠", "🗺️", "❤️"].map((ic) => <span key={ic} style={{ fontSize: 12 }}>{ic}</span>)}
+                    ))}
+                  </div>
+                  <div className="l-app-phone-nav" aria-hidden="true">
+                    <span>⌂<small>Головна</small></span>
+                    <span>◇<small>Карта</small></span>
+                    <span>♡<small>Вибране</small></span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </SlideLeft>
 
-            {/* Text + store buttons */}
-            <div className="l-cta-text">
-              <h2 className="l-cta-title">
-                Застосунок OZERA скоро{" "}<br />
-                <span className="l-accent">на iOS та Android</span>
+            <SlideRight delay={0.1} className="l-app-coming-content">
+              <span className="l-app-coming-badge">СКОРО</span>
+              <h2 className="l-app-coming-title">
+                Застосунок OZERA скоро<br />
+                <span>на iOS та Android</span>
               </h2>
-              <p className="l-cta-subtitle">
+              <p className="l-app-coming-description">
                 Готуємо мобільний застосунок, щоб озера, ціни, контакти та навігація були під рукою на риболовлі.
               </p>
-              <div className="l-launch-actions">
-                <button type="button" className="l-launch-btn" data-app-launch-trigger data-app-launch-source="landing-footer">
-                  <span className="l-launch-btn-icon" aria-hidden="true">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                    </svg>
-                  </span>
-                  Повідомити про запуск
-                </button>
-                <span className="l-launch-note">Без спаму. Напишемо, коли застосунок буде доступний.</span>
-              </div>
-              <div className="l-platform-chips" aria-label="Платформи застосунку">
-                {["iOS", "Android"].map((platform) => (
-                  <span className="l-platform-chip" key={platform} aria-label={`${platform} готується`}>
-                    <span className="l-platform-icon" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="12" height="20" x="6" y="2" rx="2" ry="2" />
-                        <path d="M11 18h2" />
+
+              <AppComingSoonForm />
+
+              <div className="l-app-benefits">
+                {[
+                  {
+                    title: "Карта платних водойм",
+                    text: "Озера на карті, фото та контакти",
+                    icon: <><path d="M14 18.5 9 20l-5-1.5v-13L9 7l6-1.5 5 1.5v8" /><path d="M9 7v13" /><path d="M15 5.5v5" /><path d="M18 22s4-3.2 4-7a4 4 0 0 0-8 0c0 3.8 4 7 4 7Z" /><circle cx="18" cy="15" r="1" /></>,
+                  },
+                  {
+                    title: "Умови, ціни та правила",
+                    text: "Вся важлива інформація перед поїздкою",
+                    icon: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" /><path d="M14 2v6h6" /><path d="M8 13h8" /><path d="M8 17h5" /></>,
+                  },
+                  {
+                    title: "Поради для риболовлі",
+                    text: "Корисні поради та рекомендації",
+                    icon: <><path d="M19.5 13.5C17 19 11 21 5 19c-2-6 0-12 5.5-14.5C12 8 16 12 19.5 13.5Z" /><path d="M9 15c3.5-1 6-3.5 7.5-7.5" /></>,
+                  },
+                ].map((benefit) => (
+                  <div className="l-app-benefit" key={benefit.title}>
+                    <span className="l-app-benefit-icon" aria-hidden="true">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        {benefit.icon}
                       </svg>
                     </span>
-                    <span>
-                      <span className="l-platform-name">{platform}</span>
-                      <span className="l-platform-status">готується</span>
-                    </span>
-                  </span>
+                    <strong>{benefit.title}</strong>
+                    <p>{benefit.text}</p>
+                  </div>
                 ))}
               </div>
-            </div>
-
+            </SlideRight>
           </div>
-          </ScaleIn>
         </div>
       </section>
 
