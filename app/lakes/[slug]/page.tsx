@@ -169,13 +169,6 @@ export default async function LakePage({
 
       <div className="dk-lake-hero">
         <div className="dk-container">
-          <div className="dk-breadcrumb">
-            <Link href="/">Головна</Link>
-            <span className="dk-breadcrumb-sep">/</span>
-            <Link href="/lakes">Каталог</Link>
-            <span className="dk-breadcrumb-sep">/</span>
-            <span className="dk-breadcrumb-cur">{lake.name}</span>
-          </div>
           <h1>{lake.name}</h1>
           {(lake.city || lake.location_text) && (
             <p className="dk-lake-address">
