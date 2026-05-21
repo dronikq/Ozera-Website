@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { Suspense } from "react";
 import { supabase, type Lake } from "@/lib/supabase";
 import CatalogView from "./CatalogView";
 import AILakePicker from "./AILakePicker";
 import DarkFiltersBar from "./DarkFiltersBar";
+import SiteHeader from "@/app/components/SiteHeader";
 import "./lakes.css";
 
 export const metadata: Metadata = {
@@ -78,16 +78,7 @@ export default async function LakesPage({
 
   return (
     <div className="dk-page">
-      {/* ── NAV ── */}
-      <nav className="dk-nav">
-        <div className="dk-nav-inner">
-          <Link href="/" className="dk-logo">
-            <Image src="/icon.png" alt="OZERA" width={36} height={36} className="dk-logo-img" />
-            <span>OZERA</span>
-          </Link>
-          <span className="dk-nav-label">Каталог озер</span>
-        </div>
-      </nav>
+      <SiteHeader />
 
       {/* ── PAGE HEADER ── */}
       <div className="dk-page-header">

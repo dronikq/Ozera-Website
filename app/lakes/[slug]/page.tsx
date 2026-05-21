@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { supabase, type Lake, type LakeImage, type LakeUpdate } from "@/lib/supabase";
@@ -11,7 +10,7 @@ import AIAdvisor from "../[id]/AIAdvisor";
 import LakeContactsPanel from "../[id]/LakeContactsPanel";
 import LakeSchemeViewer from "../[id]/LakeSchemeViewer";
 import LakeDetailTabs from "../[id]/LakeDetailTabs";
-import AppLaunchModal from "@/app/components/AppLaunchModal";
+import SiteHeader from "@/app/components/SiteHeader";
 import "../lakes.css";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -131,7 +130,6 @@ export default async function LakePage({
 
   return (
     <div className="dk-page">
-      <AppLaunchModal />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script
         type="application/ld+json"
@@ -164,21 +162,10 @@ export default async function LakePage({
         />
       )}
 
-      <nav className="dk-nav">
-        <div className="dk-nav-inner">
-          <Link href="/" className="dk-logo">
-            <Image src="/icon.png" alt="OZERA" width={36} height={36} className="dk-logo-img" />
-            <span>OZERA</span>
-          </Link>
-          <div className="dk-nav-breadcrumb">
-            <Link href="/lakes">Каталог</Link>
-            <span className="dk-nav-breadcrumb-sep">/</span>
-            <span className="dk-nav-breadcrumb-cur" style={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {lake.name}
-            </span>
-          </div>
-        </div>
-      </nav>
+      <SiteHeader breadcrumbs={[
+        { label: "Каталог", href: "/lakes" },
+        { label: lake.name },
+      ]} />
 
       <div className="dk-lake-hero">
         <div className="dk-container">
