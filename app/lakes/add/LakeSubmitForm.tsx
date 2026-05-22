@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 const INPUT: React.CSSProperties = {
   width: "100%",
@@ -28,7 +29,7 @@ const FIELD: React.CSSProperties = {
   marginBottom: 20,
 };
 
-const REQUIRED = <span style={{ color: "#FF5C5C" }}> *</span>;
+const REQUIRED = <span style={{ color: "var(--color-danger)" }}> *</span>;
 
 export default function LakeSubmitForm() {
   const [pending, setPending] = useState(false);
@@ -125,12 +126,12 @@ export default function LakeSubmitForm() {
         <p style={{ color: "var(--text-secondary)", marginBottom: 32, lineHeight: 1.6 }}>
           Заявку отримано. Ми розглянемо її та додамо озеро до каталогу.
         </p>
-        <a
+        <Link
           href="/lakes"
           style={{
             display: "inline-block",
             background: "var(--accent)",
-            color: "#0B1F3A",
+            color: "var(--color-text)",
             fontWeight: 700,
             padding: "12px 28px",
             borderRadius: 10,
@@ -139,7 +140,7 @@ export default function LakeSubmitForm() {
           }}
         >
           Повернутись до каталогу
-        </a>
+        </Link>
       </div>
     );
   }
@@ -238,9 +239,9 @@ export default function LakeSubmitForm() {
       {error && (
         <p
           style={{
-            color: "#FF5C5C",
-            background: "rgba(255,92,92,0.1)",
-            border: "1px solid rgba(255,92,92,0.3)",
+            color: "var(--color-danger)",
+            background: "var(--color-danger-soft, #F8ECE8)",
+            border: "1px solid rgba(179,90,69,0.26)",
             borderRadius: 10,
             padding: "12px 16px",
             marginBottom: 20,
@@ -257,7 +258,7 @@ export default function LakeSubmitForm() {
         style={{
           width: "100%",
           background: pending ? "var(--bg-hover)" : "var(--accent)",
-          color: pending ? "var(--text-muted)" : "#0B1F3A",
+          color: pending ? "var(--text-muted)" : "var(--color-text)",
           fontWeight: 700,
           fontSize: 16,
           padding: "14px 28px",

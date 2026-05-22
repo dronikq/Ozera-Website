@@ -77,26 +77,21 @@ export default async function HomePage() {
               {/* CTA buttons */}
               <div className="l-hero-cta">
                 <Link href="/lakes" className="l-btn-primary">
-                  Переглянути озера →
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                  </svg>
+                  Знайти озеро
                 </Link>
                 <button type="button" className="l-btn-outline" data-app-launch-trigger data-app-launch-source="hero">
-                  Отримати сповіщення про застосунок
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+                  </svg>
+                  Повідомити про запуск
                 </button>
               </div>
 
-              {/* Feature icons */}
-              <div className="l-hero-features">
-                {[
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>, text: "Усі озера в одному місці з цінами та контактами" },
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>, text: "Фото, види риб та умови лову" },
-                  { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFC857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>, text: "Навігація до озера в 1 натиск" },
-                ].map((f) => (
-                  <div className="l-feature-item" key={f.text}>
-                    <span className="l-feature-icon">{f.icon}</span>
-                    <span className="l-feature-text">{f.text}</span>
-                  </div>
-                ))}
-              </div>
             </SlideLeft>
 
             {/* Right: Phone mockup */}
@@ -110,15 +105,19 @@ export default async function HomePage() {
                     {/* Header */}
                     <div className="l-phone-header">
                       <div className="l-phone-logo">
-                        <div className="l-phone-logo-icon">🎣</div>
+                        <div className="l-phone-logo-icon">O</div>
                         <span className="l-phone-logo-text">OZERA</span>
                       </div>
-                      <span>📍</span>
+                      <span className="l-phone-count">{count}</span>
                     </div>
                     {/* Search */}
                     <div className="l-phone-search">
                       <div className="l-phone-search-inner">
-                        🔍&nbsp; Пошук озера...
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <circle cx="11" cy="11" r="8" />
+                          <path d="m21 21-4.3-4.3" />
+                        </svg>
+                        Пошук озера...
                       </div>
                     </div>
                     {/* Lake cards */}
@@ -129,27 +128,51 @@ export default async function HomePage() {
                           <img className="l-phone-card-img" src={c.img} alt={c.name} />
                           <div className="l-phone-card-info">
                             <span className="l-phone-card-name">{c.name}</span>
-                            <span className="l-phone-card-loc">📍 {c.region}</span>
-                            <span className="l-phone-card-fish">🐟 {c.fish}</span>
+                            <span className="l-phone-card-loc">{c.region}</span>
+                            <span className="l-phone-card-fish">{c.fish}</span>
                           </div>
                         </div>
                       ))}
                     </div>
                     {/* Bottom nav */}
                     <div className="l-phone-nav">
-                      {["🏠", "🗺️", "❤️", "👤"].map((ic) => (
-                        <span className="l-phone-nav-icon" key={ic}>{ic}</span>
+                      {[
+                        { label: "Головна", icon: <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" /> },
+                        { label: "Карта", icon: <><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z" /><path d="M9 3v15" /><path d="M15 6v15" /></> },
+                        { label: "Обране", icon: <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" /> },
+                      ].map((item) => (
+                        <span className="l-phone-nav-icon" key={item.label}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            {item.icon}
+                          </svg>
+                        </span>
                       ))}
                     </div>
                   </div>
                 </div>
 
                 {/* Floating badges */}
-                <div className="l-float-badge">🐟 {count} озер у базі</div>
+                <div className="l-float-badge">{count} озер у базі</div>
                 <div className="l-float-notif"><span>🔔</span> Нове озеро!</div>
               </div>
             </SlideRight>
 
+            {/* Feature icons */}
+            <div className="l-hero-features">
+              {[
+                { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>, title: "Ціни та контакти", description: "Умови, графік і контакти перед поїздкою." },
+                { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>, title: "Риба, фото та правила", description: "Дивись, що ловиться і які діють правила." },
+                { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>, title: "Навігація в один клік", description: "Відкривай маршрут до озера без зайвого пошуку." },
+              ].map((f) => (
+                <div className="l-feature-item" key={f.title}>
+                  <span className="l-feature-icon">{f.icon}</span>
+                  <span className="l-feature-copy">
+                    <span className="l-feature-title">{f.title}</span>
+                    <span className="l-feature-description">{f.description}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

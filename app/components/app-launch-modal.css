@@ -64,7 +64,7 @@
 }
 
 .app-launch-modal .app-launch-badge strong {
-  color: #f5c84b;
+  color: var(--color-accent);
   font-weight: 800;
   letter-spacing: 0.02em;
 }
@@ -80,7 +80,7 @@
 }
 
 .app-launch-modal .app-launch-modal-title span {
-  color: #f5c84b;
+  color: var(--color-accent);
 }
 
 .app-launch-modal .app-launch-modal-subtitle {
@@ -135,8 +135,8 @@
 }
 
 .app-launch-modal .app-launch-field input:focus {
-  border-color: #f5c84b;
-  box-shadow: 0 0 0 4px rgba(245, 200, 75, 0.12);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(217, 182, 111, 0.12);
 }
 
 .app-launch-modal .app-launch-field.has-error input {
@@ -156,8 +156,8 @@
   margin-top: 8px;
   border: none;
   border-radius: 16px;
-  background: linear-gradient(180deg, #ffda73, #f5c84b);
-  color: #07111f;
+  background: linear-gradient(180deg, var(--color-accent-soft), var(--color-accent));
+  color: var(--color-text);
   font: inherit;
   font-size: 18px;
   font-weight: 800;
@@ -167,7 +167,7 @@
 
 .app-launch-modal .app-launch-submit:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 32px rgba(245, 200, 75, 0.25);
+  box-shadow: 0 12px 32px rgba(217, 182, 111, 0.25);
 }
 
 .app-launch-modal .app-launch-submit:disabled {
@@ -225,9 +225,9 @@
   height: 48px;
   flex: 0 0 auto;
   border-radius: 14px;
-  background: rgba(245, 200, 75, 0.12);
-  color: #f5c84b;
-  border: 1px solid rgba(245, 200, 75, 0.13);
+  background: rgba(217, 182, 111, 0.12);
+  color: var(--color-accent);
+  border: 1px solid rgba(217, 182, 111, 0.13);
 }
 
 .app-launch-modal .app-launch-benefit strong,
@@ -263,9 +263,9 @@
   height: 64px;
   margin-bottom: 22px;
   border-radius: 18px;
-  background: rgba(245, 200, 75, 0.14);
-  color: #f5c84b;
-  border: 1px solid rgba(245, 200, 75, 0.22);
+  background: rgba(217, 182, 111, 0.14);
+  color: var(--color-accent);
+  border: 1px solid rgba(217, 182, 111, 0.22);
   font-size: 34px;
   font-weight: 800;
 }
