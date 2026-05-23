@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Footer from "./components/Footer";
 import AppLaunchModal from "./components/AppLaunchModal";
 import "./globals.css";
@@ -88,6 +89,7 @@ export default function RootLayout({
         <AppLaunchModal />
         {children}
         <Footer />
+        <SpeedInsights />
       </body>
     </html>
   );
