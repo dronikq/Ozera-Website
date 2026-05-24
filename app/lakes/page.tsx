@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 async function getInitialLakes(): Promise<Lake[]> {
   const { data, error } = await supabase
     .from("lakes")
-    .select("*")
+    .select("*, lake_images(id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at)")
     .order("name", { ascending: true })
     .limit(200);
   if (error) console.error("getInitialLakes error:", error.message);

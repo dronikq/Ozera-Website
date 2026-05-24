@@ -19,7 +19,9 @@ async function fetchLakes(
   fish: string,
   price: string,
 ): Promise<Lake[]> {
-  let query = supabase.from("lakes").select("*");
+  let query = supabase
+    .from("lakes")
+    .select("*, lake_images(id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at)");
 
   if (search) query = query.ilike("name", `%${search}%`);
   if (region) query = query.eq("city", region);
@@ -166,7 +168,7 @@ export default function LakesCatalogClient({ initialLakes }: { initialLakes: Lak
                 <div className="dk-lakes-cta__card">
                   <div className="dk-lakes-cta__media">
                     <Image
-                      src="/fishing-hero.jpg.png"
+                      src="/fishing-hero.webp"
                       alt="Рибалка на озері"
                       fill
                       sizes="(max-width: 900px) 100vw, 320px"

@@ -258,7 +258,7 @@
       circle at 75% 45%,
       rgba(217, 182, 111, 0.12),
       transparent 34%),
-    url('/fishing-hero.jpg.png') center/cover no-repeat;
+    url('/fishing-hero.webp') center/cover no-repeat;
   min-height: auto;
   display: flex; align-items: center;
   padding: 78px 0 64px;

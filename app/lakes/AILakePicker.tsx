@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Lake } from "@/lib/supabase";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
+import { getLakeCardImage } from "@/lib/lake-image-resolver";
 
 type Flow = "location" | "fish";
 type Stage = "intro" | "region" | "fish" | "loading" | "result";
@@ -483,8 +484,7 @@ export default function AILakePicker({ lakes }: { lakes: Lake[] }) {
   };
 
   const imageSrcForLake = (lake: Lake) => {
-    const url = lake.image_url?.trim();
-    return url && !failedImages[lake.id] ? url : null;
+    return failedImages[lake.id] ? null : getLakeCardImage(lake);
   };
 
   const markImageFailed = (lakeId: string) => {

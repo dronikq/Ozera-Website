@@ -5,6 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import type { Lake } from "@/lib/supabase";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
+import { getLakeCardImage } from "@/lib/lake-image-resolver";
 
 const LakesMap = dynamic(() => import("./LakesMap"), { ssr: false });
 
@@ -53,6 +54,8 @@ function LakeCard({
   isHovered: boolean;
   onHover: (id: string | null) => void;
 }) {
+  const imageSrc = getLakeCardImage(lake);
+
   return (
     <Link
       href={`/lakes/${getLakeRouteSlug(lake)}`}
@@ -66,16 +69,12 @@ function LakeCard({
     >
       {/* Photo */}
       <div className="h-44 bg-blue-50 overflow-hidden">
-        {lake.image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={lake.image_url}
-            alt={lake.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-5xl">🌊</div>
-        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={imageSrc}
+          alt={lake.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
       </div>
 
       {/* Info */}
