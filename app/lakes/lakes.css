@@ -1523,6 +1523,19 @@
   overflow: hidden;
   width: 200px;
 }
+.lake-pin-image-slot {
+  width: 100%;
+  height: 110px;
+  background: linear-gradient(135deg, #dbeafe, #eff6ff);
+  overflow: hidden;
+}
+.lake-pin-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(245,200,66,0.28), transparent 36%),
+    linear-gradient(135deg, #dbeafe, #bfdbfe);
+}
 
 /* Cluster bubble */
 .map-cluster-icon {
