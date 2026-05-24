@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 
@@ -35,6 +35,31 @@ interface Advice {
   summary: string;
   updatedAt: string;
 }
+
+type GlyphName =
+  | "assistant"
+  | "fish"
+  | "hook"
+  | "map"
+  | "clock"
+  | "x"
+  | "ruler"
+  | "leaf"
+  | "rod"
+  | "scale"
+  | "thermos"
+  | "shirt"
+  | "glove"
+  | "sun"
+  | "rain"
+  | "boot"
+  | "net"
+  | "sparkles"
+  | "refresh"
+  | "chevronDown"
+  | "chevronRight"
+  | "check"
+  | "backpack";
 
 // ── Fish classification ──
 const PREDATORY = ["щука", "окунь", "судак", "сом", "жерех", "берш", "головень"];
@@ -334,7 +359,7 @@ function peacefulAdvice(h: HourData, fish: string[], peaks: ReturnType<typeof ge
   // ── Найкращий час ──
   const biteClass = score >= 7 ? "g" : score >= 4.5 ? "o" : "b";
   const timingTags: string[] = [];
-  peaks.filter(p => p.isMajor).slice(0, 2).forEach(p => timingTags.push(`⭐⭐ ${p.label}`));
+  peaks.filter(p => p.isMajor).slice(0, 2).forEach((p) => timingTags.push(p.label));
   const next = peaks.find(p => p.start >= h.hour) ?? peaks[0];
   const trendHint = isFalling ? " Тиск падає — активність знижується." : isRising ? " Тиск зростає — активність покращується." : "";
   const timingText = biteClass === "g"
@@ -489,7 +514,7 @@ function predatoryAdvice(h: HourData, fish: string[], peaks: ReturnType<typeof g
     : "";
   const timingTags: string[] = [];
   const bestPeaks = peaks.filter(p => p.isMajor).slice(0, 2);
-  bestPeaks.forEach(p => timingTags.push(`⭐⭐ ${p.label}`));
+  bestPeaks.forEach((p) => timingTags.push(p.label));
   const dawnPeak = peaks.find(p => p.start >= 5 && p.start <= 8);
   const duskPeak = peaks.find(p => p.start >= 17 && p.start <= 20);
   let timingText = `Хижак (${score}/10) — ранній ранок та вечір найкращі вікна.${trendHintP}`;
@@ -618,496 +643,355 @@ function generateAdvice(h: HourData, fishSpecies: string[], dateStr: string): Ad
   };
 }
 
-// ── Checklist ──
-interface CheckItem { id: string; icon: string; label: string; sub?: string; warn?: boolean; }
-interface CheckSection { label: string; color: "bait" | "clothes" | "gear"; items: CheckItem[]; }
+// ── Component ──
+function Glyph({ name, size = 20 }: { name: GlyphName; size?: number }) {
+  const common = {
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.9,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
 
-function generateChecklist(h: HourData, fishSpecies: string[]): CheckSection[] {
-  const lc = fishSpecies.map(s => s.toLowerCase());
-  const hasPredatory = PREDATORY.some(p => lc.some(f => f.includes(p)));
-  const hasPeaceful  = PEACEFUL.some(p  => lc.some(f => f.includes(p)));
-  const hasCarp    = lc.some(f => f.includes("короп") || f.includes("карп") || f.includes("сазан"));
-  const hasCrucian = lc.some(f => f.includes("карась"));
-  const hasPike    = lc.some(f => f.includes("щука"));
-  const hasPerch   = lc.some(f => f.includes("окунь"));
-  const warm = h.temp >= 15;
-  const cool = h.temp >= 8 && h.temp < 15;
-  const cold = h.temp < 8;
-  const rainy = h.rain > 1;
-  const earlyMorning = h.hour <= 7;
-
-  const bait: CheckItem[] = [];
-  if (hasPredatory) {
-    bait.push({ id: "silicon",  icon: "🐛", label: "Силікон / джиг" });
-    bait.push({ id: "wobbler",  icon: "🪝", label: warm ? "Воблер" : "Воблер-суспендер" });
-    if (hasPike || hasPerch) bait.push({ id: "spinner", icon: "🌀", label: "Блешня №2–3" });
-    bait.push({ id: "livebait", icon: "🐟", label: "Живець" });
+  switch (name) {
+    case "assistant":
+      return <svg {...common}><path d="M12 3.5l1.6 4.1L18 9.2l-4.4 1.6L12 15l-1.6-4.2L6 9.2l4.4-1.6L12 3.5Z" /><path d="M4.8 16.8l.9 2.4L8 20l-2.3.8-.9 2.4-.9-2.4L2 20l2.3-.8.5-1.4" /></svg>;
+    case "fish":
+      return <svg {...common}><path d="M4 12c2.2-3.1 5-4.7 8-4.7 3.2 0 6 1.6 8 4.7-2 3.1-4.8 4.7-8 4.7-3 0-5.8-1.6-8-4.7Z" /><path d="M4 12h-2M18.2 9.8l2.8-2.2M18.2 14.2l2.8 2.2" /><circle cx="10" cy="11.5" r="0.9" fill="currentColor" stroke="none" /></svg>;
+    case "hook":
+      return <svg {...common}><path d="M6.5 6.5a4.5 4.5 0 0 1 9 0v5.2a4.5 4.5 0 0 1-9 0" /><path d="M9.2 17.2 6.5 19.8" /></svg>;
+    case "map":
+      return <svg {...common}><path d="M4 8l5-2 6 2 5-2v12l-5 2-6-2-5 2V8Z" /><path d="M9 6v12M15 8v12" /><circle cx="12" cy="11" r="1.6" /></svg>;
+    case "clock":
+      return <svg {...common}><circle cx="12" cy="12" r="8.2" /><path d="M12 7.8v4.7l3.2 1.9" /></svg>;
+    case "x":
+      return <svg {...common}><path d="M7 7l10 10M17 7 7 17" /></svg>;
+    case "ruler":
+      return <svg {...common}><path d="M5 16 16 5l3 3L8 19l-3-3Z" /><path d="M9 8l2 2M12 5l2 2M15 8l2 2" /></svg>;
+    case "leaf":
+      return <svg {...common}><path d="M19 5c-5.8 0-11 3.8-11 9.2 0 2.9 1.9 4.8 4.8 4.8C18 19 19 10.8 19 5Z" /><path d="M8.2 15.2C10 13.6 12.2 11.7 16 9.5" /></svg>;
+    case "rod":
+      return <svg {...common}><path d="M5 19 19 5" /><path d="M14.5 6.5 17.5 9.5" /><path d="M3.5 20.5 6 18" /></svg>;
+    case "scale":
+      return <svg {...common}><path d="M6 8h12" /><path d="M8 8v8m8-8v8" /><path d="M4 16h16" /><path d="M9 16a3 3 0 0 0 6 0" /></svg>;
+    case "thermos":
+      return <svg {...common}><path d="M9 3h6l-.5 2h-5L9 3Z" /><path d="M10 5h4l1 11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2l1-11Z" /><path d="M10 10h4" /></svg>;
+    case "shirt":
+      return <svg {...common}><path d="M8 5 12 7l4-2 3 3-2 2v9H7V10L5 8l3-3Z" /></svg>;
+    case "glove":
+      return <svg {...common}><path d="M8 13V6.8a1.8 1.8 0 0 1 3.6 0V13" /><path d="M11.6 13V5.8a1.8 1.8 0 0 1 3.6 0V13" /><path d="M15.2 13V7.5a1.8 1.8 0 0 1 3.6 0V16a4 4 0 0 1-4 4H10a5 5 0 0 1-5-5v-2.5" /></svg>;
+    case "sun":
+      return <svg {...common}><circle cx="12" cy="12" r="4" /><path d="M12 2.5v2.5M12 19v2.5M4.5 4.5 6.3 6.3M17.7 17.7l1.8 1.8M2.5 12H5M19 12h2.5M4.5 19.5l1.8-1.8M17.7 6.3l1.8-1.8" /></svg>;
+    case "rain":
+      return <svg {...common}><path d="M5 14.5h11.2a3.2 3.2 0 0 0 .2-6.4 4.6 4.6 0 0 0-8.6 1.7A2.8 2.8 0 0 0 5 14.5Z" /><path d="M8 18.5l-.7 1.5M12 18.5l-.7 1.5M16 18.5l-.7 1.5" /></svg>;
+    case "boot":
+      return <svg {...common}><path d="M6 5h4v9h4.5l1.5 3H6a2 2 0 0 1-2-2V9l2-4Z" /><path d="M6 14c1.5 0 3-.8 4-2" /></svg>;
+    case "net":
+      return <svg {...common}><circle cx="10.5" cy="10.5" r="4.5" /><path d="M14 14l5 5" /><path d="M8.3 8.3 12.7 12.7M12.8 8.1 8.1 12.8" /></svg>;
+    case "sparkles":
+      return <svg {...common}><path d="M12 3.5l1.6 4.1L18 9.2l-4.4 1.6L12 15l-1.6-4.2L6 9.2l4.4-1.6L12 3.5Z" /><path d="M18 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z" /></svg>;
+    case "refresh":
+      return <svg {...common}><path d="M20 12a8 8 0 0 1-13.7 5.7M4 12a8 8 0 0 1 13.7-5.7" /><path d="M4 7.5V4H0.5M20 16.5V20H23.5" /></svg>;
+    case "chevronDown":
+      return <svg {...common}><path d="m6 9 6 6 6-6" /></svg>;
+    case "chevronRight":
+      return <svg {...common}><path d="m9 6 6 6-6 6" /></svg>;
+    case "check":
+      return <svg {...common}><path d="M20 6 9 17l-5-5" /></svg>;
+    case "backpack":
+      return <svg {...common}><path d="M9 5.5h6A4 4 0 0 1 19 9.5V19H5V9.5a4 4 0 0 1 4-4Z" /><path d="M9 5.5V4.2A1.2 1.2 0 0 1 10.2 3h3.6A1.2 1.2 0 0 1 15 4.2v1.3" /><path d="M8 12h8" /></svg>;
+    default:
+      return <svg {...common}><path d="M12 3.5l1.6 4.1L18 9.2l-4.4 1.6L12 15l-1.6-4.2L6 9.2l4.4-1.6L12 3.5Z" /></svg>;
   }
-  if (hasCarp) {
-    if (warm) {
-      bait.push({ id: "boilies",    icon: "🔴", label: "Бойли" });
-      bait.push({ id: "corn",       icon: "🌽", label: "Кукурудза" });
-      bait.push({ id: "pellet",     icon: "🍢", label: "Пелети" });
-    } else {
-      bait.push({ id: "worm",  icon: "🪱", label: "Черв'як / опариш" });
-      if (cold) bait.push({ id: "pearl", icon: "🌾", label: "Перловка" });
-    }
-    bait.push({ id: "groundbait", icon: "🌿", label: "Прикормка" });
-  }
-  if (hasCrucian && !hasCarp) {
-    bait.push({ id: "worm",  icon: "🪱", label: "Черв'як / опариш" });
-    bait.push({ id: "bread", icon: "🍞", label: "Хліб / тісто" });
-  }
-
-  const clothes: CheckItem[] = [];
-  if (cold) {
-    clothes.push({ id: "jacket",  icon: "🧥", label: "Тепла куртка",   sub: `${h.temp}°C — холодно` });
-    clothes.push({ id: "gloves",  icon: "🧤", label: "Рукавички" });
-    clothes.push({ id: "thermos", icon: "☕", label: "Термос" });
-  } else if (cool) {
-    clothes.push({ id: "fleece",  icon: "🧥", label: "Флісова кофта",  sub: `+${h.temp}°C` });
-    clothes.push({ id: "thermos", icon: "☕", label: "Термос" });
-  } else {
-    clothes.push({ id: "light", icon: "👕", label: "Легкий одяг" });
-    if (h.temp > 22) clothes.push({ id: "sunscreen", icon: "🧴", label: "Сонцезахист" });
-    clothes.push({ id: "cap", icon: "🧢", label: "Кепка" });
-  }
-  if (rainy) {
-    clothes.push({ id: "raincoat", icon: "🌧️", label: "Дощовик",        sub: `⚠️ Дощ ${h.rain} мм`, warn: true });
-    clothes.push({ id: "boots",    icon: "👢", label: "Гумові чоботи",  sub: "⚠️ Мокрий берег",     warn: true });
-  }
-
-  const gear: CheckItem[] = [];
-  gear.push({ id: "net", icon: "🥅", label: "Підсак" });
-  if (hasPredatory) gear.push({ id: "spinning", icon: "🎣", label: "Спінінг" });
-  if (hasPeaceful)  { gear.push({ id: "feeder", icon: "🎣", label: "Фідер / донка" }); gear.push({ id: "stands", icon: "📐", label: "Підставки" }); }
-  if (hasCarp)      gear.push({ id: "scales", icon: "⚖️", label: "Ваги" });
-  if (earlyMorning) gear.push({ id: "torch", icon: "🔦", label: "Ліхтарик", sub: "Ще темно" });
-
-  return ([
-    { label: "🎣 Приманки",    color: "bait"    as const, items: bait },
-    { label: "🧥 Одяг",        color: "clothes" as const, items: clothes },
-    { label: "🔧 Спорядження", color: "gear"    as const, items: gear },
-  ] as CheckSection[]).filter(s => s.items.length > 0);
 }
 
-// ── Component ──
+const CP1251_BYTES = new Uint8Array(256);
+for (let i = 0; i < 256; i += 1) CP1251_BYTES[i] = i;
+const CP1251_CHARS = new TextDecoder("windows-1251").decode(CP1251_BYTES);
+const CP1251_REVERSE = new Map(Array.from(CP1251_CHARS, (ch, index) => [ch, index]));
+
+function repairCp1251Mojibake(value) {
+  if (!value) return value;
+  if (!/Рџ|С‚|Р°|в|в›|�|пїЅ/.test(value)) return value;
+
+  const bytes = [];
+  for (const ch of value) {
+    const byte = CP1251_REVERSE.get(ch);
+    if (byte === undefined) return value;
+    bytes.push(byte);
+  }
+
+  try {
+    const decoded = new TextDecoder("utf-8").decode(new Uint8Array(bytes));
+    if (!decoded || decoded.includes("�")) return value;
+    return decoded;
+  } catch {
+    return value;
+  }
+}
+
+function cleanUiText(value) {
+  return repairCp1251Mojibake(value)
+    .replace(/^[^\p{L}\p{N}]+/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function adviceIconFor(key: string, tab: "peaceful" | "predatory"): GlyphName {
+  if (key === "bait") return tab === "peaceful" ? "hook" : "fish";
+  if (key === "cast") return "ruler";
+  if (key === "groundbait") return "leaf";
+  if (key === "location") return "map";
+  if (key === "timing") return "clock";
+  if (key === "dont") return "x";
+  return "sparkles";
+}
+
+function adviceLureIconFor(name: string): GlyphName {
+  const lc = name.toLowerCase();
+  if (lc.includes("силікон") || lc.includes("silicon")) return "hook";
+  if (lc.includes("воблер")) return "fish";
+  if (lc.includes("вертуш")) return "sparkles";
+  if (lc.includes("колива")) return "sparkles";
+  if (lc.includes("живець")) return "fish";
+  return "sparkles";
+}
+
 export default function AIAdvisor({ lat, lng, fishSpecies }: { lat: number; lng: number; fishSpecies: string[] }) {
-  const [advice, setAdvice]           = useState<Advice | null>(null);
-  const [hourData, setHourData]       = useState<HourData | null>(null);
-  const [loading, setLoading]         = useState(true);
-  const [tab, setTab]                 = useState<"peaceful" | "predatory">("peaceful");
-  const [checkedItems, setCheckedItems]     = useState<Record<string, boolean>>({});
-  const [checklistStep, setChecklistStep]   = useState<"intro" | "question" | "result">("intro");
-  const [selectedFish, setSelectedFish]     = useState<string[]>([]);
-  const [adviceOpen, setAdviceOpen]         = useState(false);
-  const [checklistOpen, setChecklistOpen]   = useState(false);
+  const [advice, setAdvice] = useState<Advice | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<"peaceful" | "predatory">("peaceful");
+  const [adviceOpen, setAdviceOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
-    setCheckedItems({});
     try {
       const result = await fetchCurrentHour(lat, lng);
       if (result) {
         const a = generateAdvice(result.hour, fishSpecies, result.dateStr);
         setAdvice(a);
-        setHourData(result.hour);
         if (!a.peaceful && a.predatory) setTab("predatory");
       }
     } catch { /* ignore */ }
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, [lat, lng]); // eslint-disable-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+  useEffect(() => { load(); }, [lat, lng]);
 
   if (loading) {
     return (
-      <div className="rounded-2xl overflow-hidden animate-pulse" style={{ border: "1px solid #1E3A5F" }}>
-        <div className="h-16 bg-[#0f2a4a]" />
-        <div className="p-5 flex flex-col gap-5" style={{ background: "#132F57" }}>
-          {[1,2,3,4].map(i => (
-            <div key={i} className="flex gap-4">
-              <div className="w-10 h-10 rounded-xl shrink-0" style={{ background: "#0F2A4D" }} />
-              <div className="flex-1 flex flex-col gap-2 pt-1">
-                <div className="h-3 rounded w-24" style={{ background: "#0F2A4D" }} />
-                <div className="h-4 rounded w-full" style={{ background: "#0F2A4D" }} />
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="dk-ai-stack" aria-busy="true">
+        <section className="dk-panel dk-panel--loading">
+          <div className="dk-panel__loading-line dk-panel__loading-line--wide" />
+          <div className="dk-panel__loading-grid">
+            <div className="dk-panel__loading-card" />
+            <div className="dk-panel__loading-card" />
+            <div className="dk-panel__loading-card" />
+          </div>
+        </section>
+        <section className="dk-panel dk-panel--loading">
+          <div className="dk-panel__loading-line dk-panel__loading-line--wide" />
+          <div className="dk-panel__loading-line dk-panel__loading-line--mid" />
+          <div className="dk-panel__loading-line dk-panel__loading-line--small" />
+        </section>
       </div>
     );
   }
+
   if (!advice || (!advice.peaceful && !advice.predatory)) {
     return (
-      <div className="rounded-2xl p-5 flex items-center justify-between gap-4" style={{ background: "#132F57", border: "1px solid #1E3A5F" }}>
-        <p className="text-sm" style={{ color: "#6F85A8" }}>⚠️ Не вдалось завантажити AI-порадник</p>
-        <button onClick={load} className="text-sm font-semibold transition-colors shrink-0" style={{ color: "#4DA3FF" }}>
-          Спробувати ще раз
-        </button>
+      <div className="dk-ai-stack">
+        <section className="dk-panel dk-panel--error">
+          <div className="dk-panel__error-copy">
+            <p className="dk-panel__eyebrow">AI-помічник з підбору озера</p>
+            <p className="dk-panel__subtitle">{cleanUiText("Не вдалося завантажити поради. Спробуйте ще раз за мить.")}</p>
+          </div>
+          <button type="button" onClick={load} className="dk-btn dk-btn--accent">
+            <span className="dk-btn__icon"><Glyph name="refresh" size={16} /></span>
+            Спробувати ще раз
+          </button>
+        </section>
       </div>
     );
   }
 
   const hasBoth = !!advice.peaceful && !!advice.predatory;
   const current = tab === "peaceful" ? advice.peaceful : advice.predatory;
+  const activeTabScore = tab === "peaceful" ? advice.peacefulScore : advice.predatoryScore;
 
-  const timelineItems = current ? [
-    { emoji: tab === "peaceful" ? "🪱" : "🐟", label: "Наживка",             dot: tab === "peaceful" ? "yellow" : "red",    ...current.bait },
-    { emoji: "🎣",                              label: "Дистанція та горизонт", dot: "blue",                                    ...current.cast },
-    ...(current.groundbait ? [{ emoji: "🌿", label: "Прикормка", dot: "orange", ...current.groundbait }] : []),
-    { emoji: "📍",                              label: "Де шукати",            dot: "purple",                                  ...current.location },
-    { emoji: "⏰",                              label: "Найкращий час",         dot: "green",                                   ...current.timing },
-    { emoji: "❌",                              label: "Що не робити",          dot: "rose",                                    ...current.dont },
-  ] : [];
-
-  const dotStyle: Record<string, string> = {
-    yellow: "bg-[#fefce8] border-[#fde68a]",
-    red:    "bg-[#fff1f2] border-[#fecdd3]",
-    blue:   "bg-[#eff6ff] border-[#bfdbfe]",
-    orange: "bg-[#fff7ed] border-[#fed7aa]",
-    purple: "bg-[#faf5ff] border-[#e9d5ff]",
-    green:  "bg-[#f0fdf4] border-[#bbf7d0]",
-    rose:   "bg-[#fff1f2] border-[#fda4af]",
-  };
-  const labelStyle: Record<string, string> = {
-    yellow: "text-[#b45309]", red: "text-[#be123c]", blue: "text-[#1d4ed8]",
-    orange: "text-[#c2410c]", purple: "text-[#7e22ce]", green: "text-[#15803d]",
-    rose:   "text-[#e11d48]",
-  };
+  const adviceCards = current
+    ? [
+        { key: "bait", label: "Наживка", icon: adviceIconFor("bait", tab), tone: "accent" as const, text: current.bait.text, tags: current.bait.tags, lures: current.bait.lures ?? [] },
+        { key: "cast", label: "Дистанція та горизонт", icon: adviceIconFor("cast", tab), tone: "info" as const, text: current.cast.text, tags: current.cast.tags },
+        ...(current.groundbait ? [{ key: "groundbait", label: "Прикормка", icon: adviceIconFor("groundbait", tab), tone: "positive" as const, text: current.groundbait.text, tags: current.groundbait.tags }] : []),
+        { key: "location", label: "Де шукати", icon: adviceIconFor("location", tab), tone: "info" as const, text: current.location.text, tags: current.location.tags },
+        { key: "timing", label: "Найкращий час", icon: adviceIconFor("timing", tab), tone: "accent" as const, text: current.timing.text, tags: current.timing.tags },
+        { key: "dont", label: "Що не робити", icon: adviceIconFor("dont", tab), tone: "danger" as const, text: current.dont.text, tags: current.dont.tags },
+      ]
+    : [];
 
   return (
-    <div className="flex flex-col gap-4">
-    <section className="rounded-2xl overflow-hidden" style={{ border: "1px solid #1E3A5F" }}>
-      {/* Header */}
-      <button
-        type="button"
-        onClick={() => setAdviceOpen((prev) => !prev)}
-        className="bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex w-full items-center justify-between gap-3 text-left"
-        aria-expanded={adviceOpen}
-        aria-controls="ai-advice-content"
-      >
-        <div>
-          <p className="text-white font-bold text-[15px]">🤖 Що робити сьогодні</p>
-          <p className="text-white/45 text-xs mt-0.5">AI-порадник на основі погоди та озера</p>
-        </div>
-        <span className="text-xs font-bold text-white/55">{adviceOpen ? "▾" : "▸"}</span>
-      </button>
-
-      <div
-        id="ai-advice-content"
-        aria-hidden={!adviceOpen}
-        style={{
-          maxHeight: adviceOpen ? 2600 : 0,
-          opacity: adviceOpen ? 1 : 0,
-          overflow: "hidden",
-          transform: adviceOpen ? "translateY(0)" : "translateY(-4px)",
-          transition: "max-height 340ms ease, opacity 240ms ease, transform 240ms ease",
-          pointerEvents: adviceOpen ? "auto" : "none",
-        }}
-      >
-      {/* Fish tabs */}
-      {hasBoth && (
-        <div className="px-4 pt-2 pb-0 flex gap-1" style={{ background: "#132F57", borderBottom: "1px solid #1E3A5F" }}>
-          {(["peaceful", "predatory"] as const).map((t) => {
-            const s = t === "peaceful" ? advice.peacefulScore : advice.predatoryScore;
-            const sc = s >= 7 ? "text-[#15803d] bg-[#f0fdf4]" : s >= 4.5 ? "text-[#92400e] bg-[#fef9c3]" : "text-[#be123c] bg-[#fff1f2]";
-            return (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`px-4 py-2 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
-                  tab === t
-                    ? "border-[#FFC857] text-white"
-                    : "border-transparent text-[#6F85A8] hover:text-[#A9B8D4]"
-                }`}
-              >
-                {t === "peaceful" ? "🐟 Мирна риба" : "🦈 Хижа риба"}
-                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${sc}`}>{s}/10</span>
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Timeline */}
-      <div className="px-5 pt-5 pb-2" style={{ background: "#132F57" }}>
-        <div className="flex flex-col">
-          {timelineItems.map((item, i) => (
-            <div key={item.label} className="flex gap-4 relative pb-5">
-              {/* Vertical line */}
-              {i < timelineItems.length - 1 && (
-                <div className="absolute left-5 top-10 bottom-0 w-0.5 bg-gradient-to-b from-[#1E3A5F] to-[#132F57]" />
-              )}
-              {/* Dot */}
-              <div className={`w-10 h-10 rounded-[13px] border-2 flex items-center justify-center text-lg shrink-0 z-10 ${dotStyle[item.dot]}`}>
-                {item.emoji}
-              </div>
-              {/* Content */}
-              <div className="pt-1.5 flex-1 min-w-0">
-                <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${labelStyle[item.dot]}`}>
-                  {item.label}
-                </p>
-                <p className="text-sm font-semibold text-white leading-relaxed">{item.text}</p>
-                {"lures" in item && item.lures ? (
-                  <div className="grid grid-cols-2 gap-2 mt-3">
-                    {item.lures.map((lure) => (
-                      <div key={lure.name} className="rounded-xl p-3" style={{ background: "#0F2A4D", border: "1px solid #1E3A5F" }}>
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-[17px]">{lure.icon}</span>
-                          <span className="text-xs font-bold text-white flex-1">{lure.name}</span>
-                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${lure.top ? "bg-[#fef9c3] text-[#854d0e]" : "text-[#6F85A8]"}`} style={lure.top ? {} : { background: "#132F57" }}>
-                            {lure.top ? "⭐ Топ" : "Норм"}
-                          </span>
-                        </div>
-                        <p className="text-[10px] leading-snug mb-2" style={{ color: "#A9B8D4" }}>{lure.tip}</p>
-                        <div className="flex flex-wrap gap-1">
-                          {lure.colors.map((c) => (
-                            <div key={c.name} className="flex items-center gap-1">
-                              <div
-                                className="w-3 h-3 rounded-[3px] flex-shrink-0"
-                                style={{
-                                  background: c.hex,
-                                  border: c.hex === "#ffffff" ? "1px solid #1E3A5F" : "1px solid rgba(255,255,255,.15)",
-                                  boxShadow: c.best ? "0 0 0 1.5px #FFC857" : undefined,
-                                }}
-                              />
-                              <span className={`text-[10px] font-semibold ${c.best ? "text-[#FFC857]" : "text-[#6F85A8]"}`}>
-                                {c.name}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : item.tags.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5 mt-2">
-                    {item.tags.map((tag) => (
-                      <span key={tag} className="text-[11px] font-semibold px-2 py-0.5 rounded-md" style={{ background: "#0F2A4D", border: "1px solid #1E3A5F", color: "#A9B8D4" }}>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Summary + footer */}
-      <div className="px-5 py-3 flex items-center justify-between gap-4" style={{ background: "#0F2A4D", borderTop: "1px solid #1E3A5F" }}>
-        <p className="text-xs italic leading-relaxed flex-1 pl-3" style={{ color: "#A9B8D4", borderLeft: "2px solid #FFC857" }}>
-          {advice.summary}
-        </p>
-        <div className="flex items-center gap-3 shrink-0">
-          <span className="text-[11px]" style={{ color: "#6F85A8" }}>о {advice.updatedAt}</span>
-          <button
-            onClick={load}
-            className="text-xs font-bold transition-colors px-3 py-1.5 rounded-lg"
-            style={{ color: "#A9B8D4", background: "#132F57", border: "1px solid #1E3A5F" }}
-          >
-            🔄 Оновити
-          </button>
-        </div>
-      </div>
-      </div>
-    </section>
-
-      {/* Checklist wizard — окремий блок */}
-      <section className="rounded-2xl overflow-hidden" style={{ border: "1px solid #1E3A5F", background: "#132F57" }}>
-        {/* Header */}
+    <div className="dk-ai-stack">
+      <section className="dk-panel dk-advice-panel">
         <button
           type="button"
-          onClick={() => setChecklistOpen((prev) => !prev)}
-          className="bg-gradient-to-r from-[#0f2a4a] to-[#1e3f6e] px-5 py-4 flex w-full items-center justify-between gap-3 text-left"
-          aria-expanded={checklistOpen}
-          aria-controls="ai-checklist-content"
+          onClick={() => setAdviceOpen((prev) => !prev)}
+          className="dk-panel__header"
+          aria-expanded={adviceOpen}
+          aria-controls="ai-advice-content"
         >
-          <div>
-            <p className="text-white font-bold text-[15px]">🎒 Що взяти сьогодні</p>
-            <p className="text-white/45 text-xs mt-0.5">ШІ допоможе зібратися і не забути нічого корисного</p>
+          <div className="dk-panel__header-copy">
+            <div className="dk-label-row">
+              <span className="dk-label-row__icon"><Glyph name="assistant" size={16} /></span>
+              <span className="dk-label-row__label">{cleanUiText("Що робити сьогодні")}</span>
+            </div>
+            <p className="dk-panel__subtitle">{cleanUiText("AI-порадник на основі погоди та умов озера")}</p>
           </div>
-          <div className="flex items-center gap-2">
-          {checklistStep === "result" && (() => {
-            const cl = hourData ? generateChecklist(hourData, selectedFish) : [];
-            const all = cl.flatMap(s => s.items);
-            const done = all.filter(it => checkedItems[it.id]).length;
-            return <span className="text-xs font-bold bg-white/10 text-white/70 px-2.5 py-1 rounded-lg">{done}/{all.length}</span>;
-          })()}
-            <span className="text-xs font-bold text-white/55">{checklistOpen ? "▾" : "▸"}</span>
-          </div>
+          <span className="dk-panel__chevron" aria-hidden="true">{adviceOpen ? "▾" : "▸"}</span>
         </button>
 
         <div
-          id="ai-checklist-content"
-          aria-hidden={!checklistOpen}
+          id="ai-advice-content"
+          className="dk-panel__content"
+          aria-hidden={!adviceOpen}
           style={{
-            maxHeight: checklistOpen ? 2400 : 0,
-            opacity: checklistOpen ? 1 : 0,
+            maxHeight: adviceOpen ? 2800 : 0,
+            opacity: adviceOpen ? 1 : 0,
             overflow: "hidden",
-            transform: checklistOpen ? "translateY(0)" : "translateY(-4px)",
+            transform: adviceOpen ? "translateY(0)" : "translateY(-4px)",
             transition: "max-height 340ms ease, opacity 240ms ease, transform 240ms ease",
-            pointerEvents: checklistOpen ? "auto" : "none",
+            pointerEvents: adviceOpen ? "auto" : "none",
           }}
         >
-        {/* ── INTRO ── */}
-        {checklistStep === "intro" && (
-          <div className="px-5 py-8 flex flex-col items-center text-center gap-5">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl" style={{ background: "#0F2A4D", border: "1px solid #1E3A5F" }}>
-              🤖
-            </div>
-            <div>
-              <p className="font-bold text-[16px] leading-snug text-white">Зберемо тебе на риболовлю</p>
-              <p className="text-sm mt-1.5 leading-relaxed max-w-xs" style={{ color: "#A9B8D4" }}>
-                Відповідай на 1 коротке питання — і отримаєш персональний список спорядження під сьогоднішні умови.
-              </p>
-            </div>
-            <button
-              onClick={() => setChecklistStep("question")}
-              className="font-bold text-sm px-6 py-2.5 rounded-xl transition-colors"
-              style={{ background: "#FFC857", color: "#0B1F3A" }}
-            >
-              Почати →
-            </button>
-          </div>
-        )}
-
-        {/* ── QUESTION ── */}
-        {checklistStep === "question" && (
-          <div className="px-5 py-6 flex flex-col gap-5">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: "#6F85A8" }}>Крок 1 з 1</p>
-              <p className="font-bold text-[15px] leading-snug text-white">Яку рибу плануєш ловити сьогодні?</p>
-              <p className="text-xs mt-1" style={{ color: "#6F85A8" }}>Можна обрати кілька</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {fishSpecies.map((f) => {
-                const active = selectedFish.includes(f);
+          {hasBoth && (
+            <div className="dk-tabs">
+              {(["peaceful", "predatory"] as const).map((t) => {
+                const score = t === "peaceful" ? advice.peacefulScore : advice.predatoryScore;
+                const active = tab === t;
                 return (
                   <button
-                    key={f}
-                    onClick={() => setSelectedFish(prev =>
-                      prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f]
-                    )}
-                    className="px-3 py-1.5 rounded-xl text-sm font-semibold transition-all"
-                    style={{
-                      background: active ? "#FFC857" : "#0F2A4D",
-                      color: active ? "#0B1F3A" : "#A9B8D4",
-                      border: active ? "1.5px solid #FFC857" : "1.5px solid #1E3A5F",
-                    }}
+                    key={t}
+                    type="button"
+                    onClick={() => setTab(t)}
+                    className={`dk-tab ${active ? "dk-tab--active" : ""}`}
+                    aria-pressed={active}
                   >
-                    {f}
+                    <span className="dk-tab__label">{cleanUiText(t === "peaceful" ? "Мирна риба" : "Хижа риба")}</span>
+                    <span className="dk-tab__score">{score.toFixed(1)}/10</span>
                   </button>
                 );
               })}
             </div>
-            <button
-              disabled={selectedFish.length === 0}
-              onClick={() => { setCheckedItems({}); setChecklistStep("result"); }}
-              className="w-full py-2.5 rounded-xl font-bold text-sm transition-all"
-              style={{
-                background: selectedFish.length > 0 ? "#FFC857" : "#1E3A5F",
-                color: selectedFish.length > 0 ? "#0B1F3A" : "#6F85A8",
-                cursor: selectedFish.length === 0 ? "not-allowed" : "pointer",
-              }}
-            >
-              Показати список →
-            </button>
+          )}
+
+          <div className="dk-advice-grid">
+            {adviceCards.map((card) => (
+              <article key={card.key} className={`dk-advice-card dk-advice-card--${card.tone}`}>
+                <div className="dk-advice-card__icon"><Glyph name={card.icon} size={20} /></div>
+                <div className="dk-advice-card__body">
+                  <div className="dk-advice-card__top">
+                    <p className="dk-advice-card__label">{cleanUiText(card.label)}</p>
+                    {card.key === "timing" && activeTabScore >= 7 && <span className="dk-mini-score">{activeTabScore.toFixed(1)}/10</span>}
+                  </div>
+                  <p className="dk-advice-card__text">{cleanUiText(card.text)}</p>
+                  {card.tags.length > 0 && (
+                    <div className="dk-tag-row">
+                      {card.tags.map((tag) => (
+                        <span key={tag} className="dk-tag-row__tag">
+                          {cleanUiText(tag)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {card.lures && card.lures.length > 0 && (
+                    <div className="dk-lure-grid">
+                      {card.lures.slice(0, 4).map((lure) => (
+                        <div key={lure.name} className="dk-lure-card">
+                          <span className="dk-lure-card__icon" aria-hidden="true">
+                            <Glyph name={adviceLureIconFor(lure.name)} size={16} />
+                          </span>
+                          <div className="dk-lure-card__body">
+                            <div className="dk-lure-card__head">
+                              <span className="dk-lure-card__name">{cleanUiText(lure.name)}</span>
+                            </div>
+                            <p className="dk-lure-card__tip">{cleanUiText(lure.tip)}</p>
+                          </div>
+                          <div className="dk-lure-card__meta">
+                            <span className={`dk-lure-card__badge ${lure.top ? "dk-lure-card__badge--top" : ""}`}>
+                              {lure.top ? "Top" : "Норм"}
+                            </span>
+                            {lure.colors.length > 0 && (
+                              <div className="dk-lure-card__colors" aria-label={`Рекомендовані кольори для ${cleanUiText(lure.name)}`}>
+                                {lure.colors.map((color) => (
+                                  <span
+                                    key={`${lure.name}-${color.name}`}
+                                    className={`dk-lure-card__color${color.best ? " dk-lure-card__color--best" : ""}`}
+                                    title={cleanUiText(color.name)}
+                                    aria-label={cleanUiText(color.name)}
+                                  >
+                                    <span
+                                      className="dk-lure-card__color-dot"
+                                      aria-hidden="true"
+                                      style={{ backgroundColor: color.hex }}
+                                    />
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                      {card.lures.length > 4 && <span className="dk-lure-grid__more">+{card.lures.length - 4}</span>}
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
           </div>
-        )}
 
-        {/* ── RESULT ── */}
-        {checklistStep === "result" && hourData && (() => {
-          const checklist = generateChecklist(hourData, selectedFish);
-          const allItems  = checklist.flatMap(s => s.items);
-          const doneCount = allItems.filter(it => checkedItems[it.id]).length;
-          const totalCount = allItems.length;
-          const sectionColor: Record<string, string> = {
-            bait: "text-[#b45309]", clothes: "text-[#1d4ed8]", gear: "text-[#7e22ce]",
-          };
-          return (
-            <div className="px-5 pt-4 pb-3">
-              {/* Selected fish chips */}
-              <div className="flex flex-wrap gap-1.5 mb-4">
-                {selectedFish.map(f => (
-                  <span key={f} className="text-[11px] font-semibold px-2 py-0.5 rounded-md" style={{ background: "#0F2A4D", border: "1px solid #1E3A5F", color: "#4DA3FF" }}>
-                    🎣 {f}
-                  </span>
-                ))}
-                <button
-                  onClick={() => setChecklistStep("question")}
-                  className="text-[11px] font-semibold px-2 py-0.5 rounded-md transition-colors"
-                  style={{ background: "#0F2A4D", border: "1px solid #1E3A5F", color: "#6F85A8" }}
-                >
-                  ✏️ Змінити
-                </button>
-              </div>
-
-              {checklist.map((section) => (
-                <div key={section.label} className="mb-3">
-                  <p className={`text-[9px] font-black uppercase tracking-widest mb-2 ${sectionColor[section.color]}`}>
-                    {section.label}
-                  </p>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {section.items.map((item) => {
-                      const checked = !!checkedItems[item.id];
-                      return (
-                        <button
-                          key={item.id}
-                          onClick={() => setCheckedItems(prev => ({ ...prev, [item.id]: !prev[item.id] }))}
-                          className="flex items-center gap-2 px-2.5 py-2 rounded-xl text-left transition-all"
-                          style={{
-                            background: checked ? "rgba(34,197,94,0.1)" : "#0F2A4D",
-                            border: checked ? "1.5px solid #22c55e" : item.warn ? "1.5px solid #f87171" : "1.5px solid #1E3A5F",
-                          }}
-                        >
-                          <div className="w-4 h-4 rounded-[4px] flex-shrink-0 flex items-center justify-center transition-all"
-                            style={{
-                              background: checked ? "#22c55e" : "#132F57",
-                              border: checked ? "1.5px solid #22c55e" : item.warn ? "1.5px solid #f87171" : "1.5px solid #1E3A5F",
-                            }}
-                          >
-                            {checked && (
-                              <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
-                                <path d="M1 3.5L3.2 5.7L8 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
-                            )}
-                          </div>
-                          <span className="text-[14px] leading-none flex-shrink-0">{item.icon}</span>
-                          <div className="min-w-0">
-                            <p className={`text-[11px] font-bold leading-tight ${checked ? "line-through" : "text-white"}`} style={checked ? { color: "#6F85A8" } : {}}>
-                              {item.label}
-                            </p>
-                            {item.sub && !checked && (
-                              <p className={`text-[10px] mt-0.5 leading-tight ${item.warn ? "text-[#f87171] font-semibold" : "text-slate-400"}`}>
-                                {item.sub}
-                              </p>
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-              {totalCount > 0 && (
-                <div className="flex items-center gap-2 mt-2 mb-1">
-                  <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "#1E3A5F" }}>
-                    <div
-                      className="h-full bg-gradient-to-r from-[#22c55e] to-[#84cc16] rounded-full transition-all duration-300"
-                      style={{ width: `${(doneCount / totalCount) * 100}%` }}
-                    />
-                  </div>
-                  <span className="text-[10px] font-semibold whitespace-nowrap" style={{ color: "#6F85A8" }}>
-                    {doneCount === totalCount ? "✅ Все зібрано!" : `${doneCount} з ${totalCount}`}
-                  </span>
-                </div>
-              )}
+          <div className="dk-panel__footer">
+            <p className="dk-panel__note">{cleanUiText(advice.summary)}</p>
+            <div className="dk-panel__footer-meta">
+              <span className="dk-panel__updated">{cleanUiText(advice.updatedAt)}</span>
+              <button type="button" onClick={load} className="dk-btn dk-btn--secondary">
+                <span className="dk-btn__icon"><Glyph name="refresh" size={16} /></span>
+                Оновити
+              </button>
             </div>
-          );
-        })()}
+          </div>
+        </div>
+      </section>
+
+      <section className="dk-panel dk-checklist-panel dk-checklist-panel--soon" aria-label="Що взяти сьогодні — скоро">
+        <div className="dk-soon-preview">
+          <div className="dk-soon-preview__icon"><Glyph name="backpack" size={24} /></div>
+          <div className="dk-soon-preview__body">
+            <div className="dk-soon-preview__head">
+              <div>
+                <div className="dk-label-row">
+                  <span className="dk-label-row__label">{cleanUiText("Що взяти сьогодні")}</span>
+                  <span className="dk-soon-badge">Скоро</span>
+                </div>
+                <p className="dk-soon-preview__subtitle">{cleanUiText("AI-асистент для збору на риболовлю")}</p>
+              </div>
+            </div>
+            <p className="dk-soon-preview__text">
+              {cleanUiText("Допоможе скласти чекліст під погоду, озеро, рибу та формат виїзду.")}
+            </p>
+            <div className="dk-soon-chip-row" aria-label="Що враховуватиме AI-асистент">
+              {["Погода", "Риба", "Снасті", "Наживка", "Одяг"].map((item) => (
+                <span key={item} className="dk-soon-chip">{item}</span>
+              ))}
+            </div>
+            <div className="dk-soon-status">
+              <span className="dk-soon-status__icon"><Glyph name="sparkles" size={15} /></span>
+              <span>{cleanUiText("Скоро в OZERA")}</span>
+            </div>
+          </div>
         </div>
       </section>
     </div>

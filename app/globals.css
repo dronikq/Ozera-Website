@@ -247,6 +247,186 @@ footer a:hover {
   color: var(--color-accent) !important;
 }
 
+.oz-footer {
+  background: var(--color-primary);
+  color: #FFFFFF;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 56px 24px 28px;
+}
+
+.oz-footer__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.oz-footer__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(180px, 0.7fr) minmax(220px, 0.7fr);
+  gap: clamp(48px, 7vw, 92px);
+  align-items: start;
+}
+
+.oz-footer__brand {
+  min-width: 0;
+}
+
+.oz-footer__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: #FFFFFF;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+
+.oz-footer__logo:hover {
+  color: #FFFFFF !important;
+}
+
+.oz-footer__logo-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 1px rgba(217,182,111,0.22),
+    0 14px 30px rgba(0,0,0,0.24);
+}
+
+.oz-footer__description {
+  max-width: 340px;
+  margin-top: 14px;
+  color: rgba(255,255,255,0.72);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.oz-footer__socials {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.oz-footer__social-link {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.82);
+  text-decoration: none;
+  transition: transform 180ms ease, color 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.oz-footer__social-link:hover {
+  background: rgba(217,182,111,0.12);
+  border-color: rgba(217,182,111,0.35);
+  color: var(--color-accent) !important;
+  transform: translateY(-2px);
+}
+
+.oz-footer__heading {
+  margin: 0 0 18px;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.oz-footer__links,
+.oz-footer__contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.oz-footer__link,
+.oz-footer__contact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: rgba(255,255,255,0.70);
+  font-size: 15px;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.oz-footer__link {
+  width: fit-content;
+  transition: transform 180ms ease, color 180ms ease;
+}
+
+.oz-footer__link:hover {
+  color: var(--color-accent) !important;
+  transform: translateX(2px);
+}
+
+.oz-footer__contact-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+}
+
+a.oz-footer__contact {
+  transition: color 180ms ease;
+}
+
+a.oz-footer__contact:hover {
+  color: var(--color-accent) !important;
+}
+
+.oz-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255,255,255,0.10);
+}
+
+.oz-footer__bottom p {
+  margin: 0;
+  color: rgba(255,255,255,0.54);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .oz-footer {
+    padding: 40px 20px 24px;
+  }
+
+  .oz-footer__grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .oz-footer__logo {
+    font-size: 28px;
+  }
+
+  .oz-footer__description {
+    max-width: 100%;
+  }
+
+  .oz-footer__bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 32px;
+  }
+}
+
 /* ── Leaflet lake pin tooltip card ── */
 .lake-pin-tooltip {
   padding: 0 !important;

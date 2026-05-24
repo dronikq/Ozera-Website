@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { supabase, type Lake, type LakeImage, type LakeUpdate } from "@/lib/supabase";
@@ -325,7 +324,7 @@ export default async function LakePage({
             </div>
 
             <div className="lake-app-promo__content">
-              <div className="lake-app-promo__badge">● Скоро</div>
+              <div className="lake-app-promo__badge">Скоро</div>
 
               <h2 className="lake-app-promo__title">
                 Застосунок OZERA скоро <span className="accent">на iOS та Android</span>
@@ -337,15 +336,29 @@ export default async function LakePage({
 
               <div className="lake-app-promo__chips">
                 <div className="lake-app-promo__chip">
-                  <span className="lake-app-promo__chip-icon">⭐</span>
+                  <span className="lake-app-promo__chip-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m12 2 2.9 6.1L21 9l-4.5 4.2L17.6 20 12 16.8 6.4 20l1.1-6.8L3 9l6.1-.9L12 2Z" />
+                    </svg>
+                  </span>
                   Обрані озера
                 </div>
                 <div className="lake-app-promo__chip">
-                  <span className="lake-app-promo__chip-icon">🔔</span>
+                  <span className="lake-app-promo__chip-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+                  </span>
                   Push-сповіщення
                 </div>
                 <div className="lake-app-promo__chip">
-                  <span className="lake-app-promo__chip-icon">🧭</span>
+                  <span className="lake-app-promo__chip-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 3 10 14" />
+                      <path d="M21 3 14 21l-4-7-7-4Z" />
+                    </svg>
+                  </span>
                   Навігація
                 </div>
               </div>

@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { CameraIcon, GlobeIcon, MailIcon, MessageCircleIcon, PhoneIcon } from "./LakeUiIcons";
 
 type ContactLinks = {
   email?: string;
@@ -65,39 +66,60 @@ export default function LakeContactsPanel({ lakeId, contactsEnabled, contacts, i
   return (
     <div className="dk-contacts-panel" ref={panelRef} id={`lake-contacts-panel-${lakeId}`}>
       <button type="button" className="dk-btn-call dk-contacts-toggle" onClick={() => setOpen((value) => !value)} aria-expanded={open}>
-        📞 {open ? "Сховати контакти" : "Показати контакти"}
+        <span className="dk-btn__icon" aria-hidden="true">
+          <PhoneIcon size={16} />
+        </span>
+        {open ? "Сховати контакти" : "Показати контакти"}
       </button>
 
       {open && (
         <div className="dk-contacts-box">
           {contacts?.phone?.map((p) => (
             <a key={p} href={`tel:${p}`} className="dk-contact-link">
-              📱 {p}
+              <span className="dk-contact-link__icon" aria-hidden="true">
+                <PhoneIcon size={16} />
+              </span>
+              {p}
             </a>
           ))}
           {contacts?.email && (
             <a href={`mailto:${contacts.email}`} className="dk-contact-link">
-              ✉️ {contacts.email}
+              <span className="dk-contact-link__icon" aria-hidden="true">
+                <MailIcon size={16} />
+              </span>
+              {contacts.email}
             </a>
           )}
           {contacts?.website && (
             <a href={contacts.website} target="_blank" rel="noopener noreferrer" className="dk-contact-link">
-              🌐 {contacts.website}
+              <span className="dk-contact-link__icon" aria-hidden="true">
+                <GlobeIcon size={16} />
+              </span>
+              {contacts.website}
             </a>
           )}
           {contacts?.telegram && (
             <a href={contacts.telegram} target="_blank" rel="noopener noreferrer" className="dk-contact-link">
-              💬 Telegram
+              <span className="dk-contact-link__icon" aria-hidden="true">
+                <MessageCircleIcon size={16} />
+              </span>
+              Telegram
             </a>
           )}
           {contacts?.instagram && (
             <a href={contacts.instagram} target="_blank" rel="noopener noreferrer" className="dk-contact-link">
-              📷 Instagram
+              <span className="dk-contact-link__icon" aria-hidden="true">
+                <CameraIcon size={16} />
+              </span>
+              Instagram
             </a>
           )}
           {contacts?.viber && (
             <a href={contacts.viber} target="_blank" rel="noopener noreferrer" className="dk-contact-link">
-              💜 Viber
+              <span className="dk-contact-link__icon" aria-hidden="true">
+                <MessageCircleIcon size={16} />
+              </span>
+              Viber
             </a>
           )}
         </div>
@@ -105,3 +127,4 @@ export default function LakeContactsPanel({ lakeId, contactsEnabled, contacts, i
     </div>
   );
 }
+

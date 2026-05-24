@@ -1,6 +1,7 @@
 ﻿"use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import {
   getLakeStructuredData,
   getStructuredAmenitiesEntries,
@@ -9,7 +10,17 @@ import {
   getStructuredRulesEntries,
   type StructuredLakeData,
 } from "@/lib/lake-structured";
-import FishIcon from "@/app/components/FishIcon";
+import {
+  CalendarIcon,
+  CheckIcon,
+  ClockIcon,
+  FishIcon,
+  InfoIcon,
+  MoonIcon,
+  RouteIcon,
+  ScaleIcon,
+  TentIcon,
+} from "./LakeUiIcons";
 
 interface Props {
   description: string | null;
@@ -30,6 +41,63 @@ interface Props {
   amenityNames: string[];
   amenityItems?: { key: string; label: string; note: string | null }[];
   structured?: StructuredLakeData;
+}
+
+type TabKey = "desc" | "fish" | "price" | "rules" | "quota" | "schedule" | "services" | "amenities" | "stocking";
+
+const CP1251_BYTES = new Uint8Array(256);
+for (let i = 0; i < 256; i += 1) CP1251_BYTES[i] = i;
+const CP1251_CHARS = new TextDecoder("windows-1251").decode(CP1251_BYTES);
+const CP1251_REVERSE = new Map(Array.from(CP1251_CHARS, (ch, index) => [ch, index]));
+
+function repairCp1251Mojibake(value: string) {
+  if (!value) return value;
+  if (!/Рџ|С‚|Р°|в|в›|�|пїЅ/.test(value)) return value;
+
+  const bytes: number[] = [];
+  for (const ch of value) {
+    const byte = CP1251_REVERSE.get(ch);
+    if (byte === undefined) return value;
+    bytes.push(byte);
+  }
+
+  try {
+    const decoded = new TextDecoder("utf-8").decode(new Uint8Array(bytes));
+    if (!decoded || decoded.includes("�")) return value;
+    return decoded;
+  } catch {
+    return value;
+  }
+}
+
+function cleanUiText(value: string) {
+  return repairCp1251Mojibake(value)
+    .replace(/^[^\p{L}\p{N}]+/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tabIconFor(key: TabKey): ReactNode {
+  switch (key) {
+    case "fish":
+      return <FishIcon name="Риби" size={16} />;
+    case "price":
+      return <ScaleIcon size={16} />;
+    case "rules":
+      return <InfoIcon size={16} />;
+    case "quota":
+      return <ScaleIcon size={16} />;
+    case "schedule":
+      return <ClockIcon size={16} />;
+    case "services":
+      return <TentIcon size={16} />;
+    case "amenities":
+      return <CheckIcon size={16} />;
+    case "stocking":
+      return <CalendarIcon size={16} />;
+    default:
+      return <InfoIcon size={16} />;
+  }
 }
 
 export default function LakeDetailTabs({
@@ -140,14 +208,14 @@ export default function LakeDetailTabs({
     () =>
       [
         { key: "desc", label: "Опис" },
-        fishEntries.length > 0 ? { key: "fish", label: "🐟 Риби" } : null,
-        priceEnabled && (priceText || structuredPricing.length > 0) ? { key: "price", label: "💰 Ціни" } : null,
-        rulesEnabled && (rulesText || rulesVisible.length > 0) ? { key: "rules", label: "📋 Правила" } : null,
-        hasQuotaData ? { key: "quota", label: "⚖️ Норми вилову" } : null,
-        hasScheduleData ? { key: "schedule", label: "🕒 Графік роботи" } : null,
-        hasServicesData ? { key: "services", label: "🏕️ Додаткові послуги" } : null,
-        hasAmenitiesData ? { key: "amenities", label: "✅ Зручності" } : null,
-        hasStockingData ? { key: "stocking", label: "🐠 Зариблення" } : null,
+        fishEntries.length > 0 ? { key: "fish", label: "Риби" } : null,
+        priceEnabled && (priceText || structuredPricing.length > 0) ? { key: "price", label: "Ціни" } : null,
+        rulesEnabled && (rulesText || rulesVisible.length > 0) ? { key: "rules", label: "Правила" } : null,
+        hasQuotaData ? { key: "quota", label: "Норми вилову" } : null,
+        hasScheduleData ? { key: "schedule", label: "Графік роботи" } : null,
+        hasServicesData ? { key: "services", label: "Додаткові послуги" } : null,
+        hasAmenitiesData ? { key: "amenities", label: "Зручності" } : null,
+        hasStockingData ? { key: "stocking", label: "Зариблення" } : null,
       ].filter(Boolean) as { key: TabKey; label: string }[],
     [
       fishEntries.length,
@@ -162,19 +230,11 @@ export default function LakeDetailTabs({
       rulesText,
       rulesVisible.length,
       structuredPricing.length,
-      amenityNames.length,
-      visibleAmenities.length,
     ],
   );
 
-  type TabKey = "desc" | "fish" | "price" | "rules" | "quota" | "schedule" | "services" | "amenities" | "stocking";
   const [tab, setTab] = useState<TabKey>("desc");
-
-  useEffect(() => {
-    if (!availableTabs.some((t) => t.key === tab)) {
-      setTab(availableTabs[0]?.key ?? "desc");
-    }
-  }, [availableTabs, tab]);
+  const resolvedTab = availableTabs.some((t) => t.key === tab) ? tab : availableTabs[0]?.key ?? "desc";
   return (
     <div className="dk-tabs-section">
       <div className="dk-tabs-nav">
@@ -182,20 +242,23 @@ export default function LakeDetailTabs({
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`dk-tab-btn${tab === t.key ? " active" : ""}`}
+            className={`dk-tab-btn${resolvedTab === t.key ? " active" : ""}`}
           >
-            {t.label}
+            <span className="dk-tab-btn__icon" aria-hidden="true">
+              {tabIconFor(t.key)}
+            </span>
+            {cleanUiText(t.label)}
           </button>
         ))}
       </div>
 
-      {tab === "desc" && (
+      {resolvedTab === "desc" && (
         <div className="dk-tab-desc">
           {description ? <p>{description}</p> : <p className="dk-tab-empty">Опис ще не додано</p>}
         </div>
       )}
 
-      {tab === "fish" && (
+      {resolvedTab === "fish" && (
         <div>
           {fishSpecies.length > 0 && (
             <p style={{ margin: "0 0 16px", color: "var(--text-secondary)", fontSize: 15 }}>
@@ -207,15 +270,16 @@ export default function LakeDetailTabs({
               {fishEntries.map((f) => (
                 <div
                   key={f.name}
-                  className="dk-fish-chip"
-                  style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6 }}
+                  className="dk-fish-chip dk-fish-chip--detail"
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <FishIcon name={f.name} size={20} />
-                    <span>{f.name}</span>
+                  <div className="dk-fish-chip__head">
+                    <span className="dk-fish-chip__icon" aria-hidden="true">
+                      <FishIcon name={f.name} size={18} />
+                    </span>
+                    <span className="dk-fish-chip__name">{f.name}</span>
                   </div>
                   {(f.trophy || f.releaseFromKg) && (
-                    <div style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.35 }}>
+                    <div className="dk-fish-chip__sub">
                       {f.trophy ? "Трофейна" : ""}
                       {f.trophy && f.releaseFromKg ? " • " : ""}
                       {f.releaseFromKg ? `Від ${f.releaseFromKg} кг` : ""}
@@ -230,7 +294,7 @@ export default function LakeDetailTabs({
         </div>
       )}
 
-      {tab === "price" && (
+      {resolvedTab === "price" && (
         <div>
           {priceText && (
             <div style={{ marginBottom: 18 }}>
@@ -268,7 +332,7 @@ export default function LakeDetailTabs({
         </div>
       )}
 
-      {tab === "rules" && (
+      {resolvedTab === "rules" && (
         <div>
           {rulesText && (
             <div style={{ marginBottom: 18, padding: "16px", background: "var(--bg-secondary)", borderRadius: 12, border: "1px solid var(--border)" }}>
@@ -301,7 +365,7 @@ export default function LakeDetailTabs({
         </div>
       )}
 
-      {tab === "quota" && (
+      {resolvedTab === "quota" && (
         <div>
           {catchQuotaText && (
             <div style={{ marginBottom: 18, padding: "16px", background: "var(--bg-secondary)", borderRadius: 12, border: "1px solid var(--border)" }}>
@@ -330,7 +394,7 @@ export default function LakeDetailTabs({
         </div>
       )}
 
-      {tab === "schedule" && (
+      {resolvedTab === "schedule" && (
         <div>
           {workScheduleSummary && (
             <div style={{ marginBottom: 18, padding: "16px", background: "var(--bg-secondary)", borderRadius: 12, border: "1px solid var(--border)" }}>
@@ -339,26 +403,28 @@ export default function LakeDetailTabs({
             </div>
           )}
           <div className="dk-services-grid">
-            {lakeStructured.schedule?.is24h && <ServiceItem icon="✅" label="Цілодобово" />}
-            {lakeStructured.schedule?.bookingRequired && <ServiceItem icon="✅" label="За попередньою бронню" />}
-            {lakeStructured.schedule?.seasonal && <ServiceItem icon="✅" label="Працює сезонно" />}
-            {lakeStructured.schedule?.winterFishing != null && <ServiceItem icon="ℹ️" label={`Зимова риболовля: ${describeBool(lakeStructured.schedule.winterFishing)}`} />}
-            {lakeStructured.schedule?.nightFishing != null && <ServiceItem icon="🌙" label={`Нічна риболовля: ${describeBool(lakeStructured.schedule.nightFishing)}`} />}
-            {lakeStructured.schedule?.nightStart && lakeStructured.schedule?.nightEnd && <ServiceItem icon="⏰" label={`Ніч: ${lakeStructured.schedule.nightStart} – ${lakeStructured.schedule.nightEnd}`} />}
-            {lakeStructured.schedule?.checkInFrom && <ServiceItem icon="🚪" label={`Заїзд з ${lakeStructured.schedule.checkInFrom}`} />}
-            {lakeStructured.schedule?.checkOutUntil && <ServiceItem icon="🚪" label={`Виїзд до ${lakeStructured.schedule.checkOutUntil}`} />}
-            {lakeStructured.schedule?.note && <ServiceItem icon="📝" label={lakeStructured.schedule.note} />}
+            {lakeStructured.schedule?.is24h && <ServiceItem icon={<CheckIcon size={18} />} label="Цілодобово" />}
+            {lakeStructured.schedule?.bookingRequired && <ServiceItem icon={<CheckIcon size={18} />} label="За попередньою бронню" />}
+            {lakeStructured.schedule?.seasonal && <ServiceItem icon={<CheckIcon size={18} />} label="Працює сезонно" />}
+            {lakeStructured.schedule?.winterFishing != null && <ServiceItem icon={<InfoIcon size={18} />} label={`Зимова риболовля: ${describeBool(lakeStructured.schedule.winterFishing)}`} />}
+            {lakeStructured.schedule?.nightFishing != null && <ServiceItem icon={<MoonIcon size={18} />} label={`Нічна риболовля: ${describeBool(lakeStructured.schedule.nightFishing)}`} />}
+            {lakeStructured.schedule?.nightStart && lakeStructured.schedule?.nightEnd && <ServiceItem icon={<ClockIcon size={18} />} label={`Ніч: ${lakeStructured.schedule.nightStart} – ${lakeStructured.schedule.nightEnd}`} />}
+            {lakeStructured.schedule?.checkInFrom && <ServiceItem icon={<RouteIcon size={18} />} label={`Заїзд з ${lakeStructured.schedule.checkInFrom}`} />}
+            {lakeStructured.schedule?.checkOutUntil && <ServiceItem icon={<RouteIcon size={18} />} label={`Виїзд до ${lakeStructured.schedule.checkOutUntil}`} />}
+            {lakeStructured.schedule?.note && <ServiceItem icon={<InfoIcon size={18} />} label={lakeStructured.schedule.note} />}
           </div>
         </div>
       )}
 
-      {tab === "services" && (
+      {resolvedTab === "services" && (
         <div>
           {additionalServicesText ? (
             <div className="dk-services-grid">
               {additionalServicesText.split("\n").filter((l) => l.trim()).map((s, i) => (
                 <div key={i} className="dk-service-item">
-                  <span style={{ fontSize: 20, flexShrink: 0 }}>✅</span>
+                  <span className="dk-service-item__icon" aria-hidden="true">
+                    <CheckIcon size={18} />
+                  </span>
                   <span>{s.replace(/^[-•*]\s*/, "").trim()}</span>
                 </div>
               ))}
@@ -369,7 +435,7 @@ export default function LakeDetailTabs({
         </div>
       )}
 
-      {tab === "amenities" && (
+      {resolvedTab === "amenities" && (
         <div>
           {amenityNames.length > 0 && (
             <p style={{ margin: "0 0 14px", color: "var(--text-secondary)", fontSize: 15 }}>
@@ -391,7 +457,7 @@ export default function LakeDetailTabs({
         </div>
       )}
 
-      {tab === "stocking" && (
+      {resolvedTab === "stocking" && (
         <div>
           {stockingText && (
             <div style={{ marginBottom: 18, padding: "16px", background: "var(--bg-secondary)", borderRadius: 12, border: "1px solid var(--border)" }}>
@@ -400,17 +466,17 @@ export default function LakeDetailTabs({
             </div>
           )}
           <div className="dk-services-grid">
-            {lakeStructured.stocking?.status != null && <ServiceItem icon="✅" label={`Статус: ${describeBool(lakeStructured.stocking.status)}`} />}
+            {lakeStructured.stocking?.status != null && <ServiceItem icon={<CheckIcon size={18} />} label={`Статус: ${describeBool(lakeStructured.stocking.status)}`} />}
             {lakeStructured.stocking?.frequency && lakeStructured.stocking.frequency !== "unknown" && (
               <ServiceItem
-                icon="📆"
+                icon={<CalendarIcon size={18} />}
                 label={`Регулярність: ${lakeStructured.stocking.frequency === "regular" ? "Регулярно" : lakeStructured.stocking.frequency === "seasonal" ? "Сезонно" : lakeStructured.stocking.frequency === "one_time" ? "Разово" : lakeStructured.stocking.frequency}`}
               />
             )}
-            {lakeStructured.stocking?.lastDate && <ServiceItem icon="🗓️" label={`Останнє зариблення: ${lakeStructured.stocking.lastDate}`} />}
-            {lakeStructured.stocking?.lastSpecies?.length ? <ServiceItem icon="🐟" label={lakeStructured.stocking.lastSpecies.join(", ")} /> : null}
-            {lakeStructured.stocking?.lastAmount && <ServiceItem icon="⚖️" label={lakeStructured.stocking.lastAmount} />}
-            {lakeStructured.stocking?.note && <ServiceItem icon="📝" label={lakeStructured.stocking.note} />}
+            {lakeStructured.stocking?.lastDate && <ServiceItem icon={<CalendarIcon size={18} />} label={`Останнє зариблення: ${lakeStructured.stocking.lastDate}`} />}
+            {lakeStructured.stocking?.lastSpecies?.length ? <ServiceItem icon={<FishIcon name={lakeStructured.stocking.lastSpecies[0] ?? "Риба"} size={18} />} label={lakeStructured.stocking.lastSpecies.join(", ")} /> : null}
+            {lakeStructured.stocking?.lastAmount && <ServiceItem icon={<ScaleIcon size={18} />} label={lakeStructured.stocking.lastAmount} />}
+            {lakeStructured.stocking?.note && <ServiceItem icon={<InfoIcon size={18} />} label={lakeStructured.stocking.note} />}
           </div>
         </div>
       )}
@@ -418,10 +484,12 @@ export default function LakeDetailTabs({
   );
 }
 
-function ServiceItem({ icon, label }: { icon: string; label: string }) {
+function ServiceItem({ icon, label }: { icon: ReactNode; label: string }) {
   return (
     <div className="dk-service-item">
-      <span style={{ fontSize: 20, flexShrink: 0 }}>{icon}</span>
+      <span className="dk-service-item__icon" aria-hidden="true">
+        {icon}
+      </span>
       <span>{label}</span>
     </div>
   );
