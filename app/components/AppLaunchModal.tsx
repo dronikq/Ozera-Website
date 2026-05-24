@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import "./app-launch-modal.css";
 
@@ -230,9 +231,11 @@ export default function AppLaunchModal() {
           <>
             <div className="app-launch-content">
               <div className="app-launch-badge">
-                <span aria-hidden="true">🎣</span>
-                <strong>OZERA</strong>
-                <span>• ранній доступ</span>
+                <Image src="/icon.png" alt="" width={20} height={20} className="app-launch-badge-icon" />
+                <span className="app-launch-badge-text">
+                  <strong>OZERA</strong>
+                  <span>• ранній доступ</span>
+                </span>
               </div>
 
               <h2 id="app-launch-modal-title" className="app-launch-modal-title">
@@ -246,49 +249,55 @@ export default function AppLaunchModal() {
 
               <form className="app-launch-form" onSubmit={onSubmit} noValidate>
                 <label className={`app-launch-field ${fieldErrors.name ? "has-error" : ""}`}>
-                  <span className="app-launch-field-icon" aria-hidden="true"><UserIcon /></span>
-                  <input
-                    ref={nameRef}
-                    name="name"
-                    type="text"
-                    autoComplete="name"
-                    placeholder="Ваше ім’я"
-                    aria-label="Ваше ім’я"
-                    aria-invalid={Boolean(fieldErrors.name)}
-                    aria-describedby={fieldErrors.name ? "app-launch-name-error" : undefined}
-                    onChange={() => setFieldErrors((errors) => ({ ...errors, name: undefined }))}
-                  />
+                  <span className="app-launch-field-row">
+                    <span className="app-launch-field-icon" aria-hidden="true"><UserIcon /></span>
+                    <input
+                      ref={nameRef}
+                      name="name"
+                      type="text"
+                      autoComplete="name"
+                      placeholder="Ваше ім’я"
+                      aria-label="Ваше ім’я"
+                      aria-invalid={Boolean(fieldErrors.name)}
+                      aria-describedby={fieldErrors.name ? "app-launch-name-error" : undefined}
+                      onChange={() => setFieldErrors((errors) => ({ ...errors, name: undefined }))}
+                    />
+                  </span>
                   {fieldErrors.name && <small id="app-launch-name-error">{fieldErrors.name}</small>}
                 </label>
 
                 <label className={`app-launch-field ${fieldErrors.email ? "has-error" : ""}`}>
-                  <span className="app-launch-field-icon" aria-hidden="true"><MailIcon /></span>
-                  <input
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="Email"
-                    aria-label="Email"
-                    aria-invalid={Boolean(fieldErrors.email)}
-                    aria-describedby={fieldErrors.email ? "app-launch-email-error" : undefined}
-                    onChange={() => setFieldErrors((errors) => ({ ...errors, email: undefined }))}
-                  />
+                  <span className="app-launch-field-row">
+                    <span className="app-launch-field-icon" aria-hidden="true"><MailIcon /></span>
+                    <input
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="Email"
+                      aria-label="Email"
+                      aria-invalid={Boolean(fieldErrors.email)}
+                      aria-describedby={fieldErrors.email ? "app-launch-email-error" : undefined}
+                      onChange={() => setFieldErrors((errors) => ({ ...errors, email: undefined }))}
+                    />
+                  </span>
                   {fieldErrors.email && <small id="app-launch-email-error">{fieldErrors.email}</small>}
                 </label>
 
                 <label className="app-launch-field">
-                  <span className="app-launch-field-icon" aria-hidden="true"><PhoneIcon /></span>
-                  <input
-                    name="phone"
-                    type="tel"
-                    autoComplete="tel"
-                    placeholder="Телефон (необов’язково)"
-                    aria-label="Телефон необов’язково"
-                  />
+                  <span className="app-launch-field-row">
+                    <span className="app-launch-field-icon" aria-hidden="true"><PhoneIcon /></span>
+                    <input
+                      name="phone"
+                      type="tel"
+                      autoComplete="tel"
+                      placeholder="Телефон (необов’язково)"
+                      aria-label="Телефон необов’язково"
+                    />
+                  </span>
                 </label>
 
                 <button type="submit" className="app-launch-submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Надсилаємо..." : "Повідомити мене"}
+                  {isSubmitting ? "Надсилаємо..." : "Повідомити про запуск"}
                 </button>
 
                 <p className="app-launch-privacy">

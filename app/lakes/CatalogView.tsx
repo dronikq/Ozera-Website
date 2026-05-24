@@ -30,9 +30,9 @@ const REGIONS = [
   "Черкаська область","Чернівецька область","Чернігівська область",
 ];
 
-interface Props { lakes: Lake[]; total: number; }
+interface Props { lakes: Lake[]; }
 
-export default function CatalogView({ lakes, total }: Props) {
+export default function CatalogView({ lakes }: Props) {
   const [showMap, setShowMap] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -60,16 +60,14 @@ export default function CatalogView({ lakes, total }: Props) {
     return () => { document.body.style.overflow = ""; };
   }, [showMap]);
 
+  useEffect(() => {
+    const openMap = () => setShowMap(true);
+    window.addEventListener("dk-open-lakes-map", openMap as EventListener);
+    return () => window.removeEventListener("dk-open-lakes-map", openMap as EventListener);
+  }, []);
+
   return (
     <>
-      {/* ── Grid header row: count + map button ── */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-        <p style={{ fontSize: 14, color: "var(--text-muted)" }}>{total} озер знайдено</p>
-        <button onClick={() => setShowMap(true)} className="dk-btn-map">
-          🗺️ На карті
-        </button>
-      </div>
-
       {/* ── GRID ── */}
       {lakes.length === 0 ? (
         <div className="dk-empty">
