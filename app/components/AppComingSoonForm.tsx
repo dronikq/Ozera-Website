@@ -113,7 +113,7 @@ export default function AppComingSoonForm() {
           />
         </label>
         <button type="submit" className="l-app-email-submit" disabled={isSubmitting}>
-          {isSubmitting ? "Надсилаємо..." : "Повідомити мене"}
+          {isSubmitting ? "Надсилаємо..." : "Повідомити про запуск"}
         </button>
       </form>
 

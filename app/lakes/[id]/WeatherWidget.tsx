@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type HourData = {
   hour: number;
@@ -27,18 +27,50 @@ type WeatherData = {
   days: DayData[];
 };
 
+const CP1251_BYTES = new Uint8Array(256);
+for (let i = 0; i < 256; i += 1) CP1251_BYTES[i] = i;
+const CP1251_CHARS = new TextDecoder("windows-1251").decode(CP1251_BYTES);
+const CP1251_REVERSE = new Map(Array.from(CP1251_CHARS, (ch, index) => [ch, index]));
+
+function repairCp1251Mojibake(value: string) {
+  if (!value) return value;
+  if (!/Рџ|С‚|Р°|в|в›|�|пїЅ/.test(value)) return value;
+
+  const bytes: number[] = [];
+  for (const ch of value) {
+    const byte = CP1251_REVERSE.get(ch);
+    if (byte === undefined) return value;
+    bytes.push(byte);
+  }
+
+  try {
+    const decoded = new TextDecoder("utf-8").decode(new Uint8Array(bytes));
+    if (!decoded || decoded.includes("пїЅ")) return value;
+    return decoded;
+  } catch {
+    return value;
+  }
+}
+
+function cleanUiText(value: string) {
+  return repairCp1251Mojibake(value)
+    .replace(/^[^\p{L}\p{N}]+/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function weatherInfo(code: number, hour: number) {
   const night = hour < 6 || hour >= 21;
-  if (code === 0) return { icon: night ? "🌙" : "☀️", desc: "Ясно" };
-  if (code <= 2) return { icon: night ? "🌙" : "🌤️", desc: "Малохмарно" };
-  if (code === 3) return { icon: "☁️", desc: "Хмарно" };
-  if (code <= 49) return { icon: "🌫", desc: "Туман" };
-  if (code <= 55) return { icon: "🌦", desc: "Мряка" };
-  if (code <= 65) return { icon: "🌧", desc: "Дощ" };
-  if (code <= 77) return { icon: "🌨", desc: "Сніг" };
-  if (code <= 82) return { icon: "🌦", desc: "Злива" };
-  if (code <= 99) return { icon: "⛈", desc: "Гроза" };
-  return { icon: "🌤️", desc: "Ясно" };
+  if (code === 0) return { icon: night ? "moon" : "sun", desc: "Ясно" };
+  if (code <= 2) return { icon: night ? "moon" : "cloudSun", desc: "Малохмарно" };
+  if (code === 3) return { icon: "cloud", desc: "Хмарно" };
+  if (code <= 49) return { icon: "mist", desc: "Туман" };
+  if (code <= 55) return { icon: "drizzle", desc: "Мряка" };
+  if (code <= 65) return { icon: "rain", desc: "Дощ" };
+  if (code <= 77) return { icon: "snow", desc: "Сніг" };
+  if (code <= 82) return { icon: "rain", desc: "Злива" };
+  if (code <= 99) return { icon: "storm", desc: "Гроза" };
+  return { icon: "cloudSun", desc: "Ясно" };
 }
 
 function moonPhase(date: Date): number {
@@ -47,23 +79,143 @@ function moonPhase(date: Date): number {
   return (((diff % 29.53) + 29.53) % 29.53) / 29.53;
 }
 
-function moonIcon(phase: number): string {
-  if (phase < 0.0625 || phase >= 0.9375) return "🌑";
-  if (phase < 0.1875) return "🌒";
-  if (phase < 0.3125) return "🌓";
-  if (phase < 0.4375) return "🌔";
-  if (phase < 0.5625) return "🌕";
-  if (phase < 0.6875) return "🌖";
-  if (phase < 0.8125) return "🌗";
-  return "🌘";
-}
-
 function moonLabel(phase: number): string {
   if (phase < 0.05 || phase > 0.95) return "Новий місяць";
   if (phase < 0.25) return "Зростаючий";
   if (phase < 0.55) return "Повний місяць";
   if (phase < 0.75) return "Спадаючий";
   return "Старий місяць";
+}
+
+function formatWeatherDayLabel(dateStr: string) {
+  const date = new Date(`${dateStr}T12:00:00`);
+  const today = new Date();
+  const tomorrow = new Date(Date.now() + 86400000);
+  const isToday = date.toDateString() === today.toDateString();
+  const isTomorrow = date.toDateString() === tomorrow.toDateString();
+  if (isToday) return "Сьогодні";
+  if (isTomorrow) return "Завтра";
+
+  const label = new Intl.DateTimeFormat("uk-UA", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  }).format(date);
+
+  return label
+    .replace(/[.,]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/^(\p{Ll})/u, (match) => match.toUpperCase());
+}
+
+function localDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function findCurrentDayIndex(days: DayData[]) {
+  if (days.length === 0) return 0;
+
+  const today = localDateKey();
+  const todayIndex = days.findIndex((day) => day.dateStr === today);
+  if (todayIndex >= 0) return todayIndex;
+
+  const nextFutureIndex = days.findIndex((day) => day.dateStr > today);
+  return nextFutureIndex >= 0 ? nextFutureIndex : 0;
+}
+
+function findCurrentHourIndex(hours: HourData[]) {
+  if (hours.length === 0) return 0;
+
+  const nowHour = new Date().getHours();
+  const idx = hours.findIndex((h) => h.hour >= nowHour);
+  return idx >= 0 ? idx : 0;
+}
+
+function WeatherGlyph({ kind }: { kind: "sun" | "cloudSun" | "cloud" | "mist" | "drizzle" | "rain" | "snow" | "storm" | "moon" }) {
+  const common = {
+    width: 22,
+    height: 22,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+  if (kind === "sun") {
+    return <svg {...common}><circle cx="12" cy="12" r="4" /><path d="M12 2v2.5M12 19.5V22M4.5 4.5l1.8 1.8M17.7 17.7l1.8 1.8M2 12h2.5M19.5 12H22M4.5 19.5l1.8-1.8M17.7 6.3l1.8-1.8" /></svg>;
+  }
+  if (kind === "moon") {
+    return <svg {...common}><path d="M18 15.6A7.5 7.5 0 1 1 8.4 6a6.5 6.5 0 0 0 9.6 9.6Z" /></svg>;
+  }
+  if (kind === "cloudSun") {
+    return <svg {...common}><circle cx="8.5" cy="8.5" r="3" /><path d="M5 15.5h10.5a3 3 0 0 0 0-6 4.5 4.5 0 0 0-8.4 1.8A2.8 2.8 0 0 0 5 15.5Z" /></svg>;
+  }
+  if (kind === "cloud") {
+    return <svg {...common}><path d="M6 17h10.5a3.5 3.5 0 0 0 .2-7A5 5 0 0 0 7 8.5 3.4 3.4 0 0 0 6 17Z" /></svg>;
+  }
+  if (kind === "mist") {
+    return <svg {...common}><path d="M4 8h16M6 12h12M5 16h14" /></svg>;
+  }
+  if (kind === "snow") {
+    return <svg {...common}><path d="M12 3v18M4.5 7l15 10M19.5 7l-15 10M7.5 4.5 12 12l4.5-7.5" /></svg>;
+  }
+  if (kind === "storm") {
+    return <svg {...common}><path d="M6 16h9.5a3.5 3.5 0 0 0 .3-7A5 5 0 0 0 7 7.8 3.4 3.4 0 0 0 6 16Z" /><path d="M11 12.5l-2 4h2l-1 3.5 4-5h-2l1-2.5" /></svg>;
+  }
+  return <svg {...common}><path d="M6 17h10.5a3.5 3.5 0 0 0 .2-7A5 5 0 0 0 7 8.5 3.4 3.4 0 0 0 6 17Z" /><path d="M8.5 18.5c.4 1.5 1.7 2.5 3.5 2.5s3.1-1 3.5-2.5" /></svg>;
+}
+
+function MoonGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M18 15.6A7.5 7.5 0 1 1 8.4 6a6.5 6.5 0 0 0 9.6 9.6Z" />
+    </svg>
+  );
+}
+function WindGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 8h10a2.5 2.5 0 1 0-2.4-3.2" />
+      <path d="M4 13h13a2 2 0 1 1-1.8 2.8" />
+      <path d="M4 18h8" />
+    </svg>
+  );
+}
+
+function DropletGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 3s5 5 5 9a5 5 0 0 1-10 0c0-4 5-9 5-9Z" />
+    </svg>
+  );
+}
+
+function GaugeGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 14a8 8 0 1 1 16 0" />
+      <path d="M12 14l3-4" />
+      <circle cx="12" cy="14" r="1.25" />
+    </svg>
+  );
+}
+
+function weatherKindFromEmoji(icon: string): Parameters<typeof WeatherGlyph>[0]["kind"] {
+  if (icon === "sun" || icon === "moon" || icon === "cloudSun" || icon === "cloud" || icon === "mist" || icon === "drizzle" || icon === "rain" || icon === "snow" || icon === "storm") return icon;
+  if (icon.includes("☀")) return "sun";
+  if (icon.includes("🌙")) return "moon";
+  if (icon.includes("☁")) return "cloud";
+  if (icon.includes("🌫")) return "mist";
+  if (icon.includes("🌦")) return "drizzle";
+  if (icon.includes("🌧")) return "rain";
+  if (icon.includes("🌨")) return "snow";
+  if (icon.includes("⛈")) return "storm";
+  return "cloudSun";
 }
 
 function getSolunarPeaks(date: Date): { major: number[]; minor: number[] } {
@@ -154,8 +306,8 @@ async function fetchWeather(lat: number, lng: number): Promise<WeatherData> {
   });
 
   const days: DayData[] = [];
-  const ukDays = ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
-  const ukMonths = ["січ", "лют", "бер", "квіт", "трав", "чер", "лип", "серп", "вер", "жовт", "лист", "груд"];
+  const ukDays = ["\u041d\u0434", "\u041f\u043d", "\u0412\u0442", "\u0421\u0440", "\u0427\u0442", "\u041f\u0442", "\u0421\u0431"];
+  const ukMonths = ["\u0441\u0456\u0447", "\u043b\u044e\u0442", "\u0431\u0435\u0440", "\u043a\u0432\u0456\u0442", "\u0442\u0440\u0430\u0432", "\u0447\u0435\u0440", "\u043b\u0438\u043f", "\u0441\u0435\u0440\u043f", "\u0432\u0435\u0440", "\u0436\u043e\u0432\u0442", "\u043b\u0438\u0441\u0442", "\u0433\u0440\u0443\u0434"];
 
   dayMap.forEach((hours, dateKey) => {
     const d = new Date(`${dateKey}T12:00:00`);
@@ -172,7 +324,9 @@ async function fetchWeather(lat: number, lng: number): Promise<WeatherData> {
     });
   });
 
-  return { days: days.slice(0, 5) };
+  const today = localDateKey();
+  const upcomingDays = days.filter((day) => day.dateStr >= today);
+  return { days: (upcomingDays.length > 0 ? upcomingDays : days).slice(0, 5) };
 }
 
 export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }) {
@@ -183,52 +337,56 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
   const [activeHour, setActiveHour] = useState(0);
   const [isOpen, setIsOpen] = useState(true);
 
+  const loadData = useCallback(async (shouldAbort?: () => boolean) => {
+    setLoading(true);
+    setError(false);
+    try {
+      const next = await fetchWeather(lat, lng);
+      if (shouldAbort?.()) return;
+      setData(next);
+      const currentDayIndex = findCurrentDayIndex(next.days);
+      setActiveDay(currentDayIndex);
+      setActiveHour(findCurrentHourIndex(next.days[currentDayIndex]?.hours ?? []));
+    } catch {
+      if (!shouldAbort?.()) setError(true);
+    } finally {
+      if (!shouldAbort?.()) setLoading(false);
+    }
+  }, [lat, lng]);
+
   useEffect(() => {
     let cancelled = false;
-
-    async function load() {
-      setLoading(true);
-      setError(false);
-      try {
-        const next = await fetchWeather(lat, lng);
-        if (cancelled) return;
-        setData(next);
-        const nowHour = new Date().getHours();
-        const firstDay = next.days[0]?.hours ?? [];
-        const idx = firstDay.findIndex((h) => h.hour >= nowHour);
-        setActiveHour(idx >= 0 ? idx : 0);
-      } catch {
-        if (!cancelled) setError(true);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    load();
+    void loadData(() => cancelled);
     return () => {
       cancelled = true;
     };
-  }, [lat, lng]);
+  }, [lat, lng, loadData]);
 
   const next = useMemo(() => data?.days[activeDay] ?? data?.days[0] ?? null, [activeDay, data]);
 
   if (loading) {
     return (
-      <div className="rounded-2xl p-6 animate-pulse" style={{ background: "#132F57", border: "1px solid #1E3A5F" }}>
-        <div className="h-4 rounded w-40 mb-4" style={{ background: "#0F2A4D" }} />
-        <div className="h-20 rounded" style={{ background: "#0F2A4D" }} />
-      </div>
+      <section className="dk-weather-panel dk-weather-panel--loading" aria-busy="true">
+        <div className="dk-weather-panel__loading-line dk-weather-panel__loading-line--sm" />
+        <div className="dk-weather-panel__loading-line dk-weather-panel__loading-line--lg" />
+        <div className="dk-weather-panel__loading-row">
+          <div className="dk-weather-panel__loading-pill" />
+          <div className="dk-weather-panel__loading-pill dk-weather-panel__loading-pill--wide" />
+          <div className="dk-weather-panel__loading-pill" />
+        </div>
+      </section>
     );
   }
 
   if (error || !data || data.days.length === 0 || !next) {
     return (
-      <div className="rounded-2xl p-5 flex items-center justify-between gap-4" style={{ background: "#132F57", border: "1px solid #1E3A5F" }}>
-        <p className="text-sm" style={{ color: "#6F85A8" }}>Не вдалося завантажити погоду</p>
-        <button onClick={() => setIsOpen(true)} className="text-sm font-semibold transition-colors shrink-0" style={{ color: "#4DA3FF" }}>
-          Спробувати ще раз
-        </button>
-      </div>
+      <section className="dk-weather-panel dk-weather-panel--error">
+        <div className="dk-weather-panel__error-copy">
+          <p className="dk-weather-panel__eyebrow">Погода та умови кльову</p>
+          <p className="dk-weather-panel__subtitle">Не вдалося завантажити прогноз. Спробуйте ще раз через мить.</p>
+        </div>
+        <button type="button" className="dk-weather-panel__primary" onClick={() => void loadData()}>Спробувати ще раз</button>
+      </section>
     );
   }
 
@@ -240,207 +398,169 @@ export default function WeatherWidget({ lat, lng }: { lat: number; lng: number }
     ...peaks.minor.map((h) => ({ type: "minor" as const, start: h, end: (h + 1) % 24 })),
   ].sort((a, b) => a.start - b.start);
 
-  const biteColors: Record<"g" | "o" | "b", string> = { g: "#4ade80", o: "#fbbf24", b: "#f87171" };
-  const scoreColor: Record<"g" | "o" | "b", string> = { g: "#16a34a", o: "#d97706", b: "#dc2626" };
-  const tabDotColors: Record<"g" | "o" | "b", string> = { g: "#4ade80", o: "#fbbf24", b: "#f87171" };
+  const scoreTone = hour.biteClass === "g" ? "good" : hour.biteClass === "o" ? "warn" : "bad";
+  const weatherKind = weatherKindFromEmoji(hour.icon);
+  const bestPeak = peakWindows.find((peak) => peak.type === "major") ?? peakWindows[0] ?? null;
+  const metricItems = [
+    { label: "\u0412\u0456\u0442\u0435\u0440", value: `${hour.wind} \u043c/\u0441`, icon: <WindGlyph /> },
+    { label: "\u0412\u043e\u043b\u043e\u0433\u0456\u0441\u0442\u044c", value: `${hour.humidity}%`, icon: <DropletGlyph /> },
+    { label: "\u0422\u0438\u0441\u043a", value: `${hour.pressure} \u0433\u041f\u0430`, icon: <GaugeGlyph /> },
+    { label: "\u041e\u043f\u0430\u0434\u0438", value: `${hour.rain} \u043c\u043c`, icon: <WeatherGlyph kind="drizzle" /> },
+  ];
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: "#132F57", border: "1px solid #1E3A5F" }}>
-      <div className="px-5 pt-5">
-        <button
-          type="button"
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="mb-3 flex w-full items-center justify-between gap-3 text-left"
-          aria-expanded={isOpen}
-          aria-controls="weather-widget-content"
-        >
-          <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#6F85A8" }}>
-            Погода та умови кльову
-          </p>
-          <span className="text-xs font-bold" style={{ color: "#6F85A8" }}>
-            {isOpen ? "▾" : "▸"}
-          </span>
-        </button>
+    <section className={`dk-weather-panel ${isOpen ? "dk-weather-panel--open" : ""}`}>
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="dk-weather-panel__toggle"
+        aria-expanded={isOpen}
+        aria-controls="weather-widget-content"
+      >
+        <div className="dk-weather-panel__copy">
+          <h2 className="dk-weather-panel__title">Погода та умови кльову</h2>
+          <p className="dk-weather-panel__subtitle">Оновлено о {hour.hour.toString().padStart(2, "0")}:00 • {formatWeatherDayLabel(next.dateStr)}</p>
+        </div>
 
-        <div
-          id="weather-widget-content"
-          className="space-y-4"
-          aria-hidden={!isOpen}
-          style={{
-            maxHeight: isOpen ? 1800 : 0,
-            opacity: isOpen ? 1 : 0,
-            overflow: "hidden",
-            transform: isOpen ? "translateY(0)" : "translateY(-4px)",
-            transition: "max-height 320ms ease, opacity 220ms ease, transform 220ms ease",
-            pointerEvents: isOpen ? "auto" : "none",
-          }}
-        >
-          <div className="space-y-4">
-            <div className="flex gap-2 flex-wrap">
-              {data.days.map((day, index) => (
-                <button
-                  key={day.dateStr}
-                  onClick={() => {
-                    setActiveDay(index);
-                    setActiveHour(0);
-                  }}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-semibold border transition-all ${
-                    activeDay === index
-                      ? "bg-[#0f2a4a] border-[#0f2a4a] text-white"
-                      : "bg-[#0F2A4D] border-[#1E3A5F] text-[#A9B8D4] hover:border-[#2A4D78]"
-                  }`}
-                >
-                  {day.shortLabel}
-                  <span className="w-2 h-2 rounded-full shrink-0" style={{ background: tabDotColors[day.biteClass] }} />
-                </button>
-              ))}
+        <div className="dk-weather-panel__score">
+          <div className="dk-weather-panel__score-ring">
+            <span className="dk-weather-panel__score-value">{hour.biteScore.toFixed(1)}</span>
+            <span className="dk-weather-panel__score-label">/10</span>
+          </div>
+          <div className="dk-weather-panel__score-copy">
+            <span className={`dk-weather-panel__score-badge dk-weather-panel__score-badge--${scoreTone}`}>
+              {hour.biteClass === "g" ? "Добрий кльов" : hour.biteClass === "o" ? "Середній кльов" : "Слабкий кльов"}
+            </span>
+            <span className="dk-weather-panel__score-time">Поточний час • {String(hour.hour).padStart(2, "0")}:00</span>
+          </div>
+          <span className="dk-weather-panel__chevron" aria-hidden="true">{isOpen ? "▾" : "▸"}</span>
+        </div>
+      </button>
+
+      <div
+        id="weather-widget-content"
+        className="dk-weather-panel__content"
+        aria-hidden={!isOpen}
+        style={{
+          maxHeight: isOpen ? 1800 : 0,
+          opacity: isOpen ? 1 : 0,
+          overflow: "hidden",
+          transform: isOpen ? "translateY(0)" : "translateY(-4px)",
+          transition: "max-height 320ms ease, opacity 220ms ease, transform 220ms ease",
+          pointerEvents: isOpen ? "auto" : "none",
+        }}
+      >
+        <div className="dk-weather-panel__tabs" role="tablist" aria-label="Погодні дні">
+          {data.days.map((day, index) => (
+            <button
+              key={day.dateStr}
+              type="button"
+              onClick={() => {
+                setActiveDay(index);
+                setActiveHour(day.dateStr === localDateKey() ? findCurrentHourIndex(day.hours) : 0);
+              }}
+              className={`dk-weather-panel__tab ${activeDay === index ? "dk-weather-panel__tab--active" : ""}`}
+              aria-pressed={activeDay === index}
+            >
+              <span className="dk-weather-panel__tab-label">{formatWeatherDayLabel(day.dateStr)}</span>
+              <span className={`dk-weather-panel__tab-dot dk-weather-panel__tab-dot--${day.biteClass}`} />
+            </button>
+          ))}
+        </div>
+
+        <div className="dk-weather-panel__summary">
+          <div className="dk-weather-panel__summary-main">
+            <div className="dk-weather-panel__weather-icon">
+              <WeatherGlyph kind={weatherKind} />
             </div>
-
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl">{hour.icon}</span>
-                <div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-black text-white">+{hour.temp}°</span>
-                  </div>
-                  <div className="text-sm" style={{ color: "#A9B8D4" }}>
-                    {hour.desc} · {String(hour.hour).padStart(2, "0")}:00
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-1.5 flex-1 justify-center">
-                <Badge color={hour.biteClass === "g" ? "green" : hour.biteClass === "o" ? "yellow" : "red"}>
-                  🐟 {hour.biteClass === "g" ? "Добрий кльов" : hour.biteClass === "o" ? "Середній кльов" : "Слабкий кльов"}
-                </Badge>
-                <Badge color="purple">
-                  {moonIcon(phase)} {moonLabel(phase)}
-                </Badge>
-                {peakWindows[0] && (
-                  <Badge color={peakWindows[0].type === "major" ? "yellow" : "blue"}>
-                    {peakWindows[0].type === "major" ? "⭐" : "☆"} Пік {String(peakWindows[0].start).padStart(2, "0")}:00–{String(peakWindows[0].end).padStart(2, "0")}:00
-                  </Badge>
-                )}
-                <Badge color="gray">💨 {hour.wind} м/с</Badge>
-                <Badge color="gray">💧 {hour.humidity}%</Badge>
-              </div>
-
-              <div className="relative w-16 h-16 shrink-0">
-                <svg width="64" height="64" viewBox="0 0 64 64" style={{ transform: "rotate(-90deg)" }}>
-                  <circle cx="32" cy="32" r="27" fill="none" stroke="#e2e8f0" strokeWidth="7" />
-                  <circle
-                    cx="32"
-                    cy="32"
-                    r="27"
-                    fill="none"
-                    stroke={biteColors[hour.biteClass]}
-                    strokeWidth="7"
-                    strokeDasharray="169.6"
-                    strokeDashoffset={169.6 - (hour.biteScore / 10) * 169.6}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-sm font-black" style={{ color: scoreColor[hour.biteClass], lineHeight: 1 }}>
-                    {hour.biteScore.toFixed(1)}
-                  </span>
-                  <span className="text-[8px] text-slate-400 font-semibold uppercase">кльов</span>
-                </div>
-              </div>
-            </div>
-
-            {peakWindows.length > 0 && (
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "#6F85A8" }}>
-                  Піки активності:
+            <div className="dk-weather-panel__summary-copy">
+              <div className="dk-weather-panel__temp">+{hour.temp}°</div>
+              <p className="dk-weather-panel__condition">{cleanUiText(hour.desc)} • {String(hour.hour).padStart(2, "0")}:00</p>
+              <div className="dk-weather-panel__summary-chips">
+                <span className={`dk-weather-pill dk-weather-pill--${scoreTone}`}>
+                  {hour.biteClass === "g" ? "Добрий кльов" : hour.biteClass === "o" ? "Середній кльов" : "Слабкий кльов"}
                 </span>
-                {peakWindows.map((peak, index) => (
-                  <span
-                    key={index}
-                    className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${
-                      peak.type === "major"
-                        ? "bg-[#fef9ec] border-[#fde68a] text-[#b45309]"
-                        : "bg-[#dbeafe] border-[#bfdbfe] text-[#1d4ed8]"
-                    }`}
-                  >
-                    {peak.type === "major" ? "⭐" : "☆"} {String(peak.start).padStart(2, "0")}:00–{String(peak.end).padStart(2, "0")}:00
+                <span className="dk-weather-pill dk-weather-pill--neutral">
+                  <MoonGlyph />
+                  {cleanUiText(moonLabel(phase))}
+                </span>
+                {bestPeak && (
+                  <span className="dk-weather-pill dk-weather-pill--accent">
+                    Пік {String(bestPeak.start).padStart(2, "0")}:00–{String(bestPeak.end).padStart(2, "0")}:00
                   </span>
-                ))}
+                )}
               </div>
-            )}
+            </div>
           </div>
 
-          <div className="flex gap-1.5 overflow-x-auto px-5 pb-5 pt-1" style={{ scrollSnapType: "x mandatory" }}>
-        {next.hours.map((h, index) => {
-          const borderColor = h.biteClass === "g" ? "#4ade80" : h.biteClass === "o" ? "#fbbf24" : "#1E3A5F";
-          const isActive = index === activeHour;
-
-          return (
-            <button
-              key={h.hour}
-              type="button"
-              onClick={() => setActiveHour(index)}
-              className="shrink-0"
-              style={{
-                minWidth: 58,
-                background: isActive ? "#0f2a4a" : "#0F2A4D",
-                border: `1.5px solid ${isActive ? "#0f2a4a" : borderColor}`,
-                borderRadius: 14,
-                padding: "10px 6px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 3,
-                cursor: "pointer",
-                scrollSnapAlign: "start",
-                transition: "all .15s",
-              }}
-            >
-              <span style={{ fontSize: 10, fontWeight: 700, color: isActive ? "rgba(255,255,255,0.5)" : "#6F85A8" }}>
-                {String(h.hour).padStart(2, "0")}:00
-              </span>
-              <span style={{ fontSize: 17 }}>{h.icon}</span>
-              <span style={{ fontSize: 13, fontWeight: 800, color: "white" }}>+{h.temp}°</span>
-              <span style={{ fontSize: 9, color: isActive ? "rgba(255,255,255,0.5)" : "#6F85A8" }}>{h.wind} м/с</span>
-              <div
-                style={{
-                  width: 6,
-                  height: 20,
-                  background: isActive ? "rgba(255,255,255,0.2)" : "#1E3A5F",
-                  borderRadius: 3,
-                  overflow: "hidden",
-                  display: "flex",
-                  alignItems: "flex-end",
-                }}
-              >
-                <div style={{ width: "100%", height: `${Math.min(100, h.rain * 20)}%`, background: "#60a5fa", borderRadius: 3 }} />
+          <div className="dk-weather-panel__metrics">
+            {metricItems.map((metric) => (
+              <div key={cleanUiText(metric.label)} className="dk-weather-panel__metric">
+                <span className="dk-weather-panel__metric-icon">{metric.icon}</span>
+                <div>
+                  <p className="dk-weather-panel__metric-label">{cleanUiText(metric.label)}</p>
+                  <p className="dk-weather-panel__metric-value">{cleanUiText(metric.value)}</p>
+                </div>
               </div>
-              <span style={{ fontSize: 10, fontWeight: 700, color: isActive ? biteColors[h.biteClass] : scoreColor[h.biteClass] }}>
-                {h.biteScore.toFixed(1)}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+            ))}
+          </div>
+        </div>
+
+        {peakWindows.length > 0 && (
+          <div className="dk-weather-panel__peaks">
+            <span className="dk-weather-panel__section-label">Піки активності</span>
+            <div className="dk-weather-panel__peak-row">
+              {peakWindows.map((peak, index) => {
+                const major = peak.type === "major";
+                return (
+                  <span
+                    key={`${peak.type}-${peak.start}-${index}`}
+                    className={`dk-weather-pill dk-weather-pill--${major ? "gold" : "blue"} dk-weather-panel__peak-chip`}
+                  >
+                    {String(peak.start).padStart(2, "0")}:00–{String(peak.end).padStart(2, "0")}:00
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div className="dk-weather-panel__hours" role="list" aria-label="Погодинний прогноз">
+          {next.hours.map((h, index) => {
+            const borderColor = h.biteClass === "g" ? "#4ade80" : h.biteClass === "o" ? "#fbbf24" : "rgba(255,255,255,0.14)";
+            const isActive = index === activeHour;
+            return (
+              <button
+                key={h.hour}
+                type="button"
+                onClick={() => setActiveHour(index)}
+                className={`dk-weather-hour ${isActive ? "dk-weather-hour--active" : ""}`}
+                style={{ borderColor: isActive ? "rgba(217,182,111,0.45)" : borderColor }}
+                aria-pressed={isActive}
+              >
+                <span className="dk-weather-hour__time">{String(h.hour).padStart(2, "0")}:00</span>
+                <span className="dk-weather-hour__main">
+                  <span className="dk-weather-hour__icon">
+                    <WeatherGlyph kind={weatherKindFromEmoji(h.icon)} />
+                  </span>
+                  <span className="dk-weather-hour__temp">+{h.temp}°</span>
+                </span>
+                <span className="dk-weather-hour__meta">
+                  <span className="dk-weather-hour__wind">
+                    <WindGlyph />
+                    {h.wind}
+                  </span>
+                  <span className="dk-weather-hour__rain">
+                    <DropletGlyph />
+                    {h.rain}
+                  </span>
+                </span>
+                <span className="dk-weather-hour__score">{h.biteScore.toFixed(1)}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
-    </div>
-  );
-}
-
-function Badge({ color, children }: { color: string; children: React.ReactNode }) {
-  const styles: Record<string, string> = {
-    green: "bg-[#dcfce7] text-[#166534] border-[#bbf7d0]",
-    yellow: "bg-[#fef9c3] text-[#854d0e] border-[#fde68a]",
-    red: "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]",
-    blue: "bg-[#dbeafe] text-[#1e40af] border-[#bfdbfe]",
-    purple: "bg-[#f3e8ff] text-[#6b21a8] border-[#e9d5ff]",
-    gray: "bg-[#f1f5f9] text-[#64748b] border-[#e2e8f0]",
-  };
-
-  return (
-    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-lg border ${styles[color] ?? styles.gray}`}>
-      {children}
-    </span>
+    </section>
   );
 }
