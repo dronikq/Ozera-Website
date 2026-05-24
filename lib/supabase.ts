@@ -62,8 +62,12 @@ export type LakeImage = {
   id: string
   lake_id: string
   url: string
-  sort_order: number
-  created_at: string
+  original_url?: string | null
+  medium_url?: string | null
+  thumb_url?: string | null
+  is_primary?: boolean | null
+  sort_order?: number | null
+  created_at?: string | null
 }
 
 export type LakeUpdate = {
