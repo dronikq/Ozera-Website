@@ -355,6 +355,7 @@ export default function AILakePicker({ lakes }: { lakes: Lake[] }) {
       description: "Підбір за областю, погодою та рибою.",
       icon: <MapPinIcon />,
       flow: "location" as const,
+      disabled: false,
     },
     {
       key: "fish",
@@ -362,6 +363,7 @@ export default function AILakePicker({ lakes }: { lakes: Lake[] }) {
       description: "Знайдемо водойми під конкретну рибу.",
       icon: <FishIcon />,
       flow: "fish" as const,
+      disabled: false,
     },
     {
       key: "services",

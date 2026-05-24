@@ -713,7 +713,7 @@ for (let i = 0; i < 256; i += 1) CP1251_BYTES[i] = i;
 const CP1251_CHARS = new TextDecoder("windows-1251").decode(CP1251_BYTES);
 const CP1251_REVERSE = new Map(Array.from(CP1251_CHARS, (ch, index) => [ch, index]));
 
-function repairCp1251Mojibake(value) {
+function repairCp1251Mojibake(value: string): string {
   if (!value) return value;
   if (!/Рџ|С‚|Р°|в|в›|�|пїЅ/.test(value)) return value;
 
@@ -733,7 +733,7 @@ function repairCp1251Mojibake(value) {
   }
 }
 
-function cleanUiText(value) {
+function cleanUiText(value: string): string {
   return repairCp1251Mojibake(value)
     .replace(/^[^\p{L}\p{N}]+/gu, "")
     .replace(/\s+/g, " ")
