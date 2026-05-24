@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import type { LayerGroup, Map as LeafletMap, Marker, PopupEvent, TileLayer } from "leaflet";
+import type SuperclusterIndex from "supercluster";
 import type { Lake } from "@/lib/supabase";
+import { getLakeMapPreviewImage } from "@/lib/lake-image-resolver";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
 
 // ---------------------------------------------------------------------------
@@ -41,7 +44,7 @@ const UKRAINE_BOUNDS: [[number, number], [number, number]] = [
 
 type LakePinData = Pick<
   Lake,
-  "id" | "slug" | "name" | "lat" | "lng" | "city" | "location_text" | "image_url" | "price_uah" | "fish_species"
+  "id" | "slug" | "name" | "lat" | "lng" | "city" | "location_text" | "image_url" | "price_uah" | "fish_species" | "lake_images"
 >;
 
 interface Props {
@@ -55,16 +58,25 @@ interface Props {
 // Component
 // ---------------------------------------------------------------------------
 
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Leaflet + map instances stored in refs (never trigger re-render)
-  const LRef             = useRef<any>(null);
-  const mapRef           = useRef<any>(null);
-  const tileLayerRef     = useRef<any>(null);
-  const clusterLayerRef  = useRef<any>(null);
-  const superclusterRef  = useRef<any>(null);
-  const geoMarkerRef     = useRef<any>(null);
+  const LRef             = useRef<typeof import("leaflet") | null>(null);
+  const mapRef           = useRef<LeafletMap | null>(null);
+  const tileLayerRef     = useRef<TileLayer | null>(null);
+  const clusterLayerRef  = useRef<LayerGroup | null>(null);
+  const superclusterRef  = useRef<SuperclusterIndex<LakePinData> | null>(null);
+  const geoMarkerRef     = useRef<Marker | null>(null);
 
   // Latest prop values accessible from stable callbacks without stale closures
   const hoveredIdRef      = useRef<string | null>(hoveredId);
@@ -81,15 +93,11 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
   // ---------------------------------------------------------------------------
 
   const buildTooltipHtml = useCallback((lake: LakePinData) => {
-    const imgHtml = lake.image_url
-      ? `<img src="${lake.image_url}" alt="${lake.name}" style="width:100%;height:110px;object-fit:cover;display:block;" />`
-      : `<div style="width:100%;height:110px;background:linear-gradient(135deg,#e0f0ff,#bfdbff);display:flex;align-items:center;justify-content:center;font-size:32px;">🌊</div>`;
-
     const locationLine = lake.location_text || lake.city || "";
     const canonicalSlug = getLakeRouteSlug(lake);
 
     const fishLine = lake.fish_species?.length
-      ? `<div style="font-size:11px;color:#64748b;margin-top:2px;">🐟 ${lake.fish_species.slice(0, 2).join(", ")}${lake.fish_species.length > 2 ? ` +${lake.fish_species.length - 2}` : ""}</div>`
+      ? `<div style="font-size:11px;color:#64748b;margin-top:2px;">🐟 ${escapeHtml(lake.fish_species.slice(0, 2).join(", "))}${lake.fish_species.length > 2 ? ` +${lake.fish_species.length - 2}` : ""}</div>`
       : "";
 
     const priceLine = lake.price_uah
@@ -98,13 +106,15 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
 
     return `
       <div class="lake-pin-card">
-        ${imgHtml}
+        <div class="lake-pin-image-slot" data-map-preview-slot data-src="${escapeHtml(getLakeMapPreviewImage(lake))}" data-alt="${escapeHtml(lake.name)}">
+          <div class="lake-pin-image-placeholder"></div>
+        </div>
         <div style="padding:10px 12px 12px;">
-          <div style="font-weight:700;font-size:13px;color:#0f2a4a;line-height:1.3;">${lake.name}</div>
-          ${locationLine ? `<div style="font-size:11px;color:#94a3b8;margin-top:2px;">📍 ${locationLine}</div>` : ""}
+          <div style="font-weight:700;font-size:13px;color:#0f2a4a;line-height:1.3;">${escapeHtml(lake.name)}</div>
+          ${locationLine ? `<div style="font-size:11px;color:#94a3b8;margin-top:2px;">📍 ${escapeHtml(locationLine)}</div>` : ""}
           ${fishLine}
           ${priceLine}
-          <a href="/lakes/${canonicalSlug}" style="display:inline-block;margin-top:8px;font-size:11px;color:#2563eb;font-weight:600;text-decoration:none;">Відкрити →</a>
+          <a href="/lakes/${escapeHtml(canonicalSlug)}" style="display:inline-block;margin-top:8px;font-size:11px;color:#2563eb;font-weight:600;text-decoration:none;">Відкрити →</a>
         </div>
       </div>`;
   }, []);
@@ -127,14 +137,15 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
     const items  = sc.getClusters(
       [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()],
       zoom,
-    ) as any[];
+    );
 
     for (const item of items) {
       const [lng, lat] = item.geometry.coordinates as [number, number];
 
-      if (item.properties.cluster) {
+      if ("cluster" in item.properties && item.properties.cluster) {
         // ── Cluster bubble ──────────────────────────────────────────────────
         const count  = item.properties.point_count as number;
+        const clusterId = item.properties.cluster_id;
         const size   = count < 10 ? 36 : count < 50 ? 44 : 52;
         const icon   = L.divIcon({
           html: `<div class="map-cluster-icon" style="width:${size}px;height:${size}px;line-height:${size}px;">${count}</div>`,
@@ -144,7 +155,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
         });
         L.marker([lat, lng], { icon })
           .on("click", () => {
-            const z = sc.getClusterExpansionZoom(item.id);
+            const z = sc.getClusterExpansionZoom(clusterId);
             map.flyTo([lat, lng], Math.min(z + 0.5, 14), { duration: 0.75 });
           })
           .addTo(layer);
@@ -186,9 +197,28 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
         });
 
         // Once popup is in the DOM, attach enter/leave to keep it alive
-        marker.on("popupopen", (e: any) => {
+        marker.on("popupopen", (e: PopupEvent) => {
           const el = e.popup.getElement?.();
           if (!el) return;
+          const previewSlot = el.querySelector<HTMLElement>("[data-map-preview-slot]");
+          if (previewSlot && !previewSlot.querySelector("img")) {
+            const src = previewSlot.getAttribute("data-src");
+            const alt = previewSlot.getAttribute("data-alt") || lake.name;
+            if (src) {
+              const img = document.createElement("img");
+              img.src = src;
+              img.alt = alt;
+              img.loading = "lazy";
+              img.decoding = "async";
+              img.style.width = "100%";
+              img.style.height = "110px";
+              img.style.objectFit = "cover";
+              img.style.display = "block";
+              previewSlot.replaceChildren(img);
+            }
+          }
+          if (el.dataset.popupHoverBound === "1") return;
+          el.dataset.popupHoverBound = "1";
           el.addEventListener("mouseenter", () => {
             if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
           });
@@ -244,7 +274,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
 
         // Dark mask outside Ukraine (evenodd = hole-punch)
         const worldRect: [number, number][] = [[-90, -180], [-90, 180], [90, 180], [90, -180]];
-        (L.polygon as any)([worldRect, ukrLatLngs], {
+        L.polygon([worldRect, ukrLatLngs], {
           fillRule:    "evenodd",
           fillColor:   "#0B1F3A",
           fillOpacity: 0.42,
@@ -266,7 +296,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
       }
 
       // ── Supercluster ────────────────────────────────────────────────────────
-      const sc = new (Supercluster as any)({ radius: 60, maxZoom: 14, minPoints: 2 });
+      const sc = new Supercluster<LakePinData>({ radius: 60, maxZoom: 14, minPoints: 2 });
       superclusterRef.current = sc;
 
       const initialLakes = lakes.filter((l) => l.lat != null && l.lng != null);

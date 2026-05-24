@@ -1,23 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function LakeSchemeViewer({ src }: { src: string }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
+  const closeTimerRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    if (open) {
-      setMounted(true);
-      const frame = requestAnimationFrame(() => setVisible(true));
-      return () => cancelAnimationFrame(frame);
+  function openViewer() {
+    if (closeTimerRef.current != null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+
+    setMounted(true);
+    setVisible(false);
+    setOpen(true);
+    requestAnimationFrame(() => setVisible(true));
+  }
+
+  function closeViewer() {
+    if (closeTimerRef.current != null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
     }
 
     setVisible(false);
-    const timer = window.setTimeout(() => setMounted(false), 180);
-    return () => window.clearTimeout(timer);
-  }, [open]);
+    setOpen(false);
+    closeTimerRef.current = window.setTimeout(() => {
+      setMounted(false);
+      closeTimerRef.current = null;
+    }, 180);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -26,7 +41,7 @@ export default function LakeSchemeViewer({ src }: { src: string }) {
     document.body.style.overflow = "hidden";
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") closeViewer();
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -36,15 +51,26 @@ export default function LakeSchemeViewer({ src }: { src: string }) {
     };
   }, [open]);
 
+  useEffect(() => () => {
+    if (closeTimerRef.current != null) {
+      window.clearTimeout(closeTimerRef.current);
+    }
+  }, []);
+
   return (
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
-        className="block w-full cursor-zoom-in"
-        aria-label="Відкрити схему озера на весь екран"
+        onClick={openViewer}
+        className="block w-full cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-[#0F2A4D] text-left transition hover:border-white/20 hover:bg-[#13325b]"
+        aria-label="Відкрити схему озера"
       >
-        <img src={src} alt="Схема озера" style={{ width: "100%", display: "block" }} />
+        <div className="flex min-h-[180px] items-center justify-center px-5 py-10 text-center">
+          <div>
+            <div className="text-base font-semibold text-white">Переглянути схему водойми</div>
+            <div className="mt-1 text-sm text-white/70">Натисніть, щоб відкрити схему</div>
+          </div>
+        </div>
       </button>
 
       {mounted && (
@@ -53,7 +79,7 @@ export default function LakeSchemeViewer({ src }: { src: string }) {
           role="dialog"
           aria-modal="true"
           aria-label="Схема озера"
-          onClick={() => setOpen(false)}
+          onClick={closeViewer}
           style={{
             opacity: visible ? 1 : 0,
             transition: "opacity 180ms ease",
@@ -63,7 +89,7 @@ export default function LakeSchemeViewer({ src }: { src: string }) {
             type="button"
             onClick={(event) => {
               event.stopPropagation();
-              setOpen(false);
+              closeViewer();
             }}
             className="absolute right-4 top-4 rounded-full bg-white/10 px-3 py-2 text-sm font-semibold text-white backdrop-blur hover:bg-white/20"
             aria-label="Закрити схему озера"
@@ -80,9 +106,12 @@ export default function LakeSchemeViewer({ src }: { src: string }) {
               transition: "transform 180ms ease, opacity 180ms ease",
             }}
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={src}
               alt="Схема озера"
+              loading="lazy"
+              decoding="async"
               className="block max-h-[calc(95vh-1rem)] max-w-[calc(95vw-1rem)] object-contain"
             />
           </div>

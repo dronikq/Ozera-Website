@@ -5,6 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Lake } from "@/lib/supabase";
+import { getLakeCardImage, getLakeMapPreviewImage } from "@/lib/lake-image-resolver";
 import FishIcon from "@/app/components/FishIcon";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
 
@@ -153,15 +154,12 @@ export default function CatalogView({ lakes, total }: Props) {
 /* ── Dark grid card ── */
 function GridCard({ lake }: { lake: Lake }) {
   const fish = lake.fish_species ?? [];
+  const imageSrc = getLakeCardImage(lake);
   return (
     <Link href={`/lakes/${getLakeRouteSlug(lake)}`} className="dk-lake-card">
       <div className="dk-lake-card-photo">
-        {lake.image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={lake.image_url} alt={lake.name} className="dk-lake-card-img" />
-        ) : (
-          <div className="dk-lake-card-placeholder">🌊</div>
-        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={imageSrc} alt={lake.name} className="dk-lake-card-img" loading="lazy" decoding="async" />
         {lake.area_ha && (
           <span className="dk-area-badge">{lake.area_ha} га</span>
         )}
@@ -204,6 +202,8 @@ function MapBottomCard({
   onHover: (id: string | null) => void;
   onClick: () => void;
 }) {
+  const imageSrc = isSelected ? getLakeMapPreviewImage(lake) : null;
+
   return (
     <div
       data-id={lake.id}
@@ -212,9 +212,9 @@ function MapBottomCard({
       onMouseLeave={() => onHover(null)}
       onClick={onClick}
     >
-      {lake.image_url ? (
+      {imageSrc ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={lake.image_url} alt={lake.name} className="dk-map-card-img" />
+        <img src={imageSrc} alt={lake.name} className="dk-map-card-img" loading="lazy" decoding="async" />
       ) : (
         <div className="dk-map-card-placeholder">🌊</div>
       )}
