@@ -10,6 +10,8 @@ import AILakePicker from "./AILakePicker";
 import DarkFiltersBar from "./DarkFiltersBar";
 import SiteHeader from "@/app/components/SiteHeader";
 
+const DEFAULT_SORT = "name_asc";
+
 async function fetchLakes(
   search: string,
   sort: string,
@@ -59,21 +61,28 @@ async function fetchLakes(
   return lakes;
 }
 
-export default function LakesCatalogClient() {
+export default function LakesCatalogClient({ initialLakes }: { initialLakes: Lake[] }) {
   const searchParams = useSearchParams();
   const q = searchParams.get("q") ?? "";
-  const sort = searchParams.get("sort") ?? "name_asc";
+  const sort = searchParams.get("sort") ?? DEFAULT_SORT;
   const region = searchParams.get("region") ?? "";
   const fish = searchParams.get("fish") ?? "";
   const price = searchParams.get("price") ?? "";
 
-  const [lakes, setLakes] = useState<Lake[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadedOnce, setLoadedOnce] = useState(false);
+  const [lakes, setLakes] = useState<Lake[]>(initialLakes);
+  const [loading, setLoading] = useState(false);
+  const [loadedOnce, setLoadedOnce] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const loadedOnceRef = useRef(false);
+  const loadedOnceRef = useRef(true);
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
+    // On first mount with no active filters, server data is already correct — skip fetch.
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      if (!q && sort === DEFAULT_SORT && !region && !fish && !price) return;
+    }
+
     let cancelled = false;
     const load = async () => {
       setLoading(true);

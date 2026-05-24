@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { supabase, type Lake } from "@/lib/supabase";
 import LakesCatalogClient from "./LakesCatalogClient";
 import "./lakes.css";
 
@@ -16,10 +17,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LakesPage() {
+async function getInitialLakes(): Promise<Lake[]> {
+  const { data, error } = await supabase
+    .from("lakes")
+    .select("*")
+    .order("name", { ascending: true })
+    .limit(200);
+  if (error) console.error("getInitialLakes error:", error.message);
+  return (data ?? []) as unknown as Lake[];
+}
+
+export default async function LakesPage() {
+  const initialLakes = await getInitialLakes();
   return (
     <Suspense fallback={null}>
-      <LakesCatalogClient />
+      <LakesCatalogClient initialLakes={initialLakes} />
     </Suspense>
   );
 }
