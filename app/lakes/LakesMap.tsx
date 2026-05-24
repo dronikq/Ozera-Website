@@ -44,7 +44,7 @@ const UKRAINE_BOUNDS: [[number, number], [number, number]] = [
 
 type LakePinData = Pick<
   Lake,
-  "id" | "slug" | "name" | "lat" | "lng" | "city" | "location_text" | "image_url" | "price_uah" | "fish_species" | "lake_images"
+  "id" | "slug" | "name" | "lat" | "lng" | "city" | "location_text" | "image_url" | "price_uah" | "fish_species"
 >;
 
 interface Props {
