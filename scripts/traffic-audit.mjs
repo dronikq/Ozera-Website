@@ -5,6 +5,7 @@ import { chromium } from "playwright";
 const BASE_URL = process.env.TRAFFIC_AUDIT_BASE_URL || "http://localhost:3000";
 const LABEL = sanitizeLabel(process.env.TRAFFIC_AUDIT_LABEL || "latest");
 const HEADED = process.argv.includes("--headed") || process.env.TRAFFIC_AUDIT_HEADED === "1";
+const VERCEL_AUTOMATION_BYPASS_SECRET = process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim() || "";
 const TMP_DIR = path.join(process.cwd(), "tmp");
 const IMAGE_HUGE_THRESHOLD_BYTES = 1024 * 1024;
 const WAIT_SHORT_MS = 1200;
@@ -760,11 +761,16 @@ function mb(value) {
 
 async function main() {
   const startedAt = new Date().toISOString();
-  console.log(`Traffic audit started: label=${LABEL} baseUrl=${BASE_URL} headed=${HEADED ? "1" : "0"}`);
+  console.log(
+    `Traffic audit started: label=${LABEL} baseUrl=${BASE_URL} headed=${HEADED ? "1" : "0"} protectionBypass=${VERCEL_AUTOMATION_BYPASS_SECRET ? "enabled" : "disabled"}`,
+  );
   const browser = await chromium.launch({ headless: !HEADED });
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
     deviceScaleFactor: 1,
+    extraHTTPHeaders: VERCEL_AUTOMATION_BYPASS_SECRET
+      ? { "x-vercel-protection-bypass": VERCEL_AUTOMATION_BYPASS_SECRET }
+      : undefined,
   });
   const page = await context.newPage();
 
@@ -788,12 +794,24 @@ async function main() {
     const repeated = repeatedDownloads(coldRecords, warmRecords);
     coldSummary.repeatedDownloadsBetweenColdAndWarm = { count: 0, knownTransferBytes: 0, knownResourceBytes: 0, unknownTransferBytesRequestCount: 0, knownBytes: 0, top20: [] };
     warmSummary.repeatedDownloadsBetweenColdAndWarm = repeated;
+    const detailPagesVisited = (coldScenario.detailPagesVisited ?? 0) + (warmScenario.detailPagesVisited ?? 0);
+    const totalSupabaseRequests = coldSummary.supabaseRequests + warmSummary.supabaseRequests;
+    const totalSupabaseStorageRequests = coldSummary.supabaseStorageRequests + warmSummary.supabaseStorageRequests;
+    const valid = !(detailPagesVisited === 0 && totalSupabaseRequests === 0 && totalSupabaseStorageRequests === 0);
+    const invalidReason = valid
+      ? null
+      : "No lake detail pages visited and no Supabase requests detected. Likely Vercel Deployment Protection page or catalog not loaded.";
 
     const report = {
       label: LABEL,
       baseUrl: BASE_URL,
       startedAt,
       finishedAt: new Date().toISOString(),
+      valid,
+      invalidReason,
+      detailPagesVisited,
+      supabaseRequests: totalSupabaseRequests,
+      supabaseStorageRequests: totalSupabaseStorageRequests,
       thresholds: {
         hugeImageBytes: IMAGE_HUGE_THRESHOLD_BYTES,
         mapInitialImageRequests: 5,
@@ -828,6 +846,10 @@ async function main() {
     console.log(`Warm images transfer/resource: ${mb(warmSummary.imageKnownTransferBytes)} / ${mb(warmSummary.imageKnownResourceBytes)}, storage transfer/resource: ${mb(warmSummary.supabaseStorageKnownTransferBytes)} / ${mb(warmSummary.supabaseStorageKnownResourceBytes)}`);
     console.log(`Warm repeated network downloads: ${repeated.count}, known transfer ${mb(repeated.knownTransferBytes)}, unknown transfer requests ${repeated.unknownTransferBytesRequestCount}`);
     console.log(`Violations: cold=${coldSummary.violations.length}, warm=${warmSummary.violations.length}`);
+
+    if (!valid) {
+      process.exitCode = 2;
+    }
   } finally {
     await context.close();
     await browser.close();
