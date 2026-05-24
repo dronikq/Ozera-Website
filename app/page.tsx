@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { supabase, type Lake } from "@/lib/supabase";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
+import { getLakeCardImage } from "@/lib/lake-image-resolver";
 import LandingClient from "./components/LandingClient";
 import SiteHeader from "./components/SiteHeader";
 import AppComingSoonForm from "./components/AppComingSoonForm";
@@ -18,7 +19,7 @@ async function getLakesCount() {
 async function getPopularLakes(): Promise<Lake[]> {
   const { data } = await supabase
     .from("lakes")
-    .select("*")
+    .select("*, lake_images(id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at)")
     .not("image_url", "is", null)
     .not("price_uah", "is", null)
     .order("updated_at", { ascending: false })
@@ -265,7 +266,7 @@ export default async function HomePage() {
                   <Link href={`/lakes/${getLakeRouteSlug(lake)}`} className="l-lake-card" key={lake.id}>
                     <span className="l-lake-image-wrap">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img className="l-lake-img" src={lake.image_url ?? ""} alt={lake.name} />
+                      <img className="l-lake-img" src={getLakeCardImage(lake)} alt={lake.name} />
                       {badge && <span className="l-lake-badge">{badge}</span>}
                     </span>
                     <div className="l-lake-body">

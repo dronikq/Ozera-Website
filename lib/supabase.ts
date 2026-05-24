@@ -26,6 +26,7 @@ export type Lake = {
   area_ha: number | null
   max_depth_m: number | null
   image_url: string | null
+  lake_images?: LakeImage[] | null
   extra: Record<string, unknown> | null
   is_active: boolean
   fish_species: string[] | null

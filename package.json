@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "traffic:audit": "node scripts/traffic-audit.mjs",
+    "traffic:audit:headed": "node scripts/traffic-audit.mjs --headed",
+    "traffic:compare": "node scripts/traffic-compare.mjs"
   },
   "dependencies": {
     "@sparticuz/chromium": "^148.0.0",

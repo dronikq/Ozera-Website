@@ -2,6 +2,11 @@ import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { supabase, type Lake, type LakeImage, type LakeUpdate } from "@/lib/supabase";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
+import {
+  getGalleryMainImage,
+  getGalleryThumbImage,
+  getLakeOgImage,
+} from "@/lib/lake-image-resolver";
 import { buildLakeDetailData } from "@/lib/lake-detail-data";
 import ImageGallery from "../[id]/ImageGallery";
 import WeatherWidget from "../[id]/WeatherWidget";
@@ -15,12 +20,20 @@ import "../lakes.css";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 async function getLakeBySlug(slug: string): Promise<Lake | null> {
-  const { data } = await supabase.from("lakes").select("*").eq("slug", slug).maybeSingle();
+  const { data } = await supabase
+    .from("lakes")
+    .select("*, lake_images(id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at)")
+    .eq("slug", slug)
+    .maybeSingle();
   return data;
 }
 
 async function getLakeById(id: string): Promise<Lake | null> {
-  const { data } = await supabase.from("lakes").select("*").eq("id", id).maybeSingle();
+  const { data } = await supabase
+    .from("lakes")
+    .select("*, lake_images(id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at)")
+    .eq("id", id)
+    .maybeSingle();
   return data;
 }
 
@@ -29,7 +42,11 @@ async function resolveLake(slugOrId: string): Promise<Lake | null> {
 }
 
 async function getLakeImages(id: string): Promise<LakeImage[]> {
-  const { data } = await supabase.from("lake_images").select("*").eq("lake_id", id).order("sort_order", { ascending: true });
+  const { data } = await supabase
+    .from("lake_images")
+    .select("id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at")
+    .eq("lake_id", id)
+    .order("sort_order", { ascending: true });
   return data ?? [];
 }
 
@@ -58,7 +75,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const description = lake.description
     ? `${lake.description.slice(0, 110)} ${pricePart} ${fishPart}`.trim()
     : `Платна рибалка ${lake.name}${locationPart}. ${pricePart} ${fishPart} ${schedulePart}`.trim();
-  const image = lake.image_url ?? `${baseUrl}/og-image.png`;
+  const image = getLakeOgImage(lake);
 
   return {
     title,
@@ -104,13 +121,14 @@ export default async function LakePage({
 
   const baseUrl = "https://www.ozera.in.ua";
   const detail = buildLakeDetailData(lake);
+  const image = getLakeOgImage(lake);
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": ["TouristAttraction", "LocalBusiness"],
     name: lake.name,
     description: lake.description ?? `Платна рибалка на ${lake.name}`,
     url: `${baseUrl}/lakes/${canonicalSlug}`,
-    image: lake.image_url ?? `${baseUrl}/og-image.png`,
+    image,
     ...(lake.lat && lake.lng && { geo: { "@type": "GeoCoordinates", latitude: lake.lat, longitude: lake.lng } }),
     ...(lake.city && { address: { "@type": "PostalAddress", addressLocality: lake.city, addressCountry: "UA" } }),
     ...(lake.contacts?.phone?.length && { telephone: lake.contacts.phone[0] }),
@@ -123,7 +141,22 @@ export default async function LakePage({
     isAccessibleForFree: false,
   };
 
-  const allImages = lakeImages.length > 0 ? lakeImages.map((img) => img.url) : lake.image_url ? [lake.image_url] : [];
+  const galleryImages =
+    lakeImages.length > 0
+      ? lakeImages.map((image) => ({
+          id: image.id,
+          alt: lake.name,
+          mainUrl: getGalleryMainImage(image, lake),
+          thumbUrl: getGalleryThumbImage(image, lake),
+        }))
+      : [
+          {
+            id: lake.id,
+            alt: lake.name,
+            mainUrl: getGalleryMainImage(lake),
+            thumbUrl: getGalleryThumbImage(lake),
+          },
+        ].filter((image) => image.mainUrl !== "/ozera_splash.png" || image.thumbUrl !== "/ozera_splash.png");
   const mapsUrl = detail.mapsUrl;
   const wazeUrl = detail.wazeUrl;
 
@@ -181,7 +214,7 @@ export default async function LakePage({
         <div className="dk-container">
           <div className="dk-detail-grid">
             <div>
-              <ImageGallery images={allImages} name={lake.name} />
+              <ImageGallery images={galleryImages} name={lake.name} />
 
               {lake.lat && lake.lng && (
                 <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 16 }}>
