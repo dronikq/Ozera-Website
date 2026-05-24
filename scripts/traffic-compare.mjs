@@ -10,6 +10,7 @@ if (!beforePath || !afterPath) {
 
 const before = readJson(beforePath);
 const after = readJson(afterPath);
+const afterLabel = extractAuditLabel(afterPath) ?? extractAuditLabel(beforePath) ?? "latest";
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(path.resolve(filePath), "utf8"));
@@ -225,7 +226,13 @@ const outPath = path.join(process.cwd(), "tmp", "traffic-optimization-report.jso
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, JSON.stringify(report, null, 2));
 
+const labeledOutPath = path.join(process.cwd(), "tmp", `traffic-optimization-report-${afterLabel}.json`);
+fs.writeFileSync(labeledOutPath, JSON.stringify(report, null, 2));
+
 console.log(`Traffic optimization report written: ${outPath}`);
+if (labeledOutPath !== outPath) {
+  console.log(`Labeled copy written: ${labeledOutPath}`);
+}
 logRun("Cold", cold);
 logRun("Warm", warm);
 console.log(`Remaining violations: cold=${report.remainingViolations.cold.length}, warm=${report.remainingViolations.warm.length}`);
@@ -244,4 +251,9 @@ function logRun(label, run) {
 
 function formatBytes(value) {
   return `${((value ?? 0) / 1024 / 1024).toFixed(2)} MB`;
+}
+
+function extractAuditLabel(filePath) {
+  const match = path.basename(filePath).match(/^traffic-audit-(.+)\.json$/);
+  return match ? match[1] : null;
 }

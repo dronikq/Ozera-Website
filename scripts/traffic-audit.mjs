@@ -760,6 +760,7 @@ function mb(value) {
 
 async function main() {
   const startedAt = new Date().toISOString();
+  console.log(`Traffic audit started: label=${LABEL} baseUrl=${BASE_URL} headed=${HEADED ? "1" : "0"}`);
   const browser = await chromium.launch({ headless: !HEADED });
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
