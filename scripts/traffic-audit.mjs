@@ -12,10 +12,18 @@ const IMAGE_HUGE_THRESHOLD_BYTES = 1024 * 1024;
 const LOCAL_IMAGE_HUGE_THRESHOLD_BYTES = 500 * 1024;
 const SUPABASE_STORAGE_HUGE_THRESHOLD_BYTES = envMb("TRAFFIC_AUDIT_SUPABASE_STORAGE_THRESHOLD_MB", 35);
 const JS_BUNDLE_HUGE_THRESHOLD_BYTES = envMb("TRAFFIC_AUDIT_JS_BUNDLE_THRESHOLD_MB", 6);
+const TRAFFIC_AUDIT_DEBUG = envFlag("TRAFFIC_AUDIT_DEBUG");
+const TRAFFIC_AUDIT_PHASE_TIMEOUT_MS = envMs("TRAFFIC_AUDIT_PHASE_TIMEOUT_MS", 45000);
+const TRAFFIC_AUDIT_NAV_TIMEOUT_MS = envMs("TRAFFIC_AUDIT_NAV_TIMEOUT_MS", 60000);
 const WAIT_SHORT_MS = 1200;
 const WAIT_WEATHER_MS = 1800;
 const MAX_DETAIL_PAGES = Number.parseInt(process.env.TRAFFIC_AUDIT_DETAIL_LIMIT || "0", 10);
 const TRAFFIC_AUDIT_MARKDOWN = process.env.TRAFFIC_AUDIT_MARKDOWN === "1";
+const TRAFFIC_AUDIT_SKIP_MAP = envFlag("TRAFFIC_AUDIT_SKIP_MAP");
+const TRAFFIC_AUDIT_SKIP_DETAILS = envFlag("TRAFFIC_AUDIT_SKIP_DETAILS");
+const TRAFFIC_AUDIT_SKIP_GALLERY = envFlag("TRAFFIC_AUDIT_SKIP_GALLERY");
+const TRAFFIC_AUDIT_SKIP_WARM = envFlag("TRAFFIC_AUDIT_SKIP_WARM");
+const TRAFFIC_AUDIT_SKIP_WEATHER_WAIT = envFlag("TRAFFIC_AUDIT_SKIP_WEATHER_WAIT");
 const PHASE_KEYS = [
   "home",
   "catalog-initial",
@@ -46,9 +54,41 @@ let currentRouteGroup = "unknown";
 let currentPhase = "idle";
 let currentDetailPageSlug = null;
 let currentDetailPageIndex = 0;
+const auditState = {
+  startedAt: null,
+  finishedAt: null,
+  completedPhases: [],
+  warnings: [],
+  scenarioProgress: {
+    cold: createScenarioProgress("cold"),
+    warm: createScenarioProgress("warm"),
+  },
+  currentScenario: null,
+  currentStep: null,
+  currentDetail: null,
+  browser: null,
+  context: null,
+  page: null,
+  failureFinalized: false,
+  partialReportPath: null,
+};
 
 function sanitizeLabel(value) {
   return value.replace(/[^a-z0-9_-]+/gi, "-").replace(/^-|-$/g, "") || "latest";
+}
+
+function envFlag(name, fallback = false) {
+  const raw = process.env[name];
+  if (raw == null) return fallback;
+  return raw === "1" || raw.toLowerCase() === "true";
+}
+
+function envMs(name, fallbackMs) {
+  const raw = process.env[name];
+  if (!raw) return fallbackMs;
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) return fallbackMs;
+  return parsed;
 }
 
 function envMb(name, fallbackMb) {
@@ -57,6 +97,190 @@ function envMb(name, fallbackMb) {
   const parsed = Number.parseFloat(raw);
   if (!Number.isFinite(parsed) || parsed < 0) return fallbackMb * 1024 * 1024;
   return parsed * 1024 * 1024;
+}
+
+function createScenarioProgress(name) {
+  return {
+    name,
+    status: "pending",
+    startedAt: null,
+    finishedAt: null,
+    currentPhase: null,
+    currentDetail: null,
+    detailLinksFound: 0,
+    detailLinksPlanned: 0,
+    detailPagesVisited: 0,
+    completedPhases: [],
+    warnings: [],
+    skipped: false,
+  };
+}
+
+function debugLog(message) {
+  if (!TRAFFIC_AUDIT_DEBUG) return;
+  console.log(`[traffic-audit] ${message}`);
+}
+
+function pushWarning(message, extra = {}) {
+  const warning = {
+    message,
+    phase: currentPhase,
+    scenario: auditState.currentScenario,
+    ...extra,
+  };
+  auditState.warnings.push(warning);
+  const scenario = auditState.scenarioProgress[auditState.currentScenario];
+  if (scenario) scenario.warnings.push(warning);
+  return warning;
+}
+
+function markPhaseComplete(phaseName, scenarioName) {
+  auditState.completedPhases.push({
+    scenario: scenarioName,
+    phase: phaseName,
+    completedAt: new Date().toISOString(),
+  });
+  const scenario = auditState.scenarioProgress[scenarioName];
+  if (scenario) scenario.completedPhases.push(phaseName);
+}
+
+function countRecordsForPhase(runName, phaseName) {
+  return records.filter((record) => record.run === runName && record.phase === phaseName).length;
+}
+
+function countRecordsForPhases(runName, phaseNames) {
+  return records.filter((record) => record.run === runName && phaseNames.includes(record.phase)).length;
+}
+
+function countRecordsForDetail(runName, detailSlug, detailIndex) {
+  return records.filter(
+    (record) =>
+      record.run === runName &&
+      record.detailPageSlug === detailSlug &&
+      record.detailPageIndex === detailIndex,
+  ).length;
+}
+
+function collectScenarioProgressSnapshot(name) {
+  const scenario = auditState.scenarioProgress[name];
+  if (!scenario) return null;
+  return {
+    ...scenario,
+    completedPhases: [...scenario.completedPhases],
+    warnings: [...scenario.warnings],
+  };
+}
+
+function buildPartialReport(error) {
+  const coldRecords = records.filter((record) => record.run === "cold");
+  const warmRecords = records.filter((record) => record.run === "warm");
+  const coldDetailPageBreakdown = buildDetailPageBreakdown(coldRecords);
+  const warmDetailPageBreakdown = buildDetailPageBreakdown(warmRecords);
+  const coldSummary = summarize(coldRecords, coldDetailPageBreakdown, auditState.scenarioProgress.cold.detailPagesVisited ?? 0);
+  const warmSummary = summarize(warmRecords, warmDetailPageBreakdown, auditState.scenarioProgress.warm.detailPagesVisited ?? 0);
+  const repeated = repeatedDownloads(coldRecords, warmRecords);
+  coldSummary.repeatedDownloadsBetweenColdAndWarm = { count: 0, knownTransferBytes: 0, knownResourceBytes: 0, unknownTransferBytesRequestCount: 0, knownBytes: 0, top20: [] };
+  warmSummary.repeatedDownloadsBetweenColdAndWarm = repeated;
+
+  const completedPhases = [...auditState.completedPhases];
+  return {
+    label: LABEL,
+    baseUrl: BASE_URL,
+    startedAt: auditState.startedAt,
+    finishedAt: new Date().toISOString(),
+    partial: true,
+    error: {
+      name: error?.name ?? "Error",
+      message: error?.message ?? "Audit interrupted",
+      stack: error?.stack ?? null,
+    },
+    currentPhase,
+    currentScenario: auditState.currentScenario,
+    currentStep: auditState.currentStep,
+    completedPhases,
+    warnings: [...auditState.warnings],
+    scenarioProgress: {
+      cold: collectScenarioProgressSnapshot("cold"),
+      warm: collectScenarioProgressSnapshot("warm"),
+    },
+    coldDetailPagesVisited: auditState.scenarioProgress.cold.detailPagesVisited ?? 0,
+    warmDetailPagesVisited: auditState.scenarioProgress.warm.detailPagesVisited ?? 0,
+    totalDetailPagesVisited:
+      (auditState.scenarioProgress.cold.detailPagesVisited ?? 0) + (auditState.scenarioProgress.warm.detailPagesVisited ?? 0),
+    supabaseRequests: coldSummary.supabaseRequests + warmSummary.supabaseRequests,
+    supabaseStorageRequests: coldSummary.supabaseStorageRequests + warmSummary.supabaseStorageRequests,
+    thresholds: {
+      hugeImageBytes: IMAGE_HUGE_THRESHOLD_BYTES,
+      mapInitialImageRequests: 5,
+    },
+    runs: {
+      cold: {
+        summary: coldSummary,
+        requests: coldRecords,
+        detailPageBreakdown: coldDetailPageBreakdown,
+        detailPagesVisited: auditState.scenarioProgress.cold.detailPagesVisited ?? 0,
+      },
+      warm: {
+        summary: warmSummary,
+        requests: warmRecords,
+        detailPageBreakdown: warmDetailPageBreakdown,
+        detailPagesVisited: auditState.scenarioProgress.warm.detailPagesVisited ?? 0,
+      },
+    },
+    performanceEntries,
+  };
+}
+
+async function writeJsonReport(report, suffix = "") {
+  const suffixPart = suffix ? `-${suffix}` : "";
+  const labelPath = path.join(TMP_DIR, `traffic-audit-${LABEL}${suffixPart}.json`);
+  fs.writeFileSync(labelPath, JSON.stringify(report, null, 2));
+  if (!suffix) {
+    const latestPath = path.join(TMP_DIR, "traffic-audit-latest.json");
+    fs.writeFileSync(latestPath, JSON.stringify(report, null, 2));
+    return { labelPath, latestPath };
+  }
+  return { labelPath, latestPath: null };
+}
+
+async function finalizeFailure(error, exitCode = 1) {
+  if (auditState.failureFinalized) return;
+  auditState.failureFinalized = true;
+  auditState.finishedAt = new Date().toISOString();
+
+  const partialReport = buildPartialReport(error);
+  try {
+    debugLog("audit: partial report write start");
+    const { labelPath } = await writeJsonReport(partialReport, "partial");
+    auditState.partialReportPath = labelPath;
+    console.error(`Partial traffic audit written: ${labelPath}`);
+    debugLog("audit: partial report write done");
+  } catch (writeError) {
+    console.error("Failed to write partial traffic audit report:", writeError);
+  }
+
+  try {
+    await auditState.page?.close().catch(() => {});
+    await auditState.context?.close().catch(() => {});
+    await auditState.browser?.close().catch(() => {});
+  } catch {
+    // Ignore cleanup failures while unwinding from a fatal error or signal.
+  }
+
+  if (error) {
+    console.error(error);
+  }
+
+  process.exit(exitCode);
+}
+
+function registerSignalHandlers() {
+  const onSignal = (signalName) => {
+    void finalizeFailure(new Error(`Received ${signalName}`), 130);
+  };
+
+  process.once("SIGINT", () => onSignal("SIGINT"));
+  process.once("SIGTERM", () => onSignal("SIGTERM"));
 }
 
 function loadRouteBundleStats() {
@@ -159,6 +383,14 @@ function isSchemeRequest(rawUrl, decodedUrl) {
   return /\bscheme\b/i.test(checkUrl) || /\/scheme[\-_/.?]/i.test(checkUrl) || /scheme\.(png|jpe?g|webp|avif|gif)$/i.test(checkUrl);
 }
 
+function isImageContentType(contentType = "") {
+  return `${contentType || ""}`.toLowerCase().startsWith("image/");
+}
+
+function isSuccessfulStatus(status) {
+  return Number.isInteger(status) && status >= 200 && status < 300;
+}
+
 function isWebpLike(url, contentType = "") {
   const normalizedContentType = `${contentType || ""}`.toLowerCase();
   if (normalizedContentType.includes("image/webp")) return true;
@@ -166,6 +398,16 @@ function isWebpLike(url, contentType = "") {
     return /\.webp($|[?#])/i.test(new URL(url, BASE_URL).pathname);
   } catch {
     return /\.webp($|[?#])/i.test(url);
+  }
+}
+
+function isJpegLike(url, contentType = "") {
+  const normalizedContentType = `${contentType || ""}`.toLowerCase();
+  if (normalizedContentType.includes("image/jpeg") || normalizedContentType.includes("image/jpg")) return true;
+  try {
+    return /\.jpe?g($|[?#])/i.test(new URL(url, BASE_URL).pathname);
+  } catch {
+    return /\.jpe?g($|[?#])/i.test(url);
   }
 }
 
@@ -212,7 +454,7 @@ function isStaticResource(record, url, contentType) {
   );
 }
 
-function classify(rawUrl, resourceType, responseHeaders = {}, routeGroupParam = currentRouteGroup, phaseParam = currentPhase) {
+function classify(rawUrl, resourceType, responseHeaders = {}, status = null, routeGroupParam = currentRouteGroup, phaseParam = currentPhase) {
   const decoded = getDecodedUrl(rawUrl);
   let url;
   try {
@@ -249,6 +491,13 @@ function classify(rawUrl, resourceType, responseHeaders = {}, routeGroupParam = 
   const isStaticAsset = isStaticResource({ url: rawUrl, resourceType }, url, contentType);
   const isSchemeImage = imageLike && (phaseParam === "detail-scheme" || isSchemeRequest(rawUrl, decoded));
   const schemeContentType = contentType || "";
+  const isSchemeSuccessfulResponse = isSuccessfulStatus(status);
+  const isSchemeImageResponse = isSchemeImage && isImageContentType(schemeContentType);
+  const isSchemeFailed = isSchemeImage && (!isSchemeSuccessfulResponse || !isSchemeImageResponse);
+  const isSchemeFormatCandidate = isSchemeImage && isSchemeSuccessfulResponse && isSchemeImageResponse;
+  const isSchemeWebp = isSchemeFormatCandidate && (isWebpLike(rawUrl, schemeContentType) || isWebpLike(decoded, schemeContentType));
+  const isSchemePng = isSchemeFormatCandidate && (isPngLike(rawUrl, schemeContentType) || isPngLike(decoded, schemeContentType));
+  const isSchemeJpeg = isSchemeFormatCandidate && (isJpegLike(rawUrl, schemeContentType) || isJpegLike(decoded, schemeContentType));
 
   let imageVariant = "unknown";
   if (imageLike || isSupabaseStorage || isNextImageOptimizer) {
@@ -257,17 +506,19 @@ function classify(rawUrl, resourceType, responseHeaders = {}, routeGroupParam = 
     else if (checkUrl.includes("/medium/")) imageVariant = "medium";
     else if (checkUrl.includes("/thumb/")) imageVariant = "thumb";
     else if (isSameOrigin && /placeholder|ozera_splash|icon\.png/i.test(url.pathname)) imageVariant = "placeholder";
-    else if (isSupabaseStorage && imageLike) imageVariant = "legacy";
+    else if (isSupabaseStorage && imageLike && !isSchemeImage) imageVariant = "legacy";
   }
+  if (isSchemeImage) imageVariant = "unknown";
 
   let offenderCategory = "unknown_external";
-  if (isLakeImageVariant(imageVariant)) offenderCategory = `lake_${imageVariant}`;
-  else if (isSchemeImage) {
+  if (isSchemeImage) {
     if (isSupabaseStorage) offenderCategory = "scheme_storage";
-    else if (isWebpLike(rawUrl, schemeContentType) || isWebpLike(decoded, schemeContentType)) offenderCategory = "scheme_webp";
-    else if (isPngLike(rawUrl, schemeContentType) || isPngLike(decoded, schemeContentType)) offenderCategory = "scheme_png";
+    else if (isSchemeWebp) offenderCategory = "scheme_webp";
+    else if (isSchemePng) offenderCategory = "scheme_png";
+    else if (isSchemeJpeg) offenderCategory = "scheme_jpeg";
     else offenderCategory = "scheme_external";
   }
+  else if (isLakeImageVariant(imageVariant)) offenderCategory = `lake_${imageVariant}`;
   else if (isTileProvider) offenderCategory = "map_tile";
   else if (isWeatherApi) offenderCategory = "weather_api";
   else if (isSupabaseRest) offenderCategory = "supabase_rest";
@@ -308,8 +559,10 @@ function classify(rawUrl, resourceType, responseHeaders = {}, routeGroupParam = 
     isWeatherApi,
     isStaticAsset,
     isSchemeImage,
+    isSchemeFailed,
     imageVariant,
-    category: offenderCategory,
+    category: isSchemeImage ? (isSupabaseStorage ? "scheme_storage" : "scheme_external") : offenderCategory,
+    schemeKind: isSchemeWebp ? "webp" : isSchemePng ? "png" : isSchemeJpeg ? "jpeg" : null,
     routeGroup,
     decodedImageSource: decoded !== rawUrl ? decoded : null,
     decodedHost: decodedUrl.hostname,
@@ -362,7 +615,7 @@ function attachPageCollectors(page, runName) {
     const record = records.find((item) => item.id === requestIds.get(request));
     if (!record) return;
     const headers = response.headers();
-    const flags = classify(record.url, record.resourceType, selectedHeaders(headers), record.routeGroup, record.phase);
+    const flags = classify(record.url, record.resourceType, selectedHeaders(headers), response.status(), record.routeGroup, record.phase);
     record.status = response.status();
     record.statusText = response.statusText();
     record.responseHeaders = selectedHeaders(headers);
@@ -377,9 +630,11 @@ function attachPageCollectors(page, runName) {
       isWeatherApi: flags.isWeatherApi,
       isStaticAsset: flags.isStaticAsset,
       isSchemeImage: flags.isSchemeImage,
+      isSchemeFailed: flags.isSchemeFailed,
     };
     record.imageVariant = flags.imageVariant;
     record.category = flags.category;
+    record.schemeKind = flags.schemeKind;
     record.routeGroup = flags.routeGroup;
     record.decodedImageSource = flags.decodedImageSource;
   });
@@ -494,17 +749,94 @@ function getKnownResourceBytes(record) {
   return { value: null, source: null };
 }
 
-async function waitForNetwork(page, timeout = 9000) {
+function phaseTimedOut(error) {
+  return `${error?.message || ""}`.includes("Phase timeout");
+}
+
+async function waitForKnownSelectors(page, selectors = [], timeout = TRAFFIC_AUDIT_PHASE_TIMEOUT_MS) {
+  const filtered = selectors.filter(Boolean);
+  if (!filtered.length) return false;
+
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    for (const selector of filtered) {
+      const visible = await page.locator(selector).first().isVisible().catch(() => false);
+      if (visible) return true;
+    }
+    await page.waitForTimeout(250);
+  }
+  return false;
+}
+
+async function settlePage(page, { selectors = [], timeout = TRAFFIC_AUDIT_PHASE_TIMEOUT_MS, settleMs = WAIT_SHORT_MS } = {}) {
   await page.waitForLoadState("domcontentloaded", { timeout }).catch(() => {});
-  await page.waitForLoadState("networkidle", { timeout }).catch(() => page.waitForTimeout(WAIT_SHORT_MS));
+  await waitForKnownSelectors(page, selectors, timeout).catch(() => {});
+  await page.waitForTimeout(settleMs);
   await collectPerformance(page, page.__trafficRunName);
 }
 
-async function goto(page, urlPath, routeGroup, phase = routeGroup) {
+async function goto(page, urlPath, routeGroup, phase = routeGroup, options = {}) {
   currentRouteGroup = routeGroup;
   currentPhase = phase;
-  await page.goto(new URL(urlPath, BASE_URL).toString(), { waitUntil: "domcontentloaded", timeout: 45000 });
-  await waitForNetwork(page);
+  await page.goto(new URL(urlPath, BASE_URL).toString(), {
+    waitUntil: "domcontentloaded",
+    timeout: options.timeout ?? TRAFFIC_AUDIT_NAV_TIMEOUT_MS,
+  });
+  await settlePage(page, {
+    selectors: options.selectors ?? [],
+    timeout: options.timeout ?? TRAFFIC_AUDIT_PHASE_TIMEOUT_MS,
+    settleMs: options.settleMs ?? WAIT_SHORT_MS,
+  });
+}
+
+async function runPhase({ scenarioName, phaseName, phaseLabel, critical = true, timeoutMs = TRAFFIC_AUDIT_PHASE_TIMEOUT_MS, doneMessage = null }, fn) {
+  auditState.currentScenario = scenarioName;
+  auditState.currentStep = phaseName;
+  currentPhase = phaseName;
+  currentRouteGroup = phaseToRouteGroup(phaseName);
+
+  const scenario = auditState.scenarioProgress[scenarioName];
+  if (scenario) scenario.currentPhase = phaseName;
+
+  debugLog(`${scenarioName}: ${phaseLabel} start`);
+
+  let timeoutId;
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`Phase timeout after ${timeoutMs}ms: ${scenarioName}:${phaseLabel}`));
+    }, timeoutMs);
+  });
+
+  try {
+    const result = await Promise.race([Promise.resolve().then(fn), timeoutPromise]);
+    markPhaseComplete(phaseName, scenarioName);
+    if (doneMessage) {
+      debugLog(`${scenarioName}: ${phaseLabel} done ${doneMessage(result)}`);
+    } else {
+      debugLog(`${scenarioName}: ${phaseLabel} done`);
+    }
+    return result;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    const isTimeout = phaseTimedOut(error);
+    if (isTimeout) {
+      const warning = pushWarning(`${scenarioName}:${phaseLabel} timed out after ${timeoutMs}ms`, {
+        phaseName,
+        phaseLabel,
+        timeoutMs,
+      });
+      debugLog(`${scenarioName}: ${phaseLabel} timeout after ${timeoutMs}ms`);
+      if (critical) {
+        const fatal = new Error(warning.message);
+        fatal.cause = error;
+        throw fatal;
+      }
+      return null;
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 async function scrollToEnd(page) {
@@ -534,7 +866,11 @@ async function getDetailLinks(page) {
     return Array.from(seen);
   });
   const filtered = links.filter((href) => href !== "/lakes" && href.split("/").length >= 3);
-  return MAX_DETAIL_PAGES > 0 ? filtered.slice(0, MAX_DETAIL_PAGES) : filtered;
+  const limited = MAX_DETAIL_PAGES > 0 ? filtered.slice(0, MAX_DETAIL_PAGES) : filtered;
+  return {
+    allLinks: filtered,
+    links: limited,
+  };
 }
 
 async function clickGalleryThumbs(page) {
@@ -554,7 +890,8 @@ async function openSchemeViewer(page) {
   if (!(await schemeButton.count().catch(() => 0))) return;
 
   await schemeButton.click({ timeout: 3000 }).catch(() => {});
-  await page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => page.waitForTimeout(1200));
+  await waitForKnownSelectors(page, ['[role="dialog"][aria-label="Схема озера"]', 'button[aria-label="Закрити схему озера"]'], TRAFFIC_AUDIT_PHASE_TIMEOUT_MS);
+  await page.waitForTimeout(1200);
   await collectPerformance(page, page.__trafficRunName);
 
   const closeButton = page.getByRole("button", { name: /Закрити схему озера/i }).first();
@@ -572,7 +909,8 @@ async function openMapAndMaybePopups(page) {
   const mapButton = page.getByRole("button", { name: /карт/i }).first();
   if (!(await mapButton.count().catch(() => 0))) return;
   await mapButton.click({ timeout: 5000 }).catch(() => {});
-  await page.waitForTimeout(3500);
+  await waitForKnownSelectors(page, [".dk-map-overlay", ".leaflet-container"], TRAFFIC_AUDIT_PHASE_TIMEOUT_MS);
+  await page.waitForTimeout(2000);
   await collectPerformance(page, page.__trafficRunName);
 
   currentPhase = "map-popup";
@@ -601,7 +939,10 @@ async function visitSeoLinks(page) {
   }).catch(() => []);
 
   for (const link of links) {
-    await goto(page, link, "seo", "privacy-terms");
+    await goto(page, link, "seo", "privacy-terms", {
+      selectors: ["main", "h1", "article"],
+      timeout: TRAFFIC_AUDIT_NAV_TIMEOUT_MS,
+    });
   }
 }
 
@@ -672,31 +1013,209 @@ function buildDetailPageBreakdown(recordsForRun) {
 
 async function runScenario(page, runName) {
   page.__trafficRunName = runName;
+  const scenario = auditState.scenarioProgress[runName];
+  scenario.status = "running";
+  scenario.startedAt = new Date().toISOString();
+  scenario.skipped = false;
+  scenario.detailPagesVisited = 0;
+  scenario.detailLinksFound = 0;
+  scenario.detailLinksPlanned = 0;
+  currentDetailPageIndex = 0;
+  currentDetailPageSlug = null;
 
-  await goto(page, "/", "home", "home");
-  await goto(page, "/lakes", "catalog", "catalog-initial");
-  await scrollToEnd(page);
-  const detailLinks = await getDetailLinks(page);
+  try {
+    await runPhase(
+      {
+        scenarioName: runName,
+        phaseName: "home",
+        phaseLabel: "home",
+        critical: true,
+        doneMessage: () => `requests=${countRecordsForPhase(runName, "home")}`,
+      },
+      async () => {
+        await goto(page, "/", "home", "home", {
+          selectors: ["main", "h1"],
+          timeout: TRAFFIC_AUDIT_NAV_TIMEOUT_MS,
+        });
+      },
+    );
 
-  for (const link of detailLinks) {
-    currentDetailPageSlug = new URL(link, BASE_URL).pathname;
-    currentDetailPageIndex += 1;
-    await goto(page, link, "detail", "detail-page");
-    currentPhase = "detail-weather";
-    await page.waitForTimeout(WAIT_WEATHER_MS);
-    await collectPerformance(page, runName);
-    currentPhase = "detail-gallery";
-    await clickGalleryThumbs(page);
-    currentPhase = "detail-scheme";
-    await openSchemeViewer(page);
-    currentDetailPageSlug = null;
+    await runPhase(
+      {
+        scenarioName: runName,
+        phaseName: "catalog-initial",
+        phaseLabel: "catalog",
+        critical: true,
+        doneMessage: () => `requests=${countRecordsForPhase(runName, "catalog-initial")}`,
+      },
+      async () => {
+        await goto(page, "/lakes", "catalog", "catalog-initial", {
+          selectors: [".dk-lakes-grid", ".dk-empty", "h1"],
+          timeout: TRAFFIC_AUDIT_NAV_TIMEOUT_MS,
+        });
+      },
+    );
+
+    await runPhase(
+      {
+        scenarioName: runName,
+        phaseName: "catalog-scroll",
+        phaseLabel: "catalog scroll",
+        critical: true,
+        doneMessage: () => `requests=${countRecordsForPhase(runName, "catalog-scroll")}`,
+      },
+      async () => {
+        await scrollToEnd(page);
+      },
+    );
+
+    const { allLinks, links: detailLinks } = await getDetailLinks(page);
+    scenario.detailLinksFound = allLinks.length;
+    scenario.detailLinksPlanned = detailLinks.length;
+    debugLog(`${runName}: catalog links found=${allLinks.length}${MAX_DETAIL_PAGES > 0 ? ` limited=${detailLinks.length}` : ""}`);
+
+    if (!TRAFFIC_AUDIT_SKIP_DETAILS) {
+      for (let i = 0; i < detailLinks.length; i += 1) {
+        const link = detailLinks[i];
+        const detailPath = new URL(link, BASE_URL).pathname;
+        const detailIndex = i + 1;
+        scenario.currentDetail = {
+          index: detailIndex,
+          total: detailLinks.length,
+          path: detailPath,
+        };
+        currentDetailPageSlug = detailPath;
+        currentDetailPageIndex = detailIndex;
+
+        await runPhase(
+          {
+            scenarioName: runName,
+            phaseName: "detail-page",
+            phaseLabel: `detail ${detailIndex}/${detailLinks.length} ${detailPath}`,
+            critical: true,
+            doneMessage: () => `requests=${countRecordsForDetail(runName, detailPath, detailIndex)}`,
+          },
+          async () => {
+            await goto(page, link, "detail", "detail-page", {
+              selectors: ["h1", ".dk-gallery-main-wrap", ".dk-info-card"],
+              timeout: TRAFFIC_AUDIT_NAV_TIMEOUT_MS,
+            });
+
+            if (!TRAFFIC_AUDIT_SKIP_WEATHER_WAIT) {
+              await runPhase(
+                {
+                  scenarioName: runName,
+                  phaseName: "detail-weather",
+                  phaseLabel: `detail ${detailIndex}/${detailLinks.length} weather wait`,
+                  critical: false,
+                  doneMessage: () => `requests=${countRecordsForDetail(runName, detailPath, detailIndex)}`,
+                },
+                async () => {
+                  currentPhase = "detail-weather";
+                  await page.waitForTimeout(WAIT_WEATHER_MS);
+                  await collectPerformance(page, page.__trafficRunName);
+                },
+              );
+            } else if (TRAFFIC_AUDIT_DEBUG) {
+              debugLog(`${runName}: detail ${detailIndex}/${detailLinks.length} weather wait skipped`);
+            }
+
+            if (!TRAFFIC_AUDIT_SKIP_GALLERY) {
+              await runPhase(
+                {
+                  scenarioName: runName,
+                  phaseName: "detail-gallery",
+                  phaseLabel: `detail ${detailIndex}/${detailLinks.length} gallery`,
+                  critical: false,
+                  doneMessage: () => `requests=${countRecordsForDetail(runName, detailPath, detailIndex)}`,
+                },
+                async () => {
+                  currentPhase = "detail-gallery";
+                  await clickGalleryThumbs(page);
+                },
+              );
+            } else if (TRAFFIC_AUDIT_DEBUG) {
+              debugLog(`${runName}: detail ${detailIndex}/${detailLinks.length} gallery skipped`);
+            }
+
+            await runPhase(
+              {
+                scenarioName: runName,
+                phaseName: "detail-scheme",
+                phaseLabel: `detail ${detailIndex}/${detailLinks.length} scheme`,
+                critical: false,
+                doneMessage: () => `requests=${countRecordsForDetail(runName, detailPath, detailIndex)}`,
+              },
+              async () => {
+                currentPhase = "detail-scheme";
+                await openSchemeViewer(page);
+              },
+            );
+          },
+        );
+
+        scenario.detailPagesVisited += 1;
+        scenario.currentDetail = null;
+        currentDetailPageSlug = null;
+      }
+    } else if (TRAFFIC_AUDIT_DEBUG) {
+      debugLog(`${runName}: detail phase skipped`);
+    }
+
+    await runPhase(
+      {
+        scenarioName: runName,
+        phaseName: "catalog-return",
+        phaseLabel: "catalog return",
+        critical: true,
+        doneMessage: () => `requests=${countRecordsForPhase(runName, "catalog-return")}`,
+      },
+      async () => {
+        await goto(page, "/lakes", "catalog", "catalog-return", {
+          selectors: [".dk-lakes-grid", ".dk-empty", "h1"],
+          timeout: TRAFFIC_AUDIT_NAV_TIMEOUT_MS,
+        });
+      },
+    );
+
+    if (!TRAFFIC_AUDIT_SKIP_MAP) {
+      await runPhase(
+        {
+          scenarioName: runName,
+          phaseName: "map-open",
+          phaseLabel: "map",
+          critical: false,
+          doneMessage: () => `requests=${countRecordsForPhases(runName, ["map-open", "map-popup"])}`,
+        },
+        async () => {
+          await openMapAndMaybePopups(page);
+        },
+      );
+    } else if (TRAFFIC_AUDIT_DEBUG) {
+      debugLog(`${runName}: map skipped`);
+    }
+
+    await runPhase(
+      {
+        scenarioName: runName,
+        phaseName: "privacy-terms",
+        phaseLabel: "privacy terms",
+        critical: false,
+        doneMessage: () => `requests=${countRecordsForPhase(runName, "privacy-terms")}`,
+      },
+      async () => {
+        await visitSeoLinks(page);
+      },
+    );
+
+    scenario.status = "done";
+    scenario.finishedAt = new Date().toISOString();
+    return { detailPagesVisited: scenario.detailPagesVisited };
+  } catch (error) {
+    scenario.status = "failed";
+    scenario.finishedAt = new Date().toISOString();
+    throw error;
   }
-
-  await goto(page, "/lakes", "catalog", "catalog-return");
-  await openMapAndMaybePopups(page);
-  await visitSeoLinks(page);
-
-  return { detailPagesVisited: detailLinks.length };
 }
 
 function resourceBytes(record) {
@@ -757,6 +1276,12 @@ function phasePredicate(phase) {
 function phaseSummary(recordsForRun, phase) {
   const phaseRecords = recordsForRun.filter(phasePredicate(phase));
   const imageRecords = phaseRecords.filter(imageLike);
+  const schemeStorageRecords = phaseRecords.filter((record) => record.category === "scheme_storage");
+  const schemeWebpRecords = phaseRecords.filter((record) => record.schemeKind === "webp");
+  const schemeExternalRecords = phaseRecords.filter((record) => record.category === "scheme_external");
+  const schemePngRecords = phaseRecords.filter((record) => record.schemeKind === "png");
+  const schemeJpegRecords = phaseRecords.filter((record) => record.schemeKind === "jpeg");
+  const schemeFailedRecords = phaseRecords.filter((record) => record.flags.isSchemeFailed);
   return {
     totalRequests: phaseRecords.length,
     totalKnownTransferBytes: sumTransfer(phaseRecords, () => true),
@@ -783,6 +1308,18 @@ function phaseSummary(recordsForRun, phase) {
     weatherKnownResourceBytes: sum(phaseRecords, (record) => record.category === "weather_api"),
     externalRequests: count(phaseRecords, (record) => !isSameOriginUrl(record.url)),
     externalKnownResourceBytes: sum(phaseRecords, (record) => !isSameOriginUrl(record.url)),
+    schemeStorageRequests: schemeStorageRecords.length,
+    schemeStorageKnownResourceBytes: sum(schemeStorageRecords, () => true),
+    schemeWebpRequests: schemeWebpRecords.length,
+    schemeWebpKnownResourceBytes: sum(schemeWebpRecords, () => true),
+    schemeExternalRequests: schemeExternalRecords.length,
+    schemeExternalKnownResourceBytes: sum(schemeExternalRecords, () => true),
+    schemePngRequests: schemePngRecords.length,
+    schemePngKnownResourceBytes: sum(schemePngRecords, () => true),
+    schemeJpegRequests: schemeJpegRecords.length,
+    schemeJpegKnownResourceBytes: sum(schemeJpegRecords, () => true),
+    schemeFailedRequests: schemeFailedRecords.length,
+    schemeFailedKnownResourceBytes: sum(schemeFailedRecords, () => true),
   };
 }
 
@@ -935,7 +1472,7 @@ function collectViolations(recordsForRun, summary, detailPagesVisited) {
     if (record.imageVariant === "legacy" && ["home", "catalog", "detail", "map"].includes(record.routeGroup)) {
       violations.push({ type: "public_ui_loaded_lake_image_without_variant", url: record.url, routeGroup: record.routeGroup, phase: record.phase, knownTransferBytes: record.knownTransferBytes, knownResourceBytes: record.knownResourceBytes, bytes: record.knownResourceBytes });
     }
-    if (record.flags.isWeatherApi && (record.responseHeaders["cache-control"] || "").includes("no-store")) {
+  if (record.flags.isWeatherApi && (record.responseHeaders["cache-control"] || "").includes("no-store")) {
       violations.push({ type: "no_store_weather_request", url: record.url, routeGroup: record.routeGroup, phase: record.phase, cacheControl: record.responseHeaders["cache-control"] });
     }
     if (record.url.includes("/api/") && !record.responseHeaders["cache-control"]) {
@@ -1017,7 +1554,9 @@ function collectViolations(recordsForRun, summary, detailPagesVisited) {
 
   if (process.env.TRAFFIC_AUDIT_REQUIRE_WEBP === "1") {
     const schemeExternalCount = count(recordsForRun, (record) => record.category === "scheme_external");
-    const schemePngCount = count(recordsForRun, (record) => record.category === "scheme_png");
+    const schemePngCount = count(recordsForRun, (record) => record.schemeKind === "png");
+    const schemeJpegCount = count(recordsForRun, (record) => record.schemeKind === "jpeg");
+    const schemeFailedCount = count(recordsForRun, (record) => record.flags.isSchemeFailed);
     if (schemeExternalCount > 0) {
       violations.push({
         type: "scheme_external_requires_webp",
@@ -1028,6 +1567,18 @@ function collectViolations(recordsForRun, summary, detailPagesVisited) {
       violations.push({
         type: "scheme_png_requires_webp",
         count: schemePngCount,
+      });
+    }
+    if (schemeJpegCount > 0) {
+      violations.push({
+        type: "scheme_jpeg_requires_webp",
+        count: schemeJpegCount,
+      });
+    }
+    if (schemeFailedCount > 0) {
+      violations.push({
+        type: "scheme_failed_requires_webp",
+        count: schemeFailedCount,
       });
     }
   }
@@ -1083,6 +1634,18 @@ function summarize(recordsForRun, detailPageBreakdown = [], detailPagesVisited =
     weatherKnownTransferBytes: sumTransfer(recordsForRun, (record) => record.category === "weather_api"),
     weatherKnownResourceBytes: sum(recordsForRun, (record) => record.category === "weather_api"),
     weatherKnownBytes: sum(recordsForRun, (record) => record.category === "weather_api"),
+    schemeStorageRequests: count(recordsForRun, (record) => record.category === "scheme_storage"),
+    schemeStorageKnownResourceBytes: sum(recordsForRun, (record) => record.category === "scheme_storage"),
+    schemeWebpRequests: count(recordsForRun, (record) => record.schemeKind === "webp"),
+    schemeWebpKnownResourceBytes: sum(recordsForRun, (record) => record.schemeKind === "webp"),
+    schemeExternalRequests: count(recordsForRun, (record) => record.category === "scheme_external"),
+    schemeExternalKnownResourceBytes: sum(recordsForRun, (record) => record.category === "scheme_external"),
+    schemePngRequests: count(recordsForRun, (record) => record.schemeKind === "png"),
+    schemePngKnownResourceBytes: sum(recordsForRun, (record) => record.schemeKind === "png"),
+    schemeJpegRequests: count(recordsForRun, (record) => record.schemeKind === "jpeg"),
+    schemeJpegKnownResourceBytes: sum(recordsForRun, (record) => record.schemeKind === "jpeg"),
+    schemeFailedRequests: count(recordsForRun, (record) => record.flags.isSchemeFailed),
+    schemeFailedKnownResourceBytes: sum(recordsForRun, (record) => record.flags.isSchemeFailed),
     routeGroupBreakdown: groupBy(recordsForRun, (record) => record.routeGroup ?? "unknown"),
     phaseBreakdown: Object.fromEntries(PHASE_KEYS.map((phase) => [phase, phaseSummary(recordsForRun, phase)])),
     variantBreakdown: variantSummary(recordsForRun),
@@ -1099,7 +1662,13 @@ function summarize(recordsForRun, detailPageBreakdown = [], detailPagesVisited =
     top20LocalAssetTransferRequests: topByTransfer(recordsForRun, (record) => record.flags.isStaticAsset && isSameOriginUrl(record.url)),
     top20LakeThumb: topByCategory(recordsForRun, ["lake_thumb"]),
     top20LakeMedium: topByCategory(recordsForRun, ["lake_medium"]),
-    top20SchemeImages: topByCategory(recordsForRun, ["scheme_external", "scheme_webp", "scheme_png", "scheme_storage"]),
+    top20SchemeImages: topByCategory(recordsForRun, ["scheme_external", "scheme_webp", "scheme_png", "scheme_jpeg", "scheme_storage"]),
+    top20SchemeStorage: topByCategory(recordsForRun, ["scheme_storage"]),
+    top20SchemeWebp: top(recordsForRun, (record) => record.schemeKind === "webp"),
+    top20SchemeExternal: topByCategory(recordsForRun, ["scheme_external"]),
+    top20SchemePng: top(recordsForRun, (record) => record.schemeKind === "png"),
+    top20SchemeJpeg: top(recordsForRun, (record) => record.schemeKind === "jpeg"),
+    top20SchemeFailed: top(recordsForRun, (record) => record.flags.isSchemeFailed),
     top20MapTiles: topByCategory(recordsForRun, ["map_tile"]),
     top20JsBundles: topByCategory(recordsForRun, ["next_static_js"]),
     top20Css: topByCategory(recordsForRun, ["next_static_css"]),
@@ -1206,6 +1775,11 @@ function buildTopOffenderTable(summary, keys) {
     top20LakeThumb: "lake_thumb",
     top20LakeMedium: "lake_medium",
     top20SchemeImages: "scheme_images",
+    top20SchemeStorage: "scheme_storage",
+    top20SchemeWebp: "scheme_webp",
+    top20SchemeExternal: "scheme_external",
+    top20SchemePng: "scheme_png",
+    top20SchemeJpeg: "scheme_jpeg",
     top20MapTiles: "map_tiles",
     top20JsBundles: "js_bundles",
     top20Css: "css",
@@ -1239,6 +1813,11 @@ function recommendationLines(report) {
   const detailPagesVisited = report.totalDetailPagesVisited || 0;
   const topJsBundles = (cold.top20JsBundles ?? []).slice(0, 3);
   const topSchemeOffenders = (cold.top20SchemeImages ?? []).slice(0, 3);
+  const topSchemeStorage = (cold.top20SchemeStorage ?? []).slice(0, 3);
+  const topSchemeExternal = (cold.top20SchemeExternal ?? []).slice(0, 3);
+  const topSchemePng = (cold.top20SchemePng ?? []).slice(0, 3);
+  const topSchemeJpeg = (cold.top20SchemeJpeg ?? []).slice(0, 3);
+  const topSchemeFailed = (cold.top20SchemeFailed ?? []).slice(0, 3);
   const repeatedDownloads = warm.repeatedDownloadsBetweenColdAndWarm ?? {};
   const schemeOffenderBytes = sumArray((cold.top20SchemeImages ?? []).map((item) => item.knownResourceBytes));
 
@@ -1251,6 +1830,41 @@ function recommendationLines(report) {
       .map((item) => `${topOffenderLabel(item)} (${formatBytes(item.knownResourceBytes)})`)
       .join(", ");
     lines.push(`Scheme images are still expensive (${formatBytes(schemeOffenderBytes)} across top offenders: ${schemeTop}). Migrate scheme assets into the optimized Storage pipeline, then serve WebP thumb/full variants from immutable hashed paths.`);
+  }
+
+  const schemeStorageBytes = sumArray((cold.top20SchemeStorage ?? []).map((item) => item.knownResourceBytes));
+  if (schemeStorageBytes > 0) {
+    const schemeStorageTop = topSchemeStorage
+      .map((item) => `${topOffenderLabel(item)} (${formatBytes(item.knownResourceBytes)})`)
+      .join(", ");
+    lines.push(`Scheme storage WebP: ${formatBytes(schemeStorageBytes)} across ${schemeStorageTop || "n/a"}.`);
+  }
+
+  const schemeExternalBytes = sumArray((cold.top20SchemeExternal ?? []).map((item) => item.knownResourceBytes));
+  if (schemeExternalBytes > 0) {
+    const schemeExternalTop = topSchemeExternal
+      .map((item) => `${topOffenderLabel(item)} (${formatBytes(item.knownResourceBytes)})`)
+      .join(", ");
+    lines.push(`Scheme external remaining: ${formatBytes(schemeExternalBytes)} across ${schemeExternalTop || "n/a"}.`);
+  }
+
+  const schemeFormatBytes = sumArray([
+    ...(cold.top20SchemePng ?? []).map((item) => item.knownResourceBytes),
+    ...(cold.top20SchemeJpeg ?? []).map((item) => item.knownResourceBytes),
+  ]);
+  if (schemeFormatBytes > 0) {
+    const schemeFormatTop = [...topSchemePng, ...topSchemeJpeg]
+      .map((item) => `${topOffenderLabel(item)} (${formatBytes(item.knownResourceBytes)})`)
+      .join(", ");
+    lines.push(`Scheme PNG/JPG remaining: ${formatBytes(schemeFormatBytes)} across ${schemeFormatTop || "n/a"}.`);
+  }
+
+  const schemeFailedBytes = sumArray((cold.top20SchemeFailed ?? []).map((item) => item.knownResourceBytes));
+  if (schemeFailedBytes > 0) {
+    const schemeFailedTop = topSchemeFailed
+      .map((item) => `${topOffenderLabel(item)} (${formatBytes(item.knownResourceBytes)})`)
+      .join(", ");
+    lines.push(`Scheme failed/unreachable: ${formatBytes(schemeFailedBytes)} across ${schemeFailedTop || "n/a"}.`);
   }
 
   if ((coldMap.tileKnownResourceBytes ?? 0) > 0) {
@@ -1301,6 +1915,11 @@ function buildMarkdownReport(report) {
     "top20LakeThumb",
     "top20LakeMedium",
     "top20SchemeImages",
+    "top20SchemeStorage",
+    "top20SchemeWebp",
+    "top20SchemeExternal",
+    "top20SchemePng",
+    "top20SchemeJpeg",
     "top20MapTiles",
     "top20JsBundles",
     "top20Css",
@@ -1355,6 +1974,12 @@ function buildMarkdownReport(report) {
         ["Known resource", formatBytes(cold.totalKnownResourceBytes), formatBytes(warm.totalKnownResourceBytes)],
         ["Image resource", formatBytes(cold.imageKnownResourceBytes), formatBytes(warm.imageKnownResourceBytes)],
         ["Supabase Storage resource", formatBytes(cold.supabaseStorageKnownResourceBytes), formatBytes(warm.supabaseStorageKnownResourceBytes)],
+        ["Scheme storage", `${formatCount(cold.schemeStorageRequests)} / ${formatBytes(cold.schemeStorageKnownResourceBytes)}`, `${formatCount(warm.schemeStorageRequests)} / ${formatBytes(warm.schemeStorageKnownResourceBytes)}`],
+        ["Scheme WebP", `${formatCount(cold.schemeWebpRequests)} / ${formatBytes(cold.schemeWebpKnownResourceBytes)}`, `${formatCount(warm.schemeWebpRequests)} / ${formatBytes(warm.schemeWebpKnownResourceBytes)}`],
+        ["Scheme external remaining", `${formatCount(cold.schemeExternalRequests)} / ${formatBytes(cold.schemeExternalKnownResourceBytes)}`, `${formatCount(warm.schemeExternalRequests)} / ${formatBytes(warm.schemeExternalKnownResourceBytes)}`],
+        ["Scheme PNG remaining", `${formatCount(cold.schemePngRequests)} / ${formatBytes(cold.schemePngKnownResourceBytes)}`, `${formatCount(warm.schemePngRequests)} / ${formatBytes(warm.schemePngKnownResourceBytes)}`],
+        ["Scheme JPG remaining", `${formatCount(cold.schemeJpegRequests)} / ${formatBytes(cold.schemeJpegKnownResourceBytes)}`, `${formatCount(warm.schemeJpegRequests)} / ${formatBytes(warm.schemeJpegKnownResourceBytes)}`],
+        ["Scheme failed", `${formatCount(cold.schemeFailedRequests)} / ${formatBytes(cold.schemeFailedKnownResourceBytes)}`, `${formatCount(warm.schemeFailedRequests)} / ${formatBytes(warm.schemeFailedKnownResourceBytes)}`],
         ["Repeated network downloads", formatCount(cold.repeatedDownloadsBetweenColdAndWarm?.count ?? 0), formatCount(warm.repeatedDownloadsBetweenColdAndWarm?.count ?? 0)],
       ],
     ),
@@ -1366,7 +1991,26 @@ function buildMarkdownReport(report) {
     "### Warm",
     markdownTable(["Variant", "Requests", "Resource", "Transfer"], warmVariantRows),
     "",
-    "## 4. Route/Phase Breakdown Table",
+    "## 4. Scheme Breakdown",
+    markdownTable(
+      ["Metric", "Cold", "Warm"],
+      [
+        ["Scheme storage requests", formatCount(cold.schemeStorageRequests), formatCount(warm.schemeStorageRequests)],
+        ["Scheme storage resource", formatBytes(cold.schemeStorageKnownResourceBytes), formatBytes(warm.schemeStorageKnownResourceBytes)],
+        ["Scheme WebP requests", formatCount(cold.schemeWebpRequests), formatCount(warm.schemeWebpRequests)],
+        ["Scheme WebP resource", formatBytes(cold.schemeWebpKnownResourceBytes), formatBytes(warm.schemeWebpKnownResourceBytes)],
+        ["Scheme external requests", formatCount(cold.schemeExternalRequests), formatCount(warm.schemeExternalRequests)],
+        ["Scheme external resource", formatBytes(cold.schemeExternalKnownResourceBytes), formatBytes(warm.schemeExternalKnownResourceBytes)],
+        ["Scheme PNG requests", formatCount(cold.schemePngRequests), formatCount(warm.schemePngRequests)],
+        ["Scheme PNG resource", formatBytes(cold.schemePngKnownResourceBytes), formatBytes(warm.schemePngKnownResourceBytes)],
+        ["Scheme JPG requests", formatCount(cold.schemeJpegRequests), formatCount(warm.schemeJpegRequests)],
+        ["Scheme JPG resource", formatBytes(cold.schemeJpegKnownResourceBytes), formatBytes(warm.schemeJpegKnownResourceBytes)],
+        ["Scheme failed requests", formatCount(cold.schemeFailedRequests), formatCount(warm.schemeFailedRequests)],
+        ["Scheme failed resource", formatBytes(cold.schemeFailedKnownResourceBytes), formatBytes(warm.schemeFailedKnownResourceBytes)],
+      ],
+    ),
+    "",
+    "## 5. Route/Phase Breakdown Table",
     "> `detail-total` is a rollup over all requests attributed to detail pages. `static` groups static assets by category so the page-flow phases stay readable.",
     markdownTable(
       [
@@ -1395,7 +2039,7 @@ function buildMarkdownReport(report) {
       phaseRows,
     ),
     "",
-    "## 5. Top Expensive Detail Pages",
+    "## 6. Top Expensive Detail Pages",
     "### Cold",
     markdownTable(
       ["Lake", "Slug", "Requests", "Transfer", "Resource", "Image resource", "Medium", "Thumb", "Scheme loaded", "Weather requests"],
@@ -1430,13 +2074,19 @@ function buildMarkdownReport(report) {
       ]),
     ),
     "",
-    "## 6. Top Offenders by Category",
+    "## 7. Top Offenders by Category",
     markdownTable(["Category", "Requests", "Resource", "Top offender", "Top offender bytes"], topOffenderRows),
     "",
-    "## 7. Violations/regressions",
+    "## 8. Top Remaining Scheme Offenders",
+    markdownTable(
+      ["Bucket", "Requests", "Resource", "Top offender", "Top offender bytes"],
+      buildTopOffenderTable(cold, ["top20SchemeExternal", "top20SchemePng", "top20SchemeJpeg", "top20SchemeFailed"]),
+    ),
+    "",
+    "## 9. Violations/regressions",
     violationRows.length ? markdownTable(["Violation", "Count"], violationRows) : "- None",
     "",
-    "## 8. Recommendations generated from detected data",
+    "## 10. Recommendations generated from detected data",
     ...recommendationLines(report).map((line) => `- ${line}`),
     "",
   ].join("\n");
@@ -1450,29 +2100,40 @@ function writeMarkdownReport(report) {
 }
 
 async function main() {
-  const startedAt = new Date().toISOString();
+  auditState.startedAt = new Date().toISOString();
   console.log(
     `Traffic audit started: label=${LABEL} baseUrl=${BASE_URL} headed=${HEADED ? "1" : "0"} protectionBypass=${VERCEL_AUTOMATION_BYPASS_SECRET ? "enabled" : "disabled"}`,
   );
-  const browser = await chromium.launch({ headless: !HEADED });
-  const context = await browser.newContext({
+  registerSignalHandlers();
+
+  auditState.browser = await chromium.launch({ headless: !HEADED });
+  auditState.context = await auditState.browser.newContext({
     viewport: { width: 1440, height: 1000 },
     deviceScaleFactor: 1,
     extraHTTPHeaders: VERCEL_AUTOMATION_BYPASS_SECRET
       ? { "x-vercel-protection-bypass": VERCEL_AUTOMATION_BYPASS_SECRET }
       : undefined,
   });
-  const page = await context.newPage();
+  auditState.page = await auditState.context.newPage();
 
   try {
-    attachPageCollectors(page, "cold");
-    const coldScenario = await runScenario(page, "cold");
+    attachPageCollectors(auditState.page, "cold");
+    const coldScenario = await runScenario(auditState.page, "cold");
 
-    page.removeAllListeners("request");
-    page.removeAllListeners("response");
-    page.removeAllListeners("requestfailed");
-    attachPageCollectors(page, "warm");
-    const warmScenario = await runScenario(page, "warm");
+    let warmScenario = { detailPagesVisited: 0 };
+    if (!TRAFFIC_AUDIT_SKIP_WARM) {
+      auditState.page.removeAllListeners("request");
+      auditState.page.removeAllListeners("response");
+      auditState.page.removeAllListeners("requestfailed");
+      attachPageCollectors(auditState.page, "warm");
+      warmScenario = await runScenario(auditState.page, "warm");
+    } else {
+      auditState.scenarioProgress.warm.status = "skipped";
+      auditState.scenarioProgress.warm.skipped = true;
+      auditState.scenarioProgress.warm.startedAt = new Date().toISOString();
+      auditState.scenarioProgress.warm.finishedAt = new Date().toISOString();
+      debugLog("warm: skipped");
+    }
 
     const coldRecords = records.filter((record) => record.run === "cold");
     const warmRecords = records.filter((record) => record.run === "warm");
@@ -1491,7 +2152,13 @@ async function main() {
     const totalDetailPagesVisited = coldDetailPagesVisited + warmDetailPagesVisited;
     const totalSupabaseRequests = coldSummary.supabaseRequests + warmSummary.supabaseRequests;
     const totalSupabaseStorageRequests = coldSummary.supabaseStorageRequests + warmSummary.supabaseStorageRequests;
-    const valid = !(totalDetailPagesVisited === 0 && totalSupabaseRequests === 0 && totalSupabaseStorageRequests === 0);
+    const auditTruncated =
+      TRAFFIC_AUDIT_SKIP_MAP ||
+      TRAFFIC_AUDIT_SKIP_DETAILS ||
+      TRAFFIC_AUDIT_SKIP_GALLERY ||
+      TRAFFIC_AUDIT_SKIP_WARM ||
+      TRAFFIC_AUDIT_SKIP_WEATHER_WAIT;
+    const valid = auditTruncated || !(totalDetailPagesVisited === 0 && totalSupabaseRequests === 0 && totalSupabaseStorageRequests === 0);
     const invalidReason = valid
       ? null
       : "No lake detail pages visited and no Supabase requests detected. Likely Vercel Deployment Protection page or catalog not loaded.";
@@ -1499,10 +2166,11 @@ async function main() {
     const report = {
       label: LABEL,
       baseUrl: BASE_URL,
-      startedAt,
+      startedAt: auditState.startedAt,
       finishedAt: new Date().toISOString(),
       valid,
       invalidReason,
+      partial: false,
       coldDetailPagesVisited,
       warmDetailPagesVisited,
       totalDetailPagesVisited,
@@ -1512,9 +2180,22 @@ async function main() {
         hugeImageBytes: IMAGE_HUGE_THRESHOLD_BYTES,
         mapInitialImageRequests: 5,
       },
+      skips: {
+        map: TRAFFIC_AUDIT_SKIP_MAP,
+        details: TRAFFIC_AUDIT_SKIP_DETAILS,
+        gallery: TRAFFIC_AUDIT_SKIP_GALLERY,
+        warm: TRAFFIC_AUDIT_SKIP_WARM,
+        weatherWait: TRAFFIC_AUDIT_SKIP_WEATHER_WAIT,
+      },
       scenarios: {
-        cold: coldScenario,
-        warm: warmScenario,
+        cold: collectScenarioProgressSnapshot("cold"),
+        warm: collectScenarioProgressSnapshot("warm"),
+      },
+      completedPhases: [...auditState.completedPhases],
+      warnings: [...auditState.warnings],
+      scenarioProgress: {
+        cold: collectScenarioProgressSnapshot("cold"),
+        warm: collectScenarioProgressSnapshot("warm"),
       },
       runs: {
         cold: {
@@ -1532,14 +2213,14 @@ async function main() {
       },
       performanceEntries,
     };
+
+    debugLog("audit: report write start");
     if (TRAFFIC_AUDIT_MARKDOWN) {
       report.markdownPath = writeMarkdownReport(report);
     }
 
-    const labelPath = path.join(TMP_DIR, `traffic-audit-${LABEL}.json`);
-    const latestPath = path.join(TMP_DIR, "traffic-audit-latest.json");
-    fs.writeFileSync(labelPath, JSON.stringify(report, null, 2));
-    fs.writeFileSync(latestPath, JSON.stringify(report, null, 2));
+    const { labelPath, latestPath } = await writeJsonReport(report);
+    debugLog("audit: report write done");
 
     console.log(`Traffic audit written: ${labelPath}`);
     console.log(`Latest copy written: ${latestPath}`);
@@ -1553,16 +2234,22 @@ async function main() {
     console.log(`Warm repeated network downloads: ${repeated.count}, known transfer ${mb(repeated.knownTransferBytes)}, unknown transfer requests ${repeated.unknownTransferBytesRequestCount}`);
     console.log(`Violations: cold=${coldSummary.violations.length}, warm=${warmSummary.violations.length}`);
 
+    auditState.finishedAt = new Date().toISOString();
     if (!valid) {
       process.exitCode = 2;
     }
+  } catch (error) {
+    await finalizeFailure(error, 1);
+    return;
   } finally {
-    await context.close();
-    await browser.close();
+    if (!auditState.failureFinalized) {
+      await auditState.page?.close().catch(() => {});
+      await auditState.context?.close().catch(() => {});
+      await auditState.browser?.close().catch(() => {});
+    }
   }
 }
 
 main().catch((error) => {
-  console.error(error);
-  process.exit(1);
+  void finalizeFailure(error, 1);
 });
