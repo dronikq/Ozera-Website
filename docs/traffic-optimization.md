@@ -84,12 +84,20 @@ Variant counts after Stage 4:
 - Scheme viewer now renders a lightweight button first and mounts the external scheme image only after the user clicks it.
 - The audit threshold for initial map images was tightened to `<= 2`, which now passes with `0`.
 
+## Stage 5A Plan
+
+- Keep the existing `public.lakes.scheme_image_url` field for the MVP instead of introducing a new schema variant.
+- Replace external PNG/JPG scheme URLs with optimized Supabase Storage WebP objects, using immutable hashed paths.
+- Use a dry-run-first migration script so the current savings and regressions are visible before any write is allowed.
+- Leave all source URLs intact; this pass only changes the destination URL stored in the database.
+
 ## What Changed
 
 - Replaced the local hero background reference with an optimized WebP asset at [`public/fishing-hero.webp`](/Users/qa/Desktop/Projects/Ozera-Website/public/fishing-hero.webp), and removed the production UI reference to the 1.76 MB PNG.
 - Deferred lake scheme image loading until the user explicitly opens the scheme viewer, instead of loading the raw external PNG on page render.
 - Kept gallery rendering to a single active medium image while thumbnails continue to use thumb-sized sources.
 - Extended the traffic audit with route-group and phase breakdowns, plus top-20 views by resource, transfer, Supabase medium, external images, and local assets.
+- Added a bundle-analysis entry point via `npm run analyze` using the Next 16 Turbopack analyzer, so route-level bundle graphs can be inspected without changing production behavior.
 
 ## What Remained
 
@@ -98,6 +106,16 @@ Variant counts after Stage 4:
   - `ozero-korolek.kiev.ua` PNG at about `0.80 MB`
 - Supabase medium images remain the main remaining internal image cost, but the medium count is now down to `37` cold / `0` warm in this audit shape.
 - The cold audit no longer flags the map view for loading too many images initially.
+
+## Stage 5A Commands
+
+- Dry run: `SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npm run scheme:audit`
+- Apply after approval: `SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npm run scheme:migrate`
+
+## Stage 5A Expected Savings
+
+- Current audit still shows roughly `1.02 MB` + `0.80 MB` of external scheme offenders, so the MVP should recover about `1.82 MB` before accounting for any WebP compression gains on the destination objects.
+- The migration reuses `scheme_image_url`, so the rendering path stays unchanged while the storage backend becomes optimized.
 
 ## Top Offenders Removed
 

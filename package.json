@@ -7,9 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "analyze": "next experimental-analyze --output",
+    "analyze:interactive": "next experimental-analyze",
     "traffic:audit": "node scripts/traffic-audit.mjs",
     "traffic:audit:headed": "node scripts/traffic-audit.mjs --headed",
-    "traffic:compare": "node scripts/traffic-compare.mjs"
+    "traffic:compare": "node scripts/traffic-compare.mjs",
+    "scheme:audit": "node scripts/migrate_scheme_images_to_webp.mjs",
+    "scheme:migrate": "node scripts/migrate_scheme_images_to_webp.mjs --apply"
   },
   "dependencies": {
     "@sparticuz/chromium": "^148.0.0",
