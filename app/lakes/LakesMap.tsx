@@ -15,7 +15,7 @@ const TILE_STYLES = [
   {
     id: "positron",
     label: "Світла",
-    url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+    url: "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
     attribution: "© OpenStreetMap contributors © CARTO",
   },
   {
@@ -27,7 +27,7 @@ const TILE_STYLES = [
   {
     id: "voyager",
     label: "Voyager",
-    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+    url: "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
     attribution: "© OpenStreetMap contributors © CARTO",
   },
 ];
@@ -77,6 +77,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
   const clusterLayerRef  = useRef<LayerGroup | null>(null);
   const superclusterRef  = useRef<SuperclusterIndex<LakePinData> | null>(null);
   const geoMarkerRef     = useRef<Marker | null>(null);
+  const appliedStyleRef  = useRef<string>("");
 
   // Latest prop values accessible from stable callbacks without stale closures
   const hoveredIdRef      = useRef<string | null>(hoveredId);
@@ -263,6 +264,7 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
         attribution: initStyle.attribution,
         maxZoom: 18,
       }).addTo(map);
+      appliedStyleRef.current = initStyle.id;
 
       // ── Ukraine border mask (dims area outside Ukraine) ─────────────────────
       try {
@@ -443,12 +445,14 @@ export default function LakesMap({ lakes, hoveredId, selectedId, onMarkerClick }
     const map = mapRef.current;
     const L   = LRef.current;
     if (!map || !L || !tileLayerRef.current) return;
+    if (appliedStyleRef.current === activeStyle) return;
     const style = TILE_STYLES.find((s) => s.id === activeStyle)!;
     tileLayerRef.current.remove();
     tileLayerRef.current = L.tileLayer(style.url, {
       attribution: style.attribution,
       maxZoom: 18,
     }).addTo(map);
+    appliedStyleRef.current = style.id;
   }, [activeStyle]);
 
   // ── Keep callback ref in sync ────────────────────────────────────────────────
