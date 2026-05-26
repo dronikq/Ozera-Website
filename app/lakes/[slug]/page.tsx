@@ -1,5 +1,6 @@
 import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { supabase, type Lake, type LakeImage, type LakeUpdate } from "@/lib/supabase";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
 import {
@@ -11,13 +12,19 @@ import {
 } from "@/lib/lake-image-resolver";
 import { buildLakeDetailData } from "@/lib/lake-detail-data";
 import ImageGallery from "../[id]/ImageGallery";
-import WeatherWidget from "../[id]/WeatherWidget";
-import AIAdvisor from "../[id]/AIAdvisor";
 import LakeContactsPanel from "../[id]/LakeContactsPanel";
 import LakeSchemeViewer from "../[id]/LakeSchemeViewer";
 import LakeDetailTabs from "../[id]/LakeDetailTabs";
 import SiteHeader from "@/app/components/SiteHeader";
 import "../lakes.css";
+
+const WeatherWidget = dynamic(() => import("../[id]/WeatherWidget"), {
+  loading: () => <WeatherWidgetFallback />,
+});
+
+const AIAdvisor = dynamic(() => import("../[id]/AIAdvisor"), {
+  loading: () => <AIAdvisorFallback />,
+});
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -443,5 +450,34 @@ export default async function LakePage({
         </div>
       </section>
     </div>
+  );
+}
+
+function WeatherWidgetFallback() {
+  return (
+    <section className="dk-weather-panel dk-weather-panel--loading" aria-busy="true">
+      <div className="dk-weather-panel__loading-line dk-weather-panel__loading-line--sm" />
+      <div className="dk-weather-panel__loading-line dk-weather-panel__loading-line--lg" />
+      <div className="dk-weather-panel__loading-row">
+        <div className="dk-weather-panel__loading-pill" />
+        <div className="dk-weather-panel__loading-pill dk-weather-panel__loading-pill--wide" />
+        <div className="dk-weather-panel__loading-pill" />
+      </div>
+    </section>
+  );
+}
+
+function AIAdvisorFallback() {
+  return (
+    <section className="dk-ai-assistant" aria-busy="true">
+      <div style={{ display: "grid", gap: 12 }}>
+        <div className="dk-weather-panel__loading-line dk-weather-panel__loading-line--sm" style={{ width: 180 }} />
+        <div className="dk-weather-panel__loading-line dk-weather-panel__loading-line--lg" />
+        <div className="dk-weather-panel__loading-row">
+          <div className="dk-weather-panel__loading-pill" />
+          <div className="dk-weather-panel__loading-pill dk-weather-panel__loading-pill--wide" />
+        </div>
+      </div>
+    </section>
   );
 }
