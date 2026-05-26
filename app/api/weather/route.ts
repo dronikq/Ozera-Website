@@ -1,5 +1,52 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const SUCCESS_CACHE_HEADERS = {
+  "Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600",
+};
+
+const ERROR_CACHE_HEADERS = {
+  "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+};
+
+function jsonResponse(
+  body: Record<string, unknown>,
+  init: { status?: number; headers?: Record<string, string> } = {},
+) {
+  return NextResponse.json(body, {
+    status: init.status,
+    headers: { ...(init.headers ?? {}), ...(init.status && init.status >= 400 ? ERROR_CACHE_HEADERS : SUCCESS_CACHE_HEADERS) },
+  });
+}
+
+function parseLatLng(searchParams: URLSearchParams) {
+  const latRaw = searchParams.get("lat");
+  const lngRaw = searchParams.get("lng");
+
+  if (!latRaw || !lngRaw) {
+    return { error: "lat and lng required" as const };
+  }
+
+  const lat = Number(latRaw);
+  const lng = Number(lngRaw);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+    return { error: "invalid lat or lng" as const };
+  }
+
+  return { lat: lat.toString(), lng: lng.toString() };
+}
+
+function parseDays(searchParams: URLSearchParams) {
+  const raw = searchParams.get("days") ?? "1";
+  const days = Number(raw);
+
+  if (!Number.isInteger(days) || days < 1 || days > 16) {
+    return { error: "invalid days" as const };
+  }
+
+  return { days: String(days) };
+}
+
 // ── Source 1: Open-Meteo ──
 async function fetchOpenMeteo(lat: string, lng: string, days: string) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m,precipitation,surface_pressure&forecast_days=${days}&timezone=Europe%2FKiev`;
@@ -61,29 +108,34 @@ async function fetchYrNo(lat: string, lng: string) {
 
 // ── Handler ──
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const lat  = searchParams.get("lat");
-  const lng  = searchParams.get("lng");
-  const days = searchParams.get("days") ?? "1";
-  const cacheHeaders = {
-    "Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600",
-  };
-
-  if (!lat || !lng) {
-    return NextResponse.json({ error: "lat and lng required" }, { status: 400, headers: cacheHeaders });
-  }
-
-  // Try Open-Meteo first
   try {
-    const data = await fetchOpenMeteo(lat, lng, days);
-    return NextResponse.json(data, { headers: cacheHeaders });
-  } catch { /* fallthrough */ }
+    const { searchParams } = new URL(req.url);
+    const latLng = parseLatLng(searchParams);
+    if ("error" in latLng) {
+      return jsonResponse({ error: latLng.error }, { status: 400 });
+    }
 
-  // Fallback to Yr.no
-  try {
-    const data = await fetchYrNo(lat, lng);
-    return NextResponse.json(data, { headers: cacheHeaders });
+    const daysValue = parseDays(searchParams);
+    if ("error" in daysValue) {
+      return jsonResponse({ error: daysValue.error }, { status: 400 });
+    }
+
+    // Try Open-Meteo first
+    try {
+      const data = await fetchOpenMeteo(latLng.lat, latLng.lng, daysValue.days);
+      return jsonResponse(data);
+    } catch {
+      // fallthrough
+    }
+
+    // Fallback to Yr.no
+    try {
+      const data = await fetchYrNo(latLng.lat, latLng.lng);
+      return jsonResponse(data);
+    } catch {
+      return jsonResponse({ error: "all weather sources unavailable" }, { status: 502 });
+    }
   } catch {
-    return NextResponse.json({ error: "all weather sources unavailable" }, { status: 502, headers: cacheHeaders });
+    return jsonResponse({ error: "unexpected weather handler error" }, { status: 500 });
   }
 }
