@@ -9,6 +9,7 @@ const {
   getGalleryThumbImage,
   getLakeCardImage,
   getLakeDetailImage,
+  getLakeMapPreviewImage,
   getLakeSchemeImage,
   LAKE_PLACEHOLDER_IMAGE,
   PUBLIC_LAKE_IMAGE_SELECT,
@@ -136,6 +137,15 @@ test("gallery thumb prefers thumb_url", () => {
   const image = makeImage();
 
   assert.equal(getGalleryThumbImage(image, makeLake()), "https://cdn.example.com/thumb.webp");
+});
+
+test("map preview prefers thumb_url", () => {
+  const lake = makeLake({
+    lake_images: [makeImage()],
+    image_url: "https://cdn.example.com/legacy.jpg",
+  });
+
+  assert.equal(getLakeMapPreviewImage(lake), "https://cdn.example.com/thumb.webp");
 });
 
 test("scheme uses scheme_image_url", () => {
