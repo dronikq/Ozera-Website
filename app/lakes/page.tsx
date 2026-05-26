@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { supabase, type Lake } from "@/lib/supabase";
+import { PUBLIC_LAKE_IMAGE_SELECT } from "@/lib/lake-image-resolver";
 import LakesCatalogClient from "./LakesCatalogClient";
 import "./lakes.css";
 
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 async function getInitialLakes(): Promise<Lake[]> {
   const { data, error } = await supabase
     .from("lakes")
-    .select("*, lake_images(id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at)")
+    .select(`*, lake_images(${PUBLIC_LAKE_IMAGE_SELECT})`)
     .order("name", { ascending: true })
     .limit(200);
   if (error) console.error("getInitialLakes error:", error.message);

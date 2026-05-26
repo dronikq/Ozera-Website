@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { supabase, type Lake } from "@/lib/supabase";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
-import { getLakeCardImage } from "@/lib/lake-image-resolver";
+import { getLakeCardImage, PUBLIC_LAKE_IMAGE_SELECT } from "@/lib/lake-image-resolver";
 import LandingClient from "./components/LandingClient";
 import SiteHeader from "./components/SiteHeader";
 import AppComingSoonForm from "./components/AppComingSoonForm";
@@ -19,7 +19,7 @@ async function getLakesCount() {
 async function getPopularLakes(): Promise<Lake[]> {
   const { data } = await supabase
     .from("lakes")
-    .select("*, lake_images(id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at)")
+    .select(`*, lake_images(${PUBLIC_LAKE_IMAGE_SELECT})`)
     .not("image_url", "is", null)
     .not("price_uah", "is", null)
     .order("updated_at", { ascending: false })

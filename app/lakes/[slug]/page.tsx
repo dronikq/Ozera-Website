@@ -6,6 +6,8 @@ import {
   getGalleryMainImage,
   getGalleryThumbImage,
   getLakeOgImage,
+  getLakeSchemeImage,
+  PUBLIC_LAKE_IMAGE_SELECT,
 } from "@/lib/lake-image-resolver";
 import { buildLakeDetailData } from "@/lib/lake-detail-data";
 import ImageGallery from "../[id]/ImageGallery";
@@ -22,7 +24,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-
 async function getLakeBySlug(slug: string): Promise<Lake | null> {
   const { data } = await supabase
     .from("lakes")
-    .select("*, lake_images(id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at)")
+    .select(`*, lake_images(${PUBLIC_LAKE_IMAGE_SELECT})`)
     .eq("slug", slug)
     .maybeSingle();
   return data;
@@ -31,7 +33,7 @@ async function getLakeBySlug(slug: string): Promise<Lake | null> {
 async function getLakeById(id: string): Promise<Lake | null> {
   const { data } = await supabase
     .from("lakes")
-    .select("*, lake_images(id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at)")
+    .select(`*, lake_images(${PUBLIC_LAKE_IMAGE_SELECT})`)
     .eq("id", id)
     .maybeSingle();
   return data;
@@ -44,7 +46,7 @@ async function resolveLake(slugOrId: string): Promise<Lake | null> {
 async function getLakeImages(id: string): Promise<LakeImage[]> {
   const { data } = await supabase
     .from("lake_images")
-    .select("id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at")
+    .select(PUBLIC_LAKE_IMAGE_SELECT)
     .eq("lake_id", id)
     .order("sort_order", { ascending: true });
   return data ?? [];
@@ -159,6 +161,7 @@ export default async function LakePage({
         ].filter((image) => image.mainUrl !== "/ozera_splash.png" || image.thumbUrl !== "/ozera_splash.png");
   const mapsUrl = detail.mapsUrl;
   const wazeUrl = detail.wazeUrl;
+  const schemeImageUrl = getLakeSchemeImage(lake);
 
   return (
     <div className="dk-page">
@@ -287,11 +290,11 @@ export default async function LakePage({
                 initiallyOpen={tab === "contacts"}
               />
 
-              {lake.scheme_enabled && lake.scheme_image_url && (
+              {lake.scheme_enabled && schemeImageUrl && (
                 <div className="dk-section">
                   <h2 className="dk-section-title">🗺️ Схема озера</h2>
                   <div style={{ borderRadius: 12, overflow: "hidden" }}>
-                    <LakeSchemeViewer src={lake.scheme_image_url} />
+                    <LakeSchemeViewer src={schemeImageUrl} />
                   </div>
                 </div>
               )}
