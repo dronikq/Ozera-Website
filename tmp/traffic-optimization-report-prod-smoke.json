@@ -1,0 +1,4561 @@
+{
+  "generatedAt": "2026-05-24T14:15:27.631Z",
+  "before": {
+    "label": "after-stage4",
+    "baseUrl": "http://localhost:3000",
+    "startedAt": "2026-05-24T10:01:41.628Z",
+    "finishedAt": "2026-05-24T10:04:06.993Z"
+  },
+  "after": {
+    "label": "prod-smoke",
+    "baseUrl": "https://www.ozera.in.ua",
+    "startedAt": "2026-05-24T14:07:40.893Z",
+    "finishedAt": "2026-05-24T14:15:18.723Z"
+  },
+  "cold": {
+    "totals": {
+      "knownTransferBytes": {
+        "before": 787838,
+        "after": 6483438,
+        "saved": -5695600,
+        "percentReduction": -722.94
+      },
+      "knownResourceBytes": {
+        "before": 30845548,
+        "after": 80019653,
+        "saved": -49174105,
+        "percentReduction": -159.42
+      }
+    },
+    "images": {
+      "knownTransferBytes": {
+        "before": 403977,
+        "after": 2284256,
+        "saved": -1880279,
+        "percentReduction": -465.44
+      },
+      "knownResourceBytes": {
+        "before": 20544950,
+        "after": 51349968,
+        "saved": -30805018,
+        "percentReduction": -149.94
+      }
+    },
+    "supabaseStorage": {
+      "knownTransferBytes": {
+        "before": 0,
+        "after": 0,
+        "saved": 0,
+        "percentReduction": 0
+      },
+      "knownResourceBytes": {
+        "before": 16757370,
+        "after": 34739054,
+        "saved": -17981684,
+        "percentReduction": -107.31
+      }
+    },
+    "nextImage": {
+      "knownTransferBytes": {
+        "before": 1806,
+        "after": 52894,
+        "saved": -51088,
+        "percentReduction": -2828.79
+      },
+      "knownResourceBytes": {
+        "before": 35496,
+        "after": 38494,
+        "saved": -2998,
+        "percentReduction": -8.45
+      }
+    },
+    "weather": {
+      "knownTransferBytes": {
+        "before": 0,
+        "after": 80309,
+        "saved": -80309,
+        "percentReduction": 0
+      },
+      "knownResourceBytes": {
+        "before": 0,
+        "after": 61709,
+        "saved": -61709,
+        "percentReduction": 0
+      }
+    },
+    "requests": {
+      "total": {
+        "before": 1029,
+        "after": 2497,
+        "saved": -1468,
+        "percentReduction": -142.66
+      },
+      "image": {
+        "before": 310,
+        "after": 694,
+        "saved": -384,
+        "percentReduction": -123.87
+      },
+      "supabaseStorage": {
+        "before": 217,
+        "after": 218,
+        "saved": -1,
+        "percentReduction": -0.46
+      },
+      "unknownTransferBytes": {
+        "before": 273,
+        "after": 517
+      }
+    },
+    "variants": {
+      "original": {
+        "requests": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownTransferBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownResourceBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "bytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        }
+      },
+      "medium": {
+        "requests": {
+          "before": 37,
+          "after": 218,
+          "saved": -181,
+          "percentReduction": -489.19
+        },
+        "knownTransferBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownResourceBytes": {
+          "before": 6080322,
+          "after": 34739054,
+          "saved": -28658732,
+          "percentReduction": -471.34
+        },
+        "bytes": {
+          "before": 6080322,
+          "after": 34739054,
+          "saved": -28658732,
+          "percentReduction": -471.34
+        }
+      },
+      "thumb": {
+        "requests": {
+          "before": 180,
+          "after": 0,
+          "saved": 180,
+          "percentReduction": 100
+        },
+        "knownTransferBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownResourceBytes": {
+          "before": 10677048,
+          "after": 0,
+          "saved": 10677048,
+          "percentReduction": 100
+        },
+        "bytes": {
+          "before": 10677048,
+          "after": 0,
+          "saved": 10677048,
+          "percentReduction": 100
+        }
+      },
+      "legacy": {
+        "requests": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownTransferBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownResourceBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "bytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        }
+      },
+      "placeholder": {
+        "requests": {
+          "before": 6,
+          "after": 2,
+          "saved": 4,
+          "percentReduction": 66.67
+        },
+        "knownTransferBytes": {
+          "before": 149802,
+          "after": 148602,
+          "saved": 1200,
+          "percentReduction": 0.8
+        },
+        "knownResourceBytes": {
+          "before": 444006,
+          "after": 296004,
+          "saved": 148002,
+          "percentReduction": 33.33
+        },
+        "bytes": {
+          "before": 444006,
+          "after": 296004,
+          "saved": 148002,
+          "percentReduction": 33.33
+        }
+      },
+      "unknown": {
+        "requests": {
+          "before": 87,
+          "after": 474,
+          "saved": -387,
+          "percentReduction": -444.83
+        },
+        "knownTransferBytes": {
+          "before": 254175,
+          "after": 2135654,
+          "saved": -1881479,
+          "percentReduction": -740.23
+        },
+        "knownResourceBytes": {
+          "before": 3343574,
+          "after": 16314910,
+          "saved": -12971336,
+          "percentReduction": -387.95
+        },
+        "bytes": {
+          "before": 3343574,
+          "after": 16314910,
+          "saved": -12971336,
+          "percentReduction": -387.95
+        }
+      }
+    },
+    "repeatedDownloadsBetweenColdAndWarm": {
+      "count": {
+        "before": 0,
+        "after": 0,
+        "saved": 0,
+        "percentReduction": 0
+      },
+      "knownTransferBytes": {
+        "before": 0,
+        "after": 0,
+        "saved": 0,
+        "percentReduction": 0
+      },
+      "knownResourceBytes": {
+        "before": 0,
+        "after": 0,
+        "saved": 0,
+        "percentReduction": 0
+      },
+      "unknownTransferBytesRequestCount": {
+        "before": 0,
+        "after": 0
+      },
+      "top20": []
+    },
+    "routeGroupBreakdown": {
+      "before": {
+        "catalog": {
+          "count": 42,
+          "knownTransferBytes": 2022,
+          "knownResourceBytes": 2213808
+        },
+        "detail": {
+          "count": 273,
+          "knownTransferBytes": 0,
+          "knownResourceBytes": 17137721
+        },
+        "home": {
+          "count": 29,
+          "knownTransferBytes": 286562,
+          "knownResourceBytes": 278162
+        },
+        "seo": {
+          "count": 28,
+          "knownTransferBytes": 6913,
+          "knownResourceBytes": 505975
+        },
+        "static": {
+          "count": 657,
+          "knownTransferBytes": 492341,
+          "knownResourceBytes": 10709882
+        }
+      },
+      "after": {
+        "catalog": {
+          "count": 295,
+          "knownTransferBytes": 2982850,
+          "knownResourceBytes": 15035484
+        },
+        "detail": {
+          "count": 853,
+          "knownTransferBytes": 302275,
+          "knownResourceBytes": 32946702
+        },
+        "home": {
+          "count": 163,
+          "knownTransferBytes": 610875,
+          "knownResourceBytes": 569154
+        },
+        "map": {
+          "count": 93,
+          "knownTransferBytes": 89896,
+          "knownResourceBytes": 1354630
+        },
+        "scheme": {
+          "count": 38,
+          "knownTransferBytes": 0,
+          "knownResourceBytes": 2423147
+        },
+        "seo": {
+          "count": 35,
+          "knownTransferBytes": 27209,
+          "knownResourceBytes": 489499
+        },
+        "static": {
+          "count": 958,
+          "knownTransferBytes": 2390024,
+          "knownResourceBytes": 27139328
+        },
+        "weather": {
+          "count": 62,
+          "knownTransferBytes": 80309,
+          "knownResourceBytes": 61709
+        }
+      }
+    },
+    "phaseBreakdown": {
+      "before": {
+        "catalog": {
+          "count": 33,
+          "knownTransferBytes": 149502,
+          "knownResourceBytes": 1348784
+        },
+        "catalog-return": {
+          "count": 34,
+          "knownTransferBytes": 1500,
+          "knownResourceBytes": 1241941
+        },
+        "catalog-scroll": {
+          "count": 1,
+          "knownTransferBytes": 0,
+          "knownResourceBytes": 194895
+        },
+        "detail": {
+          "count": 851,
+          "knownTransferBytes": 58573,
+          "knownResourceBytes": 26473774
+        },
+        "home": {
+          "count": 40,
+          "knownTransferBytes": 543220,
+          "knownResourceBytes": 531583
+        },
+        "seo": {
+          "count": 70,
+          "knownTransferBytes": 35043,
+          "knownResourceBytes": 1054571
+        }
+      },
+      "after": {
+        "catalog": {
+          "count": 87,
+          "knownTransferBytes": 246731,
+          "knownResourceBytes": 5966122
+        },
+        "catalog-return": {
+          "count": 93,
+          "knownTransferBytes": 21014,
+          "knownResourceBytes": 6492606
+        },
+        "catalog-scroll": {
+          "count": 58,
+          "knownTransferBytes": 83635,
+          "knownResourceBytes": 1179555
+        },
+        "detail": {
+          "count": 2016,
+          "knownTransferBytes": 3477076,
+          "knownResourceBytes": 58527077
+        },
+        "home": {
+          "count": 43,
+          "knownTransferBytes": 2535643,
+          "knownResourceBytes": 2684773
+        },
+        "map-initial": {
+          "count": 79,
+          "knownTransferBytes": 76635,
+          "knownResourceBytes": 1345269
+        },
+        "map-popup": {
+          "count": 14,
+          "knownTransferBytes": 13261,
+          "knownResourceBytes": 9361
+        },
+        "scheme-open": {
+          "count": 39,
+          "knownTransferBytes": 0,
+          "knownResourceBytes": 2423147
+        },
+        "seo": {
+          "count": 68,
+          "knownTransferBytes": 29443,
+          "knownResourceBytes": 1391743
+        }
+      }
+    },
+    "top20ByResource": [
+      {
+        "url": "https://www.ozera.in.ua/fishing-hero.jpg.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 1847265,
+        "knownResourceBytes": 1846965,
+        "bytes": 1846965,
+        "contentType": "image/png",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://vovkoveozero.com.ua/wp-content/uploads/2024/04/%D0%9F%D0%BB%D0%B0%D0%BD-%D0%BE%D0%B7%D0%B5%D1%80%D0%B0-%D0%B8%D1%82%D0%BE%D0%B3-04.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 1018947,
+        "bytes": 1018947,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozero-korolek.kiev.ua/wp-content/uploads/2025/05/photo_2025-05-13-12.22.11.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 801026,
+        "bytes": 801026,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8a22c6a3-f3d1-4eab-8f79-ed38d5dc9559/e740d322-a3ef-4bae-9f43-3b213eeb75ce/medium/89556c423492e09b550ba28b213a81e9d7b6fcaef680bdc46411b97befb6ff5a.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 560779,
+        "bytes": 560779,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/353d8141-764b-46ec-9865-027656da4d24/7dcc814d-ffc3-4f68-a080-dd67203ced99/medium/dcc4df9e1fee64f8aa0edafd1e4b0be9a6589bd83c90673f2b0bcd05667148a4.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324935,
+        "bytes": 324935,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/bb3031df-92ee-414c-ae94-f093b09b1223/28be998b-3a8b-41e3-98c2-a6a49a4cb846/medium/9a9c2fff85626cc888e8e3cb9bdf41b892ff3582f44cd583259cde0122b97c8c.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324490,
+        "bytes": 324490,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-scroll",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/b35ce4de-99ab-4b6e-870a-0e60ab42dd4a/medium/b6365c43d770ec41622abf2ab57d94ee4c80f66fdd48c4e8df044918ee36d3b5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 310967,
+        "bytes": 310967,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8d0abd9c-7a76-44c3-ace4-cfa3e1c50b02/2d9c70d8-2d1c-49ff-8417-f1572fe6eb96/medium/0db6eaa767ac4ef60153d9c5ce2decddcfa3fb311d809699354a4f1c9b3b6bee.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284630,
+        "bytes": 284630,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/6c2ab506-a809-4a80-b02a-b84db786ad22/48cdca3d-1a5d-487b-b8ee-2d3a38fbd06e/medium/4c96b5c55d745a6ce8d6b5cb5eb70912d919401d048d57c5e713158fd01d63c5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284317,
+        "bytes": 284317,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      }
+    ],
+    "top20ByTransfer": [
+      {
+        "url": "https://www.ozera.in.ua/fishing-hero.jpg.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 1847265,
+        "knownResourceBytes": 1846965,
+        "bytes": 1847265,
+        "contentType": "image/png",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/ozera_splash.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "static",
+        "phase": "catalog",
+        "knownTransferBytes": 148302,
+        "knownResourceBytes": 148002,
+        "bytes": 148302,
+        "contentType": "image/png",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "placeholder"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "home",
+        "phase": "home",
+        "knownTransferBytes": 77922,
+        "knownResourceBytes": 77622,
+        "bytes": 77922,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 72356,
+        "knownResourceBytes": 72056,
+        "bytes": 72356,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0za7.5tp5ac6y.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 68364,
+        "knownResourceBytes": 68064,
+        "bytes": 68364,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=1run2",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "home",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=1da8v",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=zhb43",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=1jtgc",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=1anzc",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=i3hnc",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=16mz1",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=178je",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=15ewq",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=6dt4p",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=1hkh8",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=bbyhz",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=1afde",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=11zy7",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=1jhjm",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 63744,
+        "knownResourceBytes": 63444,
+        "bytes": 63744,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      }
+    ],
+    "top20SupabaseMediumImages": [
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8a22c6a3-f3d1-4eab-8f79-ed38d5dc9559/e740d322-a3ef-4bae-9f43-3b213eeb75ce/medium/89556c423492e09b550ba28b213a81e9d7b6fcaef680bdc46411b97befb6ff5a.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 560779,
+        "bytes": 560779,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/353d8141-764b-46ec-9865-027656da4d24/7dcc814d-ffc3-4f68-a080-dd67203ced99/medium/dcc4df9e1fee64f8aa0edafd1e4b0be9a6589bd83c90673f2b0bcd05667148a4.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324935,
+        "bytes": 324935,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/bb3031df-92ee-414c-ae94-f093b09b1223/28be998b-3a8b-41e3-98c2-a6a49a4cb846/medium/9a9c2fff85626cc888e8e3cb9bdf41b892ff3582f44cd583259cde0122b97c8c.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324490,
+        "bytes": 324490,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-scroll",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/b35ce4de-99ab-4b6e-870a-0e60ab42dd4a/medium/b6365c43d770ec41622abf2ab57d94ee4c80f66fdd48c4e8df044918ee36d3b5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 310967,
+        "bytes": 310967,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8d0abd9c-7a76-44c3-ace4-cfa3e1c50b02/2d9c70d8-2d1c-49ff-8417-f1572fe6eb96/medium/0db6eaa767ac4ef60153d9c5ce2decddcfa3fb311d809699354a4f1c9b3b6bee.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284630,
+        "bytes": 284630,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/6c2ab506-a809-4a80-b02a-b84db786ad22/48cdca3d-1a5d-487b-b8ee-2d3a38fbd06e/medium/4c96b5c55d745a6ce8d6b5cb5eb70912d919401d048d57c5e713158fd01d63c5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284317,
+        "bytes": 284317,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/6c2ab506-a809-4a80-b02a-b84db786ad22/48cdca3d-1a5d-487b-b8ee-2d3a38fbd06e/medium/4c96b5c55d745a6ce8d6b5cb5eb70912d919401d048d57c5e713158fd01d63c5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284317,
+        "bytes": 284317,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/6c2ab506-a809-4a80-b02a-b84db786ad22/48cdca3d-1a5d-487b-b8ee-2d3a38fbd06e/medium/4c96b5c55d745a6ce8d6b5cb5eb70912d919401d048d57c5e713158fd01d63c5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284317,
+        "bytes": 284317,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/9a7eff61-4194-463f-a9a7-2883c61b8a99/medium/8acf36ad68264ed8277b877c5089d743e1576cce32cb37942d952102cb789fe7.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 279960,
+        "bytes": 279960,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      }
+    ],
+    "top20ExternalImages": [
+      {
+        "url": "https://vovkoveozero.com.ua/wp-content/uploads/2024/04/%D0%9F%D0%BB%D0%B0%D0%BD-%D0%BE%D0%B7%D0%B5%D1%80%D0%B0-%D0%B8%D1%82%D0%BE%D0%B3-04.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 1018947,
+        "bytes": 1018947,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozero-korolek.kiev.ua/wp-content/uploads/2025/05/photo_2025-05-13-12.22.11.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 801026,
+        "bytes": 801026,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.karpych.com.ua/wp-content/uploads/2023/03/%D0%B8%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5_viber_2023-03-13_20-26-32-152.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 247039,
+        "bytes": 247039,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, max-age=604800",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.clubrybalok.com.ua/wp-content/webpc-passthru.php?src=https://www.clubrybalok.com.ua/wp-content/uploads/2021/11/photo_2021-11-16_10-54-08.jpg&nocache=1",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 188512,
+        "bytes": 188512,
+        "contentType": "image/webp",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://tridentlake.com/_Resources/Persistent/9/e/3/1/9e31b5211d595a86cc8511757638a3b9bba57d53/viber_image_2024-750x500.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 85819,
+        "bytes": 85819,
+        "contentType": "image/jpeg",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://liman-oshitki.com.ua/wp-content/uploads/2022/05/Karta-glybin.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 78543,
+        "bytes": 78543,
+        "contentType": "image/jpeg",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "home",
+        "phase": "home",
+        "knownTransferBytes": 77922,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      }
+    ],
+    "top20LocalAssets": [
+      {
+        "url": "https://www.ozera.in.ua/fishing-hero.jpg.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 1847265,
+        "knownResourceBytes": 1846965,
+        "bytes": 1846965,
+        "contentType": "image/png",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/ozera_splash.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "static",
+        "phase": "catalog",
+        "knownTransferBytes": 148302,
+        "knownResourceBytes": 148002,
+        "bytes": 148002,
+        "contentType": "image/png",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "placeholder"
+      },
+      {
+        "url": "https://www.ozera.in.ua/ozera_splash.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "static",
+        "phase": "catalog-return",
+        "knownTransferBytes": 300,
+        "knownResourceBytes": 148002,
+        "bytes": 148002,
+        "contentType": "image/png",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "placeholder"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 72356,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "catalog",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      }
+    ],
+    "remainingViolations": [
+      {
+        "type": "huge_image_over_threshold",
+        "url": "https://www.ozera.in.ua/fishing-hero.jpg.png",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 1847265,
+        "knownResourceBytes": 1846965,
+        "bytes": 1846965
+      }
+    ],
+    "topRemainingOffenders": [
+      {
+        "url": "https://www.ozera.in.ua/fishing-hero.jpg.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 1847265,
+        "knownResourceBytes": 1846965,
+        "bytes": 1846965,
+        "contentType": "image/png",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://vovkoveozero.com.ua/wp-content/uploads/2024/04/%D0%9F%D0%BB%D0%B0%D0%BD-%D0%BE%D0%B7%D0%B5%D1%80%D0%B0-%D0%B8%D1%82%D0%BE%D0%B3-04.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 1018947,
+        "bytes": 1018947,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozero-korolek.kiev.ua/wp-content/uploads/2025/05/photo_2025-05-13-12.22.11.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 801026,
+        "bytes": 801026,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8a22c6a3-f3d1-4eab-8f79-ed38d5dc9559/e740d322-a3ef-4bae-9f43-3b213eeb75ce/medium/89556c423492e09b550ba28b213a81e9d7b6fcaef680bdc46411b97befb6ff5a.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 560779,
+        "bytes": 560779,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/353d8141-764b-46ec-9865-027656da4d24/7dcc814d-ffc3-4f68-a080-dd67203ced99/medium/dcc4df9e1fee64f8aa0edafd1e4b0be9a6589bd83c90673f2b0bcd05667148a4.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324935,
+        "bytes": 324935,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/bb3031df-92ee-414c-ae94-f093b09b1223/28be998b-3a8b-41e3-98c2-a6a49a4cb846/medium/9a9c2fff85626cc888e8e3cb9bdf41b892ff3582f44cd583259cde0122b97c8c.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324490,
+        "bytes": 324490,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-scroll",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/b35ce4de-99ab-4b6e-870a-0e60ab42dd4a/medium/b6365c43d770ec41622abf2ab57d94ee4c80f66fdd48c4e8df044918ee36d3b5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 310967,
+        "bytes": 310967,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8d0abd9c-7a76-44c3-ace4-cfa3e1c50b02/2d9c70d8-2d1c-49ff-8417-f1572fe6eb96/medium/0db6eaa767ac4ef60153d9c5ce2decddcfa3fb311d809699354a4f1c9b3b6bee.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284630,
+        "bytes": 284630,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/6c2ab506-a809-4a80-b02a-b84db786ad22/48cdca3d-1a5d-487b-b8ee-2d3a38fbd06e/medium/4c96b5c55d745a6ce8d6b5cb5eb70912d919401d048d57c5e713158fd01d63c5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284317,
+        "bytes": 284317,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      }
+    ],
+    "limitations": [
+      "After cold has 517 requests with unknown transfer bytes; totalKnownResourceBytes is resource size, not transfer."
+    ]
+  },
+  "warm": {
+    "totals": {
+      "knownTransferBytes": {
+        "before": 19572,
+        "after": 410814,
+        "saved": -391242,
+        "percentReduction": -1998.99
+      },
+      "knownResourceBytes": {
+        "before": 3088684,
+        "after": 79494510,
+        "saved": -76405826,
+        "percentReduction": -2473.73
+      }
+    },
+    "images": {
+      "knownTransferBytes": {
+        "before": 600,
+        "after": 15000,
+        "saved": -14400,
+        "percentReduction": -2400
+      },
+      "knownResourceBytes": {
+        "before": 2374465,
+        "after": 50819551,
+        "saved": -48445086,
+        "percentReduction": -2040.25
+      }
+    },
+    "supabaseStorage": {
+      "knownTransferBytes": {
+        "before": 0,
+        "after": 0,
+        "saved": 0,
+        "percentReduction": 0
+      },
+      "knownResourceBytes": {
+        "before": 1974808,
+        "after": 34357401,
+        "saved": -32382593,
+        "percentReduction": -1639.78
+      }
+    },
+    "nextImage": {
+      "knownTransferBytes": {
+        "before": 0,
+        "after": 14400,
+        "saved": -14400,
+        "percentReduction": 0
+      },
+      "knownResourceBytes": {
+        "before": 2286,
+        "after": 37732,
+        "saved": -35446,
+        "percentReduction": -1550.57
+      }
+    },
+    "weather": {
+      "knownTransferBytes": {
+        "before": 0,
+        "after": 80309,
+        "saved": -80309,
+        "percentReduction": 0
+      },
+      "knownResourceBytes": {
+        "before": 0,
+        "after": 61709,
+        "saved": -61709,
+        "percentReduction": 0
+      }
+    },
+    "requests": {
+      "total": {
+        "before": 108,
+        "after": 2504,
+        "saved": -2396,
+        "percentReduction": -2218.52
+      },
+      "image": {
+        "before": 49,
+        "after": 695,
+        "saved": -646,
+        "percentReduction": -1318.37
+      },
+      "supabaseStorage": {
+        "before": 34,
+        "after": 215,
+        "saved": -181,
+        "percentReduction": -532.35
+      },
+      "unknownTransferBytes": {
+        "before": 37,
+        "after": 521
+      }
+    },
+    "variants": {
+      "original": {
+        "requests": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownTransferBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownResourceBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "bytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        }
+      },
+      "medium": {
+        "requests": {
+          "before": 0,
+          "after": 215,
+          "saved": -215,
+          "percentReduction": 0
+        },
+        "knownTransferBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownResourceBytes": {
+          "before": 0,
+          "after": 34357401,
+          "saved": -34357401,
+          "percentReduction": 0
+        },
+        "bytes": {
+          "before": 0,
+          "after": 34357401,
+          "saved": -34357401,
+          "percentReduction": 0
+        }
+      },
+      "thumb": {
+        "requests": {
+          "before": 34,
+          "after": 0,
+          "saved": 34,
+          "percentReduction": 100
+        },
+        "knownTransferBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownResourceBytes": {
+          "before": 1974808,
+          "after": 0,
+          "saved": 1974808,
+          "percentReduction": 100
+        },
+        "bytes": {
+          "before": 1974808,
+          "after": 0,
+          "saved": 1974808,
+          "percentReduction": 100
+        }
+      },
+      "legacy": {
+        "requests": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownTransferBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownResourceBytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "bytes": {
+          "before": 0,
+          "after": 0,
+          "saved": 0,
+          "percentReduction": 0
+        }
+      },
+      "placeholder": {
+        "requests": {
+          "before": 2,
+          "after": 2,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownTransferBytes": {
+          "before": 600,
+          "after": 600,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "knownResourceBytes": {
+          "before": 148002,
+          "after": 148002,
+          "saved": 0,
+          "percentReduction": 0
+        },
+        "bytes": {
+          "before": 148002,
+          "after": 148002,
+          "saved": 0,
+          "percentReduction": 0
+        }
+      },
+      "unknown": {
+        "requests": {
+          "before": 13,
+          "after": 478,
+          "saved": -465,
+          "percentReduction": -3576.92
+        },
+        "knownTransferBytes": {
+          "before": 0,
+          "after": 14400,
+          "saved": -14400,
+          "percentReduction": 0
+        },
+        "knownResourceBytes": {
+          "before": 251655,
+          "after": 16314148,
+          "saved": -16062493,
+          "percentReduction": -6382.74
+        },
+        "bytes": {
+          "before": 251655,
+          "after": 16314148,
+          "saved": -16062493,
+          "percentReduction": -6382.74
+        }
+      }
+    },
+    "repeatedDownloadsBetweenColdAndWarm": {
+      "count": {
+        "before": 13,
+        "after": 757,
+        "saved": -744,
+        "percentReduction": -5723.08
+      },
+      "knownTransferBytes": {
+        "before": 15372,
+        "after": 316330,
+        "saved": -300958,
+        "percentReduction": -1957.83
+      },
+      "knownResourceBytes": {
+        "before": 160074,
+        "after": 4680321,
+        "saved": -4520247,
+        "percentReduction": -2823.85
+      },
+      "unknownTransferBytesRequestCount": {
+        "before": 2,
+        "after": 85
+      },
+      "top20": [
+        {
+          "url": "https://www.ozera.in.ua/lakes/shchaslyvyy-rybachok-kompleks-vidpochynku?_rsc=tnytb",
+          "knownTransferBytes": 1764,
+          "knownResourceBytes": 1464,
+          "bytes": 1764,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog-scroll",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/api/weather?lat=49.96553&lng=35.36732&days=5",
+          "knownTransferBytes": 1748,
+          "knownResourceBytes": 1448,
+          "bytes": 1748,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "weather",
+          "phase": "detail",
+          "imageVariant": "unknown",
+          "cacheControl": "public, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/api/weather?lat=50.1564164&lng=35.7605933&days=5",
+          "knownTransferBytes": 1746,
+          "knownResourceBytes": 1446,
+          "bytes": 1746,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "weather",
+          "phase": "detail",
+          "imageVariant": "unknown",
+          "cacheControl": "public, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/lakes/fartova-rybolovlya?_rsc=tnytb",
+          "knownTransferBytes": 1736,
+          "knownResourceBytes": 1436,
+          "bytes": 1736,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog-scroll",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/lakes/tsentr-simeynoyi-rybolovli-bili-kameni?_rsc=tnytb",
+          "knownTransferBytes": 1735,
+          "knownResourceBytes": 1435,
+          "bytes": 1735,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog-scroll",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/lakes/vidpochynok-klub-rybalok?_rsc=tnytb",
+          "knownTransferBytes": 1730,
+          "knownResourceBytes": 1430,
+          "bytes": 1730,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/lakes/vidpochynok-klub-rybalok?_rsc=tnytb",
+          "knownTransferBytes": 1730,
+          "knownResourceBytes": 1430,
+          "bytes": 1730,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog-return",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/lakes/neptun-lymanne-hospodarstvo?_rsc=tnytb",
+          "knownTransferBytes": 1728,
+          "knownResourceBytes": 1428,
+          "bytes": 1728,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog-scroll",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/api/weather?lat=50.231397&lng=29.834395&days=5",
+          "knownTransferBytes": 1715,
+          "knownResourceBytes": 1415,
+          "bytes": 1715,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "weather",
+          "phase": "detail",
+          "imageVariant": "unknown",
+          "cacheControl": "public, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/lakes/white-horvat?_rsc=tnytb",
+          "knownTransferBytes": 1714,
+          "knownResourceBytes": 1414,
+          "bytes": 1714,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog-return",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/lakes/white-horvat?_rsc=tnytb",
+          "knownTransferBytes": 1713,
+          "knownResourceBytes": 1413,
+          "bytes": 1713,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/lakes/tsariv-khutir?_rsc=tnytb",
+          "knownTransferBytes": 1713,
+          "knownResourceBytes": 1413,
+          "bytes": 1713,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog-scroll",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/lakes/ozero-pidkova?_rsc=tnytb",
+          "knownTransferBytes": 1709,
+          "knownResourceBytes": 1409,
+          "bytes": 1709,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog-scroll",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/api/weather?lat=48.838359&lng=29.289292&days=5",
+          "knownTransferBytes": 1706,
+          "knownResourceBytes": 1406,
+          "bytes": 1706,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "weather",
+          "phase": "detail",
+          "imageVariant": "unknown",
+          "cacheControl": "public, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/api/weather?lat=50.075673&lng=30.661037&days=5",
+          "knownTransferBytes": 1705,
+          "knownResourceBytes": 1405,
+          "bytes": 1705,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "weather",
+          "phase": "detail",
+          "imageVariant": "unknown",
+          "cacheControl": "public, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/api/weather?lat=50.0723&lng=28.5651&days=5",
+          "knownTransferBytes": 1705,
+          "knownResourceBytes": 1405,
+          "bytes": 1705,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "weather",
+          "phase": "detail",
+          "imageVariant": "unknown",
+          "cacheControl": "public, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/api/weather?lat=51.38&lng=28.75&days=5",
+          "knownTransferBytes": 1705,
+          "knownResourceBytes": 1405,
+          "bytes": 1705,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "weather",
+          "phase": "detail",
+          "imageVariant": "unknown",
+          "cacheControl": "public, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/lakes/gold-fish-club?_rsc=tnytb",
+          "knownTransferBytes": 1703,
+          "knownResourceBytes": 1403,
+          "bytes": 1703,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/api/weather?lat=50.396793&lng=30.157223&days=5",
+          "knownTransferBytes": 1703,
+          "knownResourceBytes": 1403,
+          "bytes": 1703,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "weather",
+          "phase": "detail",
+          "imageVariant": "unknown",
+          "cacheControl": "public, max-age=0, must-revalidate"
+        },
+        {
+          "url": "https://www.ozera.in.ua/lakes/gold-fish-club?_rsc=tnytb",
+          "knownTransferBytes": 1703,
+          "knownResourceBytes": 1403,
+          "bytes": 1703,
+          "status": 200,
+          "resourceType": "fetch",
+          "routeGroup": "detail",
+          "phase": "catalog-return",
+          "imageVariant": "unknown",
+          "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    "routeGroupBreakdown": {
+      "before": {
+        "catalog": {
+          "count": 40,
+          "knownTransferBytes": 2021,
+          "knownResourceBytes": 1977753
+        },
+        "home": {
+          "count": 23,
+          "knownTransferBytes": 13051,
+          "knownResourceBytes": 268762
+        },
+        "static": {
+          "count": 45,
+          "knownTransferBytes": 4500,
+          "knownResourceBytes": 842169
+        }
+      },
+      "after": {
+        "catalog": {
+          "count": 286,
+          "knownTransferBytes": 71338,
+          "knownResourceBytes": 14626351
+        },
+        "detail": {
+          "count": 859,
+          "knownTransferBytes": 155570,
+          "knownResourceBytes": 32954405
+        },
+        "home": {
+          "count": 172,
+          "knownTransferBytes": 82980,
+          "knownResourceBytes": 593732
+        },
+        "map": {
+          "count": 93,
+          "knownTransferBytes": 15217,
+          "knownResourceBytes": 1355986
+        },
+        "scheme": {
+          "count": 38,
+          "knownTransferBytes": 0,
+          "knownResourceBytes": 2423147
+        },
+        "seo": {
+          "count": 36,
+          "knownTransferBytes": 4800,
+          "knownResourceBytes": 487854
+        },
+        "static": {
+          "count": 958,
+          "knownTransferBytes": 600,
+          "knownResourceBytes": 26991326
+        },
+        "weather": {
+          "count": 62,
+          "knownTransferBytes": 80309,
+          "knownResourceBytes": 61709
+        }
+      }
+    },
+    "phaseBreakdown": {
+      "before": {
+        "catalog": {
+          "count": 33,
+          "knownTransferBytes": 1500,
+          "knownResourceBytes": 1348784
+        },
+        "catalog-return": {
+          "count": 33,
+          "knownTransferBytes": 1500,
+          "knownResourceBytes": 1200782
+        },
+        "home": {
+          "count": 42,
+          "knownTransferBytes": 16572,
+          "knownResourceBytes": 539118
+        }
+      },
+      "after": {
+        "catalog": {
+          "count": 93,
+          "knownTransferBytes": 21026,
+          "knownResourceBytes": 6344616
+        },
+        "catalog-return": {
+          "count": 92,
+          "knownTransferBytes": 21613,
+          "knownResourceBytes": 6112144
+        },
+        "catalog-scroll": {
+          "count": 54,
+          "knownTransferBytes": 35335,
+          "knownResourceBytes": 655534
+        },
+        "detail": {
+          "count": 2021,
+          "knownTransferBytes": 306213,
+          "knownResourceBytes": 58527301
+        },
+        "home": {
+          "count": 44,
+          "knownTransferBytes": 4345,
+          "knownResourceBytes": 2684011
+        },
+        "map-initial": {
+          "count": 79,
+          "knownTransferBytes": 300,
+          "knownResourceBytes": 1345269
+        },
+        "map-popup": {
+          "count": 14,
+          "knownTransferBytes": 14917,
+          "knownResourceBytes": 10717
+        },
+        "scheme-open": {
+          "count": 39,
+          "knownTransferBytes": 0,
+          "knownResourceBytes": 2423147
+        },
+        "seo": {
+          "count": 68,
+          "knownTransferBytes": 7065,
+          "knownResourceBytes": 1391771
+        }
+      }
+    },
+    "top20ByResource": [
+      {
+        "url": "https://www.ozera.in.ua/fishing-hero.jpg.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 1846965,
+        "bytes": 1846965,
+        "contentType": "image/png",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://vovkoveozero.com.ua/wp-content/uploads/2024/04/%D0%9F%D0%BB%D0%B0%D0%BD-%D0%BE%D0%B7%D0%B5%D1%80%D0%B0-%D0%B8%D1%82%D0%BE%D0%B3-04.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 1018947,
+        "bytes": 1018947,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozero-korolek.kiev.ua/wp-content/uploads/2025/05/photo_2025-05-13-12.22.11.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 801026,
+        "bytes": 801026,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8a22c6a3-f3d1-4eab-8f79-ed38d5dc9559/e740d322-a3ef-4bae-9f43-3b213eeb75ce/medium/89556c423492e09b550ba28b213a81e9d7b6fcaef680bdc46411b97befb6ff5a.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 560779,
+        "bytes": 560779,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/353d8141-764b-46ec-9865-027656da4d24/7dcc814d-ffc3-4f68-a080-dd67203ced99/medium/dcc4df9e1fee64f8aa0edafd1e4b0be9a6589bd83c90673f2b0bcd05667148a4.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324935,
+        "bytes": 324935,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/bb3031df-92ee-414c-ae94-f093b09b1223/28be998b-3a8b-41e3-98c2-a6a49a4cb846/medium/9a9c2fff85626cc888e8e3cb9bdf41b892ff3582f44cd583259cde0122b97c8c.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324490,
+        "bytes": 324490,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-scroll",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/b35ce4de-99ab-4b6e-870a-0e60ab42dd4a/medium/b6365c43d770ec41622abf2ab57d94ee4c80f66fdd48c4e8df044918ee36d3b5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 310967,
+        "bytes": 310967,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8d0abd9c-7a76-44c3-ace4-cfa3e1c50b02/2d9c70d8-2d1c-49ff-8417-f1572fe6eb96/medium/0db6eaa767ac4ef60153d9c5ce2decddcfa3fb311d809699354a4f1c9b3b6bee.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284630,
+        "bytes": 284630,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/6c2ab506-a809-4a80-b02a-b84db786ad22/48cdca3d-1a5d-487b-b8ee-2d3a38fbd06e/medium/4c96b5c55d745a6ce8d6b5cb5eb70912d919401d048d57c5e713158fd01d63c5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284317,
+        "bytes": 284317,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      }
+    ],
+    "top20ByTransfer": [
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=yn4ny",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "detail",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=1389s",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "detail",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=hw42y",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "detail",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=75uai",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "detail",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=1uru1",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "detail",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=tjbf6",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "detail",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=1r8hc",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "detail",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=kpqz7",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "detail",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=1lugb",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "detail",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=an1g7",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "detail",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=x4zzc",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "detail",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/?_rsc=4hkfo",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "home",
+        "phase": "seo",
+        "knownTransferBytes": 3165,
+        "knownResourceBytes": 2865,
+        "bytes": 3165,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=1o3s8",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 3137,
+        "knownResourceBytes": 2837,
+        "bytes": 3137,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes/add?_rsc=1whc9",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 3137,
+        "knownResourceBytes": 2837,
+        "bytes": 3137,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes/add?_rsc=u2h9v",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 3137,
+        "knownResourceBytes": 2837,
+        "bytes": 3137,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes/add?_rsc=2ig7i",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 3137,
+        "knownResourceBytes": 2837,
+        "bytes": 3137,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=g638c",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 3137,
+        "knownResourceBytes": 2837,
+        "bytes": 3137,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes/add?_rsc=1vf0d",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 3137,
+        "knownResourceBytes": 2837,
+        "bytes": 3137,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes/add?_rsc=bthh4",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 3137,
+        "knownResourceBytes": 2837,
+        "bytes": 3137,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/lakes?_rsc=ik2of",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "fetch",
+        "routeGroup": "catalog",
+        "phase": "detail",
+        "knownTransferBytes": 3137,
+        "knownResourceBytes": 2837,
+        "bytes": 3137,
+        "contentType": "text/x-component",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      }
+    ],
+    "top20SupabaseMediumImages": [
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8a22c6a3-f3d1-4eab-8f79-ed38d5dc9559/e740d322-a3ef-4bae-9f43-3b213eeb75ce/medium/89556c423492e09b550ba28b213a81e9d7b6fcaef680bdc46411b97befb6ff5a.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 560779,
+        "bytes": 560779,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/353d8141-764b-46ec-9865-027656da4d24/7dcc814d-ffc3-4f68-a080-dd67203ced99/medium/dcc4df9e1fee64f8aa0edafd1e4b0be9a6589bd83c90673f2b0bcd05667148a4.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324935,
+        "bytes": 324935,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/bb3031df-92ee-414c-ae94-f093b09b1223/28be998b-3a8b-41e3-98c2-a6a49a4cb846/medium/9a9c2fff85626cc888e8e3cb9bdf41b892ff3582f44cd583259cde0122b97c8c.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324490,
+        "bytes": 324490,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-scroll",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/b35ce4de-99ab-4b6e-870a-0e60ab42dd4a/medium/b6365c43d770ec41622abf2ab57d94ee4c80f66fdd48c4e8df044918ee36d3b5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 310967,
+        "bytes": 310967,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8d0abd9c-7a76-44c3-ace4-cfa3e1c50b02/2d9c70d8-2d1c-49ff-8417-f1572fe6eb96/medium/0db6eaa767ac4ef60153d9c5ce2decddcfa3fb311d809699354a4f1c9b3b6bee.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284630,
+        "bytes": 284630,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/6c2ab506-a809-4a80-b02a-b84db786ad22/48cdca3d-1a5d-487b-b8ee-2d3a38fbd06e/medium/4c96b5c55d745a6ce8d6b5cb5eb70912d919401d048d57c5e713158fd01d63c5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284317,
+        "bytes": 284317,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/6c2ab506-a809-4a80-b02a-b84db786ad22/48cdca3d-1a5d-487b-b8ee-2d3a38fbd06e/medium/4c96b5c55d745a6ce8d6b5cb5eb70912d919401d048d57c5e713158fd01d63c5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284317,
+        "bytes": 284317,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/6c2ab506-a809-4a80-b02a-b84db786ad22/48cdca3d-1a5d-487b-b8ee-2d3a38fbd06e/medium/4c96b5c55d745a6ce8d6b5cb5eb70912d919401d048d57c5e713158fd01d63c5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284317,
+        "bytes": 284317,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/9a7eff61-4194-463f-a9a7-2883c61b8a99/medium/8acf36ad68264ed8277b877c5089d743e1576cce32cb37942d952102cb789fe7.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 279960,
+        "bytes": 279960,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      }
+    ],
+    "top20ExternalImages": [
+      {
+        "url": "https://vovkoveozero.com.ua/wp-content/uploads/2024/04/%D0%9F%D0%BB%D0%B0%D0%BD-%D0%BE%D0%B7%D0%B5%D1%80%D0%B0-%D0%B8%D1%82%D0%BE%D0%B3-04.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 1018947,
+        "bytes": 1018947,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozero-korolek.kiev.ua/wp-content/uploads/2025/05/photo_2025-05-13-12.22.11.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 801026,
+        "bytes": 801026,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.karpych.com.ua/wp-content/uploads/2023/03/%D0%B8%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5_viber_2023-03-13_20-26-32-152.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 247039,
+        "bytes": 247039,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, max-age=604800",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.clubrybalok.com.ua/wp-content/webpc-passthru.php?src=https://www.clubrybalok.com.ua/wp-content/uploads/2021/11/photo_2021-11-16_10-54-08.jpg&nocache=1",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 188512,
+        "bytes": 188512,
+        "contentType": "image/webp",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://tridentlake.com/_Resources/Persistent/9/e/3/1/9e31b5211d595a86cc8511757638a3b9bba57d53/viber_image_2024-750x500.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 85819,
+        "bytes": 85819,
+        "contentType": "image/jpeg",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://liman-oshitki.com.ua/wp-content/uploads/2022/05/Karta-glybin.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 78543,
+        "bytes": 78543,
+        "contentType": "image/jpeg",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "home",
+        "phase": "home",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://plus.unsplash.com/premium_photo-1727538055174-92526593a254?w=600&h=400&fit=crop&auto=format&q=80",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 77622,
+        "bytes": 77622,
+        "contentType": "image/avif",
+        "cacheControl": "public, max-age=31536000",
+        "imageVariant": "unknown"
+      }
+    ],
+    "top20LocalAssets": [
+      {
+        "url": "https://www.ozera.in.ua/fishing-hero.jpg.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 1846965,
+        "bytes": 1846965,
+        "contentType": "image/png",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/ozera_splash.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "static",
+        "phase": "catalog-return",
+        "knownTransferBytes": 300,
+        "knownResourceBytes": 148002,
+        "bytes": 148002,
+        "contentType": "image/png",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "placeholder"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "catalog",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozera.in.ua/_next/static/chunks/0.~2ky53fo~10.js",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "script",
+        "routeGroup": "static",
+        "phase": "detail",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 72056,
+        "bytes": 72056,
+        "contentType": "application/javascript; charset=utf-8",
+        "cacheControl": "public,max-age=31536000,immutable",
+        "imageVariant": "unknown"
+      }
+    ],
+    "remainingViolations": [
+      {
+        "type": "huge_image_over_threshold",
+        "url": "https://www.ozera.in.ua/fishing-hero.jpg.png",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 1846965,
+        "bytes": 1846965
+      }
+    ],
+    "topRemainingOffenders": [
+      {
+        "url": "https://www.ozera.in.ua/fishing-hero.jpg.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 1846965,
+        "bytes": 1846965,
+        "contentType": "image/png",
+        "cacheControl": "public, max-age=0, must-revalidate",
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://vovkoveozero.com.ua/wp-content/uploads/2024/04/%D0%9F%D0%BB%D0%B0%D0%BD-%D0%BE%D0%B7%D0%B5%D1%80%D0%B0-%D0%B8%D1%82%D0%BE%D0%B3-04.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 1018947,
+        "bytes": 1018947,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://www.ozero-korolek.kiev.ua/wp-content/uploads/2025/05/photo_2025-05-13-12.22.11.png",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "scheme",
+        "phase": "scheme-open",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 801026,
+        "bytes": 801026,
+        "contentType": "image/png",
+        "cacheControl": null,
+        "imageVariant": "unknown"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8a22c6a3-f3d1-4eab-8f79-ed38d5dc9559/e740d322-a3ef-4bae-9f43-3b213eeb75ce/medium/89556c423492e09b550ba28b213a81e9d7b6fcaef680bdc46411b97befb6ff5a.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 560779,
+        "bytes": 560779,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/2cabaf61-6420-4af6-9b01-7447c7c0185c/medium/5a812e920d7251f2b74dd1954d569f817cf1ed6a1ae330a03feb6b32dfcb2954.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 439143,
+        "bytes": 439143,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fa24a7d6-7636-43a0-bddc-e08b5d2dc62d/17cd0f73-ef4d-48dc-9564-50e6ad389eeb/medium/ee6fb71709bcdfda00f444a000295538b9eec4adcba15a63e052727d2509ce71.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 364573,
+        "bytes": 364573,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/5bd5ffd8-8998-4d27-8991-93100b1a2e06/872685dc-8226-400f-a4bf-282afe004997/medium/55a0d47d6bb441630e0efc14aa40a7ef9e6f7823e299c1648d23812ab6af345e.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-return",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 357431,
+        "bytes": 357431,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/353d8141-764b-46ec-9865-027656da4d24/7dcc814d-ffc3-4f68-a080-dd67203ced99/medium/dcc4df9e1fee64f8aa0edafd1e4b0be9a6589bd83c90673f2b0bcd05667148a4.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324935,
+        "bytes": 324935,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/bb3031df-92ee-414c-ae94-f093b09b1223/28be998b-3a8b-41e3-98c2-a6a49a4cb846/medium/9a9c2fff85626cc888e8e3cb9bdf41b892ff3582f44cd583259cde0122b97c8c.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 324490,
+        "bytes": 324490,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog-scroll",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/fef4c0d0-9dd0-4ad9-9827-929d4bae1067/32ea7efe-438a-4387-ae96-b0e873322894/medium/f46c63e4d0c7571c1897d6c496f461bb87b63bc1c0b648f55963e70a9ff68a19.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 317582,
+        "bytes": 317582,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/d5d7c7b1-2dc8-4179-850d-2476b3156c10/b35ce4de-99ab-4b6e-870a-0e60ab42dd4a/medium/b6365c43d770ec41622abf2ab57d94ee4c80f66fdd48c4e8df044918ee36d3b5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 310967,
+        "bytes": 310967,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/8d0abd9c-7a76-44c3-ace4-cfa3e1c50b02/2d9c70d8-2d1c-49ff-8417-f1572fe6eb96/medium/0db6eaa767ac4ef60153d9c5ce2decddcfa3fb311d809699354a4f1c9b3b6bee.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "detail",
+        "phase": "detail",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284630,
+        "bytes": 284630,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      },
+      {
+        "url": "https://hakinbhfivthqxvkssok.supabase.co/storage/v1/object/public/lake-images/lakes/6c2ab506-a809-4a80-b02a-b84db786ad22/48cdca3d-1a5d-487b-b8ee-2d3a38fbd06e/medium/4c96b5c55d745a6ce8d6b5cb5eb70912d919401d048d57c5e713158fd01d63c5.jpg",
+        "method": "GET",
+        "status": 200,
+        "resourceType": "image",
+        "routeGroup": "catalog",
+        "phase": "catalog",
+        "knownTransferBytes": null,
+        "knownResourceBytes": 284317,
+        "bytes": 284317,
+        "contentType": "image/jpeg",
+        "cacheControl": "public, 31536000",
+        "imageVariant": "medium"
+      }
+    ],
+    "limitations": [
+      "After warm has 521 requests with unknown transfer bytes; totalKnownResourceBytes is resource size, not transfer."
+    ]
+  },
+  "estimatedSavedKnownTransferBytes": {
+    "cold": {
+      "before": 787838,
+      "after": 6483438,
+      "saved": -5695600,
+      "percentReduction": -722.94
+    },
+    "warm": {
+      "before": 19572,
+      "after": 410814,
+      "saved": -391242,
+      "percentReduction": -1998.99
+    }
+  },
+  "estimatedSavedKnownResourceBytes": {
+    "cold": {
+      "before": 30845548,
+      "after": 80019653,
+      "saved": -49174105,
+      "percentReduction": -159.42
+    },
+    "warm": {
+      "before": 3088684,
+      "after": 79494510,
+      "saved": -76405826,
+      "percentReduction": -2473.73
+    }
+  },
+  "remainingViolations": {
+    "cold": [
+      {
+        "type": "huge_image_over_threshold",
+        "url": "https://www.ozera.in.ua/fishing-hero.jpg.png",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 1847265,
+        "knownResourceBytes": 1846965,
+        "bytes": 1846965
+      }
+    ],
+    "warm": [
+      {
+        "type": "huge_image_over_threshold",
+        "url": "https://www.ozera.in.ua/fishing-hero.jpg.png",
+        "routeGroup": "static",
+        "phase": "home",
+        "knownTransferBytes": 0,
+        "knownResourceBytes": 1846965,
+        "bytes": 1846965
+      }
+    ]
+  },
+  "limitations": [
+    "After cold has 517 requests with unknown transfer bytes; totalKnownResourceBytes is resource size, not transfer.",
+    "After warm has 521 requests with unknown transfer bytes; totalKnownResourceBytes is resource size, not transfer."
+  ]
+}

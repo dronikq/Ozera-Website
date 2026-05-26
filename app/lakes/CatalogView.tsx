@@ -69,19 +69,20 @@ export default function CatalogView({ lakes }: Props) {
   return (
     <>
       {/* ── GRID ── */}
-      {lakes.length === 0 ? (
-        <div className="dk-empty">
-          <span className="dk-empty-icon">🎣</span>
-          <p className="dk-empty-title">Нічого не знайдено</p>
-          <p className="dk-empty-sub">Спробуй змінити фільтри</p>
-        </div>
-      ) : (
-        <div className="dk-lakes-grid">
-          {lakes.map((lake) => (
-            <GridCard key={lake.id} lake={lake} />
-          ))}
-        </div>
-      )}
+      {!showMap &&
+        (lakes.length === 0 ? (
+          <div className="dk-empty">
+            <span className="dk-empty-icon">🎣</span>
+            <p className="dk-empty-title">Нічого не знайдено</p>
+            <p className="dk-empty-sub">Спробуй змінити фільтри</p>
+          </div>
+        ) : (
+          <div className="dk-lakes-grid">
+            {lakes.map((lake) => (
+              <GridCard key={lake.id} lake={lake} />
+            ))}
+          </div>
+        ))}
 
       {/* ── MAP OVERLAY ── */}
       {showMap && (

@@ -18,6 +18,7 @@ const TRAFFIC_AUDIT_NAV_TIMEOUT_MS = envMs("TRAFFIC_AUDIT_NAV_TIMEOUT_MS", 60000
 const WAIT_SHORT_MS = 1200;
 const WAIT_WEATHER_MS = 1800;
 const MAX_DETAIL_PAGES = Number.parseInt(process.env.TRAFFIC_AUDIT_DETAIL_LIMIT || "0", 10);
+const TRAFFIC_AUDIT_DETAIL_SLUG = process.env.TRAFFIC_AUDIT_DETAIL_SLUG?.trim() || "";
 const TRAFFIC_AUDIT_MARKDOWN = process.env.TRAFFIC_AUDIT_MARKDOWN === "1";
 const TRAFFIC_AUDIT_SKIP_MAP = envFlag("TRAFFIC_AUDIT_SKIP_MAP");
 const TRAFFIC_AUDIT_SKIP_DETAILS = envFlag("TRAFFIC_AUDIT_SKIP_DETAILS");
@@ -46,10 +47,14 @@ const base = new URL(BASE_URL);
 const routeBundleStats = loadRouteBundleStats();
 const records = [];
 const performanceEntries = [];
+const networkEvents = [];
+const consoleErrors = [];
+const pageErrors = [];
 const requestIds = new WeakMap();
 let requestSeq = 0;
 let currentRouteGroup = "unknown";
 let currentPhase = "idle";
+let currentPhaseStartedAt = null;
 let currentDetailPageSlug = null;
 let currentDetailPageIndex = 0;
 const auditState = {
@@ -117,6 +122,25 @@ function createScenarioProgress(name) {
 function debugLog(message) {
   if (!TRAFFIC_AUDIT_DEBUG) return;
   console.log(`[traffic-audit] ${message}`);
+}
+
+function nowIso() {
+  return new Date().toISOString();
+}
+
+function pushNetworkEvent(event) {
+  networkEvents.push({ at: nowIso(), ...event });
+  if (networkEvents.length > 400) networkEvents.splice(0, networkEvents.length - 400);
+}
+
+function pushConsoleError(event) {
+  consoleErrors.push({ at: nowIso(), ...event });
+  if (consoleErrors.length > 100) consoleErrors.splice(0, consoleErrors.length - 100);
+}
+
+function pushPageError(event) {
+  pageErrors.push({ at: nowIso(), ...event });
+  if (pageErrors.length > 100) pageErrors.splice(0, pageErrors.length - 100);
 }
 
 function pushWarning(message, extra = {}) {
@@ -281,6 +305,110 @@ function registerSignalHandlers() {
   process.once("SIGTERM", () => onSignal("SIGTERM"));
 }
 
+function phaseKeySelectors(phaseName) {
+  switch (phaseName) {
+    case "home":
+      return ["main", "h1"];
+    case "catalog-initial":
+    case "catalog-return":
+      return [".dk-lakes-grid", ".dk-empty", "h1"];
+    case "detail-page":
+      return ["h1", ".dk-gallery-main-wrap", ".dk-info-card"];
+    case "detail-scheme":
+      return ['[role="dialog"][aria-label="Схема озера"]', 'button[aria-label="Закрити схему озера"]'];
+    case "map-open":
+      return [".dk-map-overlay", ".leaflet-container"];
+    default:
+      return [];
+  }
+}
+
+function selectSelectorStatus(selectors, state) {
+  return selectors.map((selector) => ({
+    selector,
+    exists: state[selector]?.exists ?? null,
+    visible: state[selector]?.visible ?? null,
+  }));
+}
+
+async function collectDebugDump(page, { scenarioName, phaseName, phaseLabel, timeoutMs }) {
+  const elapsedMs = currentPhaseStartedAt == null ? null : Date.now() - currentPhaseStartedAt;
+  const selectors = phaseKeySelectors(phaseName);
+  const selectorState = {};
+
+  for (const selector of selectors) {
+    const locator = page.locator(selector).first();
+    const exists = await locator.count().then((count) => count > 0).catch(() => false);
+    const visible = exists ? await locator.isVisible().catch(() => false) : false;
+    selectorState[selector] = { exists, visible };
+  }
+
+  let readyState = null;
+  try {
+    readyState = await page.evaluate(() => document.readyState);
+  } catch {
+    readyState = "unavailable";
+  }
+
+  const pendingRequests = records
+    .filter((record) => record.run === scenarioName && record.status == null && !record.failed)
+    .slice(-20)
+    .map((record) => ({
+      id: record.id,
+      url: record.url,
+      method: record.method,
+      resourceType: record.resourceType,
+      routeGroup: record.routeGroup,
+      phase: record.phase,
+      detailPageSlug: record.detailPageSlug,
+      detailPageIndex: record.detailPageIndex,
+      ageMs: record.startedAt ? Date.now() - record.startedAt : null,
+    }));
+
+  const failedRequests = records
+    .filter((record) => record.run === scenarioName && record.failed)
+    .slice(-20)
+    .map((record) => ({
+      id: record.id,
+      url: record.url,
+      method: record.method,
+      resourceType: record.resourceType,
+      routeGroup: record.routeGroup,
+      phase: record.phase,
+      detailPageSlug: record.detailPageSlug,
+      detailPageIndex: record.detailPageIndex,
+      status: record.status,
+      failureText: record.failureText,
+    }));
+
+  return {
+    phase: phaseName,
+    phaseLabel,
+    route: page.url(),
+    routeGroup: currentRouteGroup,
+    scenario: scenarioName,
+    elapsedMs,
+    timeoutMs,
+    pendingRequests,
+    failedRequests,
+    consoleErrors: consoleErrors.filter((event) => event.run === scenarioName).slice(-20),
+    pageErrors: pageErrors.filter((event) => event.run === scenarioName).slice(-20),
+    networkEvents: networkEvents.filter((event) => event.run === scenarioName).slice(-20),
+    documentReadyState: readyState,
+    selectorStatus: selectors.length ? selectSelectorStatus(selectors, selectorState) : [],
+  };
+}
+
+async function printTimeoutDebugDump(page, phaseInfo) {
+  if (!TRAFFIC_AUDIT_DEBUG) return;
+  try {
+    const dump = await collectDebugDump(page, phaseInfo);
+    console.error(`[traffic-audit] timeout debug dump: ${JSON.stringify(dump, null, 2)}`);
+  } catch (error) {
+    console.error("[traffic-audit] failed to build timeout debug dump:", error);
+  }
+}
+
 function loadRouteBundleStats() {
   try {
     if (!fs.existsSync(ROUTE_BUNDLE_STATS_PATH)) return null;
@@ -426,6 +554,11 @@ function isAnalyticsRequest(rawUrl, responseHeaders = {}) {
     ]) ||
     /google-analytics|googletagmanager|vercel-analytics|vercel-insights/i.test(responseHeaders["content-type"] || "")
   );
+}
+
+function isImmutableCacheable(responseHeaders = {}) {
+  const cacheControl = `${responseHeaders["cache-control"] || ""}`.toLowerCase();
+  return cacheControl.includes("immutable") && cacheControl.includes("max-age=31536000");
 }
 
 function isSentryRequest(rawUrl) {
@@ -575,12 +708,36 @@ function classify(rawUrl, resourceType, responseHeaders = {}, status = null, rou
 }
 
 function attachPageCollectors(page, runName) {
+  page.on("console", (message) => {
+    if (message.type() !== "error") return;
+    pushConsoleError({
+      run: runName,
+      type: message.type(),
+      text: message.text(),
+      location: message.location(),
+      phase: currentPhase,
+      routeGroup: currentRouteGroup,
+    });
+  });
+
+  page.on("pageerror", (error) => {
+    pushPageError({
+      run: runName,
+      name: error?.name ?? "Error",
+      message: error?.message ?? String(error),
+      stack: error?.stack ?? null,
+      phase: currentPhase,
+      routeGroup: currentRouteGroup,
+    });
+  });
+
   page.on("request", (request) => {
     const id = ++requestSeq;
     const requestHeaders = request.headers();
     const record = {
       id,
       run: runName,
+      startedAt: Date.now(),
       url: request.url(),
       method: request.method(),
       status: null,
@@ -613,6 +770,18 @@ function attachPageCollectors(page, runName) {
     };
     records.push(record);
     requestIds.set(request, id);
+    pushNetworkEvent({
+      run: runName,
+      kind: "request",
+      id,
+      url: record.url,
+      method: record.method,
+      resourceType: record.resourceType,
+      phase: currentPhase,
+      routeGroup: currentRouteGroup,
+      detailPageSlug: currentDetailPageSlug,
+      detailPageIndex: currentDetailPageIndex,
+    });
   });
 
   page.on("response", (response) => {
@@ -636,12 +805,26 @@ function attachPageCollectors(page, runName) {
       isStaticAsset: flags.isStaticAsset,
       isSchemeImage: flags.isSchemeImage,
       isSchemeFailed: flags.isSchemeFailed,
+      isAnalytics: isAnalyticsRequest(record.url, selectedHeaders(headers)),
     };
     record.imageVariant = flags.imageVariant;
     record.category = flags.category;
     record.schemeKind = flags.schemeKind;
     record.routeGroup = flags.routeGroup;
     record.decodedImageSource = flags.decodedImageSource;
+    pushNetworkEvent({
+      run: runName,
+      kind: "response",
+      id: record.id,
+      url: record.url,
+      method: record.method,
+      status: record.status,
+      resourceType: record.resourceType,
+      phase: currentPhase,
+      routeGroup: currentRouteGroup,
+      detailPageSlug: currentDetailPageSlug,
+      detailPageIndex: currentDetailPageIndex,
+    });
   });
 
   page.on("requestfailed", (request) => {
@@ -649,6 +832,19 @@ function attachPageCollectors(page, runName) {
     if (!record) return;
     record.failed = true;
     record.failureText = request.failure()?.errorText ?? "request failed";
+    pushNetworkEvent({
+      run: runName,
+      kind: "requestfailed",
+      id: record.id,
+      url: record.url,
+      method: record.method,
+      resourceType: record.resourceType,
+      phase: currentPhase,
+      routeGroup: currentRouteGroup,
+      detailPageSlug: currentDetailPageSlug,
+      detailPageIndex: currentDetailPageIndex,
+      failureText: record.failureText,
+    });
   });
 }
 
@@ -799,6 +995,7 @@ async function runPhase({ scenarioName, phaseName, phaseLabel, critical = true, 
   auditState.currentStep = phaseName;
   currentPhase = phaseName;
   currentRouteGroup = phaseToRouteGroup(phaseName);
+  currentPhaseStartedAt = Date.now();
 
   const scenario = auditState.scenarioProgress[scenarioName];
   if (scenario) scenario.currentPhase = phaseName;
@@ -831,6 +1028,7 @@ async function runPhase({ scenarioName, phaseName, phaseLabel, critical = true, 
         timeoutMs,
       });
       debugLog(`${scenarioName}: ${phaseLabel} timeout after ${timeoutMs}ms`);
+      await printTimeoutDebugDump(auditState.page, { scenarioName, phaseName, phaseLabel, timeoutMs });
       if (critical) {
         const fatal = new Error(warning.message);
         fatal.cause = error;
@@ -841,6 +1039,7 @@ async function runPhase({ scenarioName, phaseName, phaseLabel, critical = true, 
     throw error;
   } finally {
     clearTimeout(timeoutId);
+    currentPhaseStartedAt = null;
   }
 }
 
@@ -871,7 +1070,10 @@ async function getDetailLinks(page) {
     return Array.from(seen);
   });
   const filtered = links.filter((href) => href !== "/lakes" && href.split("/").length >= 3);
-  const limited = MAX_DETAIL_PAGES > 0 ? filtered.slice(0, MAX_DETAIL_PAGES) : filtered;
+  const slugFiltered = TRAFFIC_AUDIT_DETAIL_SLUG
+    ? filtered.filter((href) => slugFromLakePath(href) === TRAFFIC_AUDIT_DETAIL_SLUG)
+    : filtered;
+  const limited = MAX_DETAIL_PAGES > 0 ? slugFiltered.slice(0, MAX_DETAIL_PAGES) : slugFiltered;
   return {
     allLinks: filtered,
     links: limited,
@@ -895,7 +1097,16 @@ async function openSchemeViewer(page) {
   if (!(await schemeButton.count().catch(() => 0))) return;
 
   await schemeButton.click({ timeout: 3000 }).catch(() => {});
-  await waitForKnownSelectors(page, ['[role="dialog"][aria-label="Схема озера"]', 'button[aria-label="Закрити схему озера"]'], TRAFFIC_AUDIT_PHASE_TIMEOUT_MS);
+  const schemeOpened = await waitForKnownSelectors(
+    page,
+    ['[role="dialog"][aria-label="Схема озера"]', 'button[aria-label="Закрити схему озера"]'],
+    Math.min(TRAFFIC_AUDIT_PHASE_TIMEOUT_MS, 6000),
+  );
+  if (!schemeOpened) {
+    debugLog(`${page.__trafficRunName}: scheme dialog did not appear after click; continuing`);
+    return;
+  }
+
   await page.waitForTimeout(1200);
   await collectPerformance(page, page.__trafficRunName);
 
@@ -914,7 +1125,11 @@ async function openMapAndMaybePopups(page) {
   const mapButton = page.getByRole("button", { name: /карт/i }).first();
   if (!(await mapButton.count().catch(() => 0))) return;
   await mapButton.click({ timeout: 5000 }).catch(() => {});
-  await waitForKnownSelectors(page, [".dk-map-overlay", ".leaflet-container"], TRAFFIC_AUDIT_PHASE_TIMEOUT_MS);
+  const mapOpened = await waitForKnownSelectors(page, [".dk-map-overlay", ".leaflet-container"], Math.min(TRAFFIC_AUDIT_PHASE_TIMEOUT_MS, 6000));
+  if (!mapOpened) {
+    debugLog(`${page.__trafficRunName}: map overlay did not appear after click; continuing`);
+    return;
+  }
   await page.waitForTimeout(2000);
   await collectPerformance(page, page.__trafficRunName);
 
@@ -1396,6 +1611,76 @@ function topByCategory(recordsForRun, categories, limit = 20) {
   return top(recordsForRun, (record) => categories.includes(record.category), limit);
 }
 
+function summarizeJsResources(recordsForRun) {
+  const jsRecords = recordsForRun.filter((record) => record.category === "next_static_js");
+  const byUrl = new Map();
+
+  for (const record of jsRecords) {
+    const existing = byUrl.get(record.url);
+    if (existing) {
+      existing.count += 1;
+      continue;
+    }
+
+    byUrl.set(record.url, {
+      url: record.url,
+      count: 1,
+      knownResourceBytes: record.knownResourceBytes ?? 0,
+      knownTransferBytes: record.knownTransferBytes ?? 0,
+      routeGroup: record.routeGroup,
+      phase: record.phase,
+      status: record.status,
+      resourceType: record.resourceType,
+      cacheControl: record.responseHeaders["cache-control"] ?? null,
+      isImmutableStatic: isSameOriginUrl(record.url) && isImmutableCacheable(record.responseHeaders),
+      isThirdPartyAnalytics: !isSameOriginUrl(record.url) && isAnalyticsRequest(record.url, record.responseHeaders),
+    });
+  }
+
+  const uniqueResources = [...byUrl.values()];
+  const jsTopUniqueResources = [...uniqueResources]
+    .sort((a, b) => b.knownResourceBytes - a.knownResourceBytes)
+    .slice(0, 20);
+
+  const repeatedResources = uniqueResources
+    .filter((item) => item.count > 1)
+    .map((item) => ({
+      ...item,
+      repeatedBytes: item.knownResourceBytes * (item.count - 1),
+    }))
+    .sort((a, b) => {
+      if (b.count !== a.count) return b.count - a.count;
+      return b.knownResourceBytes - a.knownResourceBytes;
+    });
+
+  const jsRepeatedResources = repeatedResources.slice(0, 20);
+  const jsRepeatedImmutableBytes = sumArray(repeatedResources.filter((item) => item.isImmutableStatic).map((item) => item.repeatedBytes));
+  const jsRepeatedThirdPartyBytes = sumArray(repeatedResources.filter((item) => item.isThirdPartyAnalytics).map((item) => item.repeatedBytes));
+  const jsRepeatedHardBytes = sumArray(
+    repeatedResources
+      .filter((item) => !item.isImmutableStatic)
+      .filter((item) => !item.isThirdPartyAnalytics)
+      .map((item) => item.repeatedBytes),
+  );
+
+  const jsUniqueBytes = sumArray([...byUrl.values()].map((item) => item.knownResourceBytes));
+  const jsTotalBytes = sumArray(jsRecords.map((record) => record.knownResourceBytes ?? 0));
+
+  return {
+    jsRequests: jsRecords.length,
+    jsUniqueResourceCount: byUrl.size,
+    jsRepeatedResourceCount: repeatedResources.length,
+    jsUniqueBytes,
+    jsTotalBytes,
+    jsRepeatedBytes: jsTotalBytes - jsUniqueBytes,
+    jsRepeatedHardBytes,
+    jsRepeatedImmutableBytes,
+    jsRepeatedThirdPartyBytes,
+    jsTopUniqueResources,
+    jsRepeatedResources,
+  };
+}
+
 function schemeRecommendationForRecord(record) {
   if (record.category === "scheme_failed") {
     return "Scheme URL failed to load in public UI. Replace with a reachable WebP storage asset or clear the broken scheme_image_url in APP/data.";
@@ -1612,10 +1897,18 @@ function collectViolations(recordsForRun, summary, detailPagesVisited) {
       threshold: SUPABASE_STORAGE_HUGE_THRESHOLD_BYTES,
     });
   }
-  if ((summary?.jsKnownResourceBytes ?? 0) > JS_BUNDLE_HUGE_THRESHOLD_BYTES) {
+  if ((summary?.jsMaxRouteBytes ?? 0) > JS_BUNDLE_HUGE_THRESHOLD_BYTES) {
     violations.push({
-      type: "js_bundle_too_high",
-      knownResourceBytes: summary.jsKnownResourceBytes,
+      type: "js_unique_bundle_too_high",
+      route: summary.jsMaxRouteRoute ?? null,
+      knownResourceBytes: summary.jsMaxRouteBytes,
+      threshold: JS_BUNDLE_HUGE_THRESHOLD_BYTES,
+    });
+  }
+  if ((summary?.jsRepeatedHardBytes ?? summary?.jsRepeatedBytes ?? 0) > JS_BUNDLE_HUGE_THRESHOLD_BYTES) {
+    violations.push({
+      type: "js_repeated_downloads_too_high",
+      knownResourceBytes: summary.jsRepeatedHardBytes ?? summary.jsRepeatedBytes,
       threshold: JS_BUNDLE_HUGE_THRESHOLD_BYTES,
     });
   }
@@ -1656,6 +1949,7 @@ function collectViolations(recordsForRun, summary, detailPagesVisited) {
 
 function summarize(recordsForRun, detailPageBreakdown = [], detailPagesVisited = 0) {
   const imageRecords = recordsForRun.filter(imageLike);
+  const jsSummary = summarizeJsResources(recordsForRun);
   const summary = {
     totalRequests: recordsForRun.length,
     totalKnownTransferBytes: sumTransfer(recordsForRun, () => true),
@@ -1684,8 +1978,17 @@ function summarize(recordsForRun, detailPageBreakdown = [], detailPagesVisited =
     nextImageKnownTransferBytes: sumTransfer(recordsForRun, (record) => record.flags.isNextImageOptimizer),
     nextImageKnownResourceBytes: sum(recordsForRun, (record) => record.flags.isNextImageOptimizer),
     nextImageKnownBytes: sum(recordsForRun, (record) => record.flags.isNextImageOptimizer),
-    jsRequests: count(recordsForRun, (record) => record.category === "next_static_js"),
-    jsKnownResourceBytes: sum(recordsForRun, (record) => record.category === "next_static_js"),
+    jsRequests: jsSummary.jsRequests,
+    jsKnownResourceBytes: jsSummary.jsTotalBytes,
+    jsTotalBytes: jsSummary.jsTotalBytes,
+    jsUniqueBytes: jsSummary.jsUniqueBytes,
+    jsRepeatedBytes: jsSummary.jsRepeatedBytes,
+    jsUniqueResourceCount: jsSummary.jsUniqueResourceCount,
+    jsRepeatedResourceCount: jsSummary.jsRepeatedResourceCount,
+    jsTopUniqueResources: jsSummary.jsTopUniqueResources,
+    jsRepeatedResources: jsSummary.jsRepeatedResources,
+    jsMaxRouteRoute: null,
+    jsMaxRouteBytes: 0,
     cssRequests: count(recordsForRun, (record) => record.category === "next_static_css"),
     cssKnownResourceBytes: sum(recordsForRun, (record) => record.category === "next_static_css"),
     fontRequests: count(recordsForRun, (record) => record.category === "font"),
@@ -1750,6 +2053,13 @@ function summarize(recordsForRun, detailPageBreakdown = [], detailPagesVisited =
     top20UnknownExternal: topByCategory(recordsForRun, ["unknown_external"]),
     detailPageBreakdown,
   };
+  const routeHotspots = Array.isArray(routeBundleStats)
+    ? [...routeBundleStats]
+        .filter((row) => row && typeof row.route === "string")
+        .sort((a, b) => Number(b.firstLoadUncompressedJsBytes ?? 0) - Number(a.firstLoadUncompressedJsBytes ?? 0))
+    : [];
+  summary.jsMaxRouteRoute = routeHotspots[0]?.route ?? null;
+  summary.jsMaxRouteBytes = Number(routeHotspots[0]?.firstLoadUncompressedJsBytes ?? summary.jsUniqueBytes ?? 0) || 0;
   summary.violations = collectViolations(recordsForRun, summary, detailPagesVisited);
   return summary;
 }
@@ -1948,11 +2258,24 @@ function recommendationLines(report) {
     lines.push("Map tiles still cost traffic. Consider lazy-loading the map, shrinking the initial viewport, or improving tile cache behavior.");
   }
 
-  if ((cold.jsKnownResourceBytes ?? 0) > JS_BUNDLE_HUGE_THRESHOLD_BYTES) {
+  if ((cold.jsMaxRouteBytes ?? 0) > JS_BUNDLE_HUGE_THRESHOLD_BYTES) {
     const bundleRoutes = formatRouteBundleHotspots(routeBundleStats);
     const bundleList = topJsBundles.map((item) => `${topOffenderLabel(item)} (${formatBytes(item.knownResourceBytes)})`).join(", ");
     const routeList = bundleRoutes.length ? ` Top route bundles: ${bundleRoutes.join("; ")}.` : "";
-    lines.push(`JS bundle weight is high (${formatBytes(cold.jsKnownResourceBytes)}). Inspect the bundle analyzer and split heavy code paths with dynamic imports.${routeList} Top network JS resources: ${bundleList}.`);
+    lines.push(`JS unique bundle is high (${formatBytes(cold.jsMaxRouteBytes)} on ${cold.jsMaxRouteRoute ?? "n/a"}). Inspect the bundle analyzer and split heavy code paths with dynamic imports.${routeList} Top network JS resources: ${bundleList}.`);
+  }
+
+  if ((cold.jsRepeatedBytes ?? 0) > JS_BUNDLE_HUGE_THRESHOLD_BYTES) {
+    const hardBytes = cold.jsRepeatedHardBytes ?? 0;
+    const repeatedList = (cold.jsRepeatedResources ?? [])
+      .slice(0, 3)
+      .map((item) => `${topOffenderLabel(item)} ×${formatCount(item.count)} (${formatBytes(item.repeatedBytes)})`)
+      .join(", ");
+    if (hardBytes > JS_BUNDLE_HUGE_THRESHOLD_BYTES) {
+      lines.push(`JS repeated downloads are high (${formatBytes(hardBytes)} hard bytes). Inspect cache headers for repeated first-party assets.${repeatedList ? ` Top repeated JS: ${repeatedList}.` : ""}`);
+    } else if ((cold.jsRepeatedThirdPartyBytes ?? 0) > 0 || (cold.jsRepeatedImmutableBytes ?? 0) > 0) {
+      lines.push(`JS repeated requests are expected under multi-page audit replay (${formatBytes(cold.jsRepeatedBytes)} total, ${formatBytes(cold.jsRepeatedImmutableBytes ?? 0)} immutable, ${formatBytes(cold.jsRepeatedThirdPartyBytes ?? 0)} third-party).${repeatedList ? ` Top repeated JS: ${repeatedList}.` : ""}`);
+    }
   }
 
   if ((coldWeather.weatherKnownResourceBytes ?? 0) > 0) {
@@ -2223,6 +2546,8 @@ async function main() {
       auditState.page.removeAllListeners("request");
       auditState.page.removeAllListeners("response");
       auditState.page.removeAllListeners("requestfailed");
+      auditState.page.removeAllListeners("console");
+      auditState.page.removeAllListeners("pageerror");
       attachPageCollectors(auditState.page, "warm");
       warmScenario = await runScenario(auditState.page, "warm");
     } else {
