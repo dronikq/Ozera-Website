@@ -4,6 +4,7 @@ import { createJiti } from "jiti";
 
 const jiti = createJiti(import.meta.url);
 const {
+  getGalleryDisplayImage,
   getGalleryMainImage,
   getGalleryThumbImage,
   getLakeCardImage,
@@ -101,17 +102,17 @@ test("missing thumb falls back to medium", () => {
     image_url: "https://cdn.example.com/legacy.jpg",
   });
 
-  assert.equal(getLakeCardImage(lake), "https://cdn.example.com/medium.webp");
+  assert.equal(getGalleryThumbImage(lake.lake_images?.[0], lake), "https://cdn.example.com/medium.webp");
 });
 
-test("missing variants falls back to legacy image_url", () => {
+test("gallery thumb falls back to legacy image_url when variants are missing", () => {
   const lake = makeLake({
     lake_images: [makeImage({ medium_url: null, thumb_url: null, original_url: "https://cdn.example.com/original-only.jpg" })],
     image_url: "https://cdn.example.com/legacy.jpg",
   });
 
-  assert.equal(getLakeCardImage(lake), "https://cdn.example.com/legacy.jpg");
-  assert.equal(getLakeDetailImage(lake), "https://cdn.example.com/legacy.jpg");
+  assert.equal(getGalleryThumbImage(lake.lake_images?.[0], lake), "https://cdn.example.com/legacy.jpg");
+  assert.equal(getGalleryDisplayImage(lake.lake_images?.[0], lake), "https://cdn.example.com/legacy.jpg");
 });
 
 test("original_url is never selected", () => {
@@ -120,15 +121,21 @@ test("original_url is never selected", () => {
     image_url: "https://cdn.example.com/legacy.jpg",
   });
 
-  assert.equal(getGalleryMainImage(lake.lake_images?.[0], lake), "https://cdn.example.com/legacy.jpg");
   assert.equal(getGalleryThumbImage(lake.lake_images?.[0], lake), "https://cdn.example.com/legacy.jpg");
+  assert.equal(getGalleryDisplayImage(lake.lake_images?.[0], lake), "https://cdn.example.com/legacy.jpg");
 });
 
-test("gallery prefers medium_url", () => {
+test("gallery display prefers medium_url", () => {
   const image = makeImage();
 
+  assert.equal(getGalleryDisplayImage(image, makeLake()), "https://cdn.example.com/medium.webp");
   assert.equal(getGalleryMainImage(image, makeLake()), "https://cdn.example.com/medium.webp");
-  assert.equal(getGalleryThumbImage(image, makeLake()), "https://cdn.example.com/medium.webp");
+});
+
+test("gallery thumb prefers thumb_url", () => {
+  const image = makeImage();
+
+  assert.equal(getGalleryThumbImage(image, makeLake()), "https://cdn.example.com/thumb.webp");
 });
 
 test("scheme uses scheme_image_url", () => {

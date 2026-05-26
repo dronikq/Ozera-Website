@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { supabase, type Lake, type LakeImage, type LakeUpdate } from "@/lib/supabase";
 import { getLakeRouteSlug } from "@/lib/lake-slug";
 import {
-  getGalleryMainImage,
+  getGalleryDisplayImage,
   getGalleryThumbImage,
   getLakeOgImage,
   getLakeSchemeImage,
@@ -148,14 +148,14 @@ export default async function LakePage({
       ? lakeImages.map((image) => ({
           id: image.id,
           alt: lake.name,
-          mainUrl: getGalleryMainImage(image, lake),
+          mainUrl: getGalleryDisplayImage(image, lake),
           thumbUrl: getGalleryThumbImage(image, lake),
         }))
       : [
           {
             id: lake.id,
             alt: lake.name,
-            mainUrl: getGalleryMainImage(lake),
+            mainUrl: getGalleryDisplayImage(lake),
             thumbUrl: getGalleryThumbImage(lake),
           },
         ].filter((image) => image.mainUrl !== "/ozera_splash.png" || image.thumbUrl !== "/ozera_splash.png");

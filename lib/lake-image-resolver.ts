@@ -201,10 +201,14 @@ export function getLakeSchemeImage(lake: LakeImageOwner | null | undefined) {
   return cleanUrl(lake?.scheme_image_url);
 }
 
-export function getGalleryMainImage(imageOrLake: ImageLike | LakeImageOwner | null | undefined, lake?: LakeImageOwner | null) {
+export function getGalleryDisplayImage(imageOrLake: ImageLike | LakeImageOwner | null | undefined, lake?: LakeImageOwner | null) {
   return resolveImageLikeSelection("lake_gallery", imageOrLake, lake, ["medium_url", "thumb_url"]).url;
 }
 
+export function getGalleryMainImage(imageOrLake: ImageLike | LakeImageOwner | null | undefined, lake?: LakeImageOwner | null) {
+  return getGalleryDisplayImage(imageOrLake, lake);
+}
+
 export function getGalleryThumbImage(imageOrLake: ImageLike | LakeImageOwner | null | undefined, lake?: LakeImageOwner | null) {
-  return resolveImageLikeSelection("lake_gallery", imageOrLake, lake, ["medium_url", "thumb_url"]).url;
+  return resolveImageLikeSelection("lake_gallery", imageOrLake, lake, ["thumb_url", "medium_url"]).url;
 }
