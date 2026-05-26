@@ -6,6 +6,7 @@ export default function LakeSchemeViewer({ src }: { src: string }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const closeTimerRef = useRef<number | null>(null);
 
   function openViewer() {
@@ -16,6 +17,7 @@ export default function LakeSchemeViewer({ src }: { src: string }) {
 
     setMounted(true);
     setVisible(false);
+    setLoadError(false);
     setOpen(true);
     requestAnimationFrame(() => setVisible(true));
   }
@@ -106,14 +108,21 @@ export default function LakeSchemeViewer({ src }: { src: string }) {
               transition: "transform 180ms ease, opacity 180ms ease",
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={src}
-              alt="Схема озера"
-              loading="lazy"
-              decoding="async"
-              className="block max-h-[calc(95vh-1rem)] max-w-[calc(95vw-1rem)] object-contain"
-            />
+            {loadError ? (
+              <div className="flex min-h-[220px] min-w-[280px] max-w-[calc(95vw-1rem)] items-center justify-center px-8 py-12 text-center text-white/80">
+                Схему не вдалося завантажити. Закрийте вікно і спробуйте пізніше.
+              </div>
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={src}
+                alt="Схема озера"
+                loading="lazy"
+                decoding="async"
+                onError={() => setLoadError(true)}
+                className="block max-h-[calc(95vh-1rem)] max-w-[calc(95vw-1rem)] object-contain"
+              />
+            )}
           </div>
         </div>
       )}

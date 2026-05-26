@@ -65,22 +65,25 @@ export async function GET(req: NextRequest) {
   const lat  = searchParams.get("lat");
   const lng  = searchParams.get("lng");
   const days = searchParams.get("days") ?? "1";
+  const cacheHeaders = {
+    "Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600",
+  };
 
   if (!lat || !lng) {
-    return NextResponse.json({ error: "lat and lng required" }, { status: 400 });
+    return NextResponse.json({ error: "lat and lng required" }, { status: 400, headers: cacheHeaders });
   }
 
   // Try Open-Meteo first
   try {
     const data = await fetchOpenMeteo(lat, lng, days);
-    return NextResponse.json(data);
+    return NextResponse.json(data, { headers: cacheHeaders });
   } catch { /* fallthrough */ }
 
   // Fallback to Yr.no
   try {
     const data = await fetchYrNo(lat, lng);
-    return NextResponse.json(data);
+    return NextResponse.json(data, { headers: cacheHeaders });
   } catch {
-    return NextResponse.json({ error: "all weather sources unavailable" }, { status: 502 });
+    return NextResponse.json({ error: "all weather sources unavailable" }, { status: 502, headers: cacheHeaders });
   }
 }

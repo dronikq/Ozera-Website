@@ -40,8 +40,6 @@ const PHASE_KEYS = [
   "static",
 ];
 const STATIC_CATEGORIES = new Set(["next_static_js", "next_static_css", "font", "local_static"]);
-const LAKE_CATEGORIES = new Set(["lake_thumb", "lake_medium", "lake_original", "lake_legacy", "lake_placeholder"]);
-
 fs.mkdirSync(TMP_DIR, { recursive: true });
 
 const base = new URL(BASE_URL);
@@ -374,10 +372,6 @@ function isSameOriginRequest(rawUrl) {
   }
 }
 
-function isLakeImageVariant(imageVariant) {
-  return LAKE_CATEGORIES.has(`lake_${imageVariant}`);
-}
-
 function isSchemeRequest(rawUrl, decodedUrl) {
   const checkUrl = `${rawUrl} ${decodedUrl}`;
   return /\bscheme\b/i.test(checkUrl) || /\/scheme[\-_/.?]/i.test(checkUrl) || /scheme\.(png|jpe?g|webp|avif|gif)$/i.test(checkUrl);
@@ -500,25 +494,35 @@ function classify(rawUrl, resourceType, responseHeaders = {}, status = null, rou
   const isSchemeJpeg = isSchemeFormatCandidate && (isJpegLike(rawUrl, schemeContentType) || isJpegLike(decoded, schemeContentType));
 
   let imageVariant = "unknown";
+  let lakeImageClass = null;
   if (imageLike || isSupabaseStorage || isNextImageOptimizer) {
     const checkUrl = `${rawUrl} ${decoded}`;
-    if (checkUrl.includes("/original/")) imageVariant = "original";
-    else if (checkUrl.includes("/medium/")) imageVariant = "medium";
-    else if (checkUrl.includes("/thumb/")) imageVariant = "thumb";
-    else if (isSameOrigin && /placeholder|ozera_splash|icon\.png/i.test(url.pathname)) imageVariant = "placeholder";
-    else if (isSupabaseStorage && imageLike && !isSchemeImage) imageVariant = "legacy";
+    const isWebp = isWebpLike(rawUrl, contentType) || isWebpLike(decoded, contentType);
+    if (checkUrl.includes("/original/")) {
+      imageVariant = "original";
+      lakeImageClass = "lake_original";
+    } else if (checkUrl.includes("/medium/")) {
+      imageVariant = "medium";
+      lakeImageClass = isWebp ? "lake_medium_webp" : "lake_medium_legacy";
+    } else if (checkUrl.includes("/thumb/")) {
+      imageVariant = "thumb";
+      lakeImageClass = isWebp ? "lake_thumb_webp" : "lake_thumb_legacy";
+    } else if (isSameOrigin && /placeholder|ozera_splash|icon\.png/i.test(url.pathname)) {
+      imageVariant = "placeholder";
+      lakeImageClass = "lake_placeholder";
+    } else if (isSupabaseStorage && imageLike && !isSchemeImage) {
+      imageVariant = "legacy";
+      lakeImageClass = "lake_legacy_image_url";
+    }
   }
   if (isSchemeImage) imageVariant = "unknown";
 
-  let offenderCategory = "unknown_external";
+  let offenderCategory = lakeImageClass || "unknown_external";
   if (isSchemeImage) {
-    if (isSupabaseStorage) offenderCategory = "scheme_storage";
-    else if (isSchemeWebp) offenderCategory = "scheme_webp";
-    else if (isSchemePng) offenderCategory = "scheme_png";
-    else if (isSchemeJpeg) offenderCategory = "scheme_jpeg";
+    if (isSchemeWebp) offenderCategory = "scheme_webp";
+    else if (isSupabaseStorage || isSameOrigin) offenderCategory = "scheme_legacy";
     else offenderCategory = "scheme_external";
   }
-  else if (isLakeImageVariant(imageVariant)) offenderCategory = `lake_${imageVariant}`;
   else if (isTileProvider) offenderCategory = "map_tile";
   else if (isWeatherApi) offenderCategory = "weather_api";
   else if (isSupabaseRest) offenderCategory = "supabase_rest";
@@ -561,7 +565,8 @@ function classify(rawUrl, resourceType, responseHeaders = {}, status = null, rou
     isSchemeImage,
     isSchemeFailed,
     imageVariant,
-    category: isSchemeImage ? (isSupabaseStorage ? "scheme_storage" : "scheme_external") : offenderCategory,
+    lakeImageClass,
+    category: offenderCategory,
     schemeKind: isSchemeWebp ? "webp" : isSchemePng ? "png" : isSchemeJpeg ? "jpeg" : null,
     routeGroup,
     decodedImageSource: decoded !== rawUrl ? decoded : null,
@@ -1276,8 +1281,8 @@ function phasePredicate(phase) {
 function phaseSummary(recordsForRun, phase) {
   const phaseRecords = recordsForRun.filter(phasePredicate(phase));
   const imageRecords = phaseRecords.filter(imageLike);
-  const schemeStorageRecords = phaseRecords.filter((record) => record.category === "scheme_storage");
-  const schemeWebpRecords = phaseRecords.filter((record) => record.schemeKind === "webp");
+  const schemeWebpRecords = phaseRecords.filter((record) => record.category === "scheme_webp");
+  const schemeLegacyRecords = phaseRecords.filter((record) => record.category === "scheme_legacy");
   const schemeExternalRecords = phaseRecords.filter((record) => record.category === "scheme_external");
   const schemePngRecords = phaseRecords.filter((record) => record.schemeKind === "png");
   const schemeJpegRecords = phaseRecords.filter((record) => record.schemeKind === "jpeg");
@@ -1308,10 +1313,10 @@ function phaseSummary(recordsForRun, phase) {
     weatherKnownResourceBytes: sum(phaseRecords, (record) => record.category === "weather_api"),
     externalRequests: count(phaseRecords, (record) => !isSameOriginUrl(record.url)),
     externalKnownResourceBytes: sum(phaseRecords, (record) => !isSameOriginUrl(record.url)),
-    schemeStorageRequests: schemeStorageRecords.length,
-    schemeStorageKnownResourceBytes: sum(schemeStorageRecords, () => true),
     schemeWebpRequests: schemeWebpRecords.length,
     schemeWebpKnownResourceBytes: sum(schemeWebpRecords, () => true),
+    schemeLegacyRequests: schemeLegacyRecords.length,
+    schemeLegacyKnownResourceBytes: sum(schemeLegacyRecords, () => true),
     schemeExternalRequests: schemeExternalRecords.length,
     schemeExternalKnownResourceBytes: sum(schemeExternalRecords, () => true),
     schemePngRequests: schemePngRecords.length,
@@ -1391,6 +1396,60 @@ function topByCategory(recordsForRun, categories, limit = 20) {
   return top(recordsForRun, (record) => categories.includes(record.category), limit);
 }
 
+function schemeRecommendationForRecord(record) {
+  if (record.category === "scheme_failed") {
+    return "Scheme URL failed to load in public UI. Replace with a reachable WebP storage asset or clear the broken scheme_image_url in APP/data.";
+  }
+  if (record.category === "scheme_external" && record.schemeKind === "jpeg") {
+    return "External JPEG scheme detected. Replace with a WebP storage upload from APP/admin or during data migration.";
+  }
+  if (record.category === "scheme_external") {
+    return "External scheme URL detected. Replace with a storage WebP asset if one exists; otherwise clean up the lake scheme source in APP/data.";
+  }
+  if (record.category === "scheme_legacy") {
+    return "Legacy scheme storage path detected. Migrate the lake scheme to the WebP storage pipeline.";
+  }
+  if (record.category === "scheme_png" || record.category === "scheme_jpeg") {
+    return "Non-WebP scheme detected. Re-upload/convert the scheme asset to WebP in APP/admin or via migration.";
+  }
+  return "Review the scheme source in APP/data and prefer the storage WebP asset.";
+}
+
+function collectSchemeDataOffenders(recordsForRun) {
+  const offenders = [];
+  for (const record of recordsForRun) {
+    const isSchemeRelated =
+      record.category === "scheme_external" ||
+      record.category === "scheme_legacy" ||
+      record.category === "scheme_png" ||
+      record.category === "scheme_jpeg" ||
+      record.flags.isSchemeFailed;
+
+    if (!isSchemeRelated) continue;
+
+    const lakeUrl = record.detailPageSlug ?? null;
+    offenders.push({
+      lakeUrl,
+      lakeSlug: lakeUrl ? slugFromLakePath(lakeUrl) : null,
+      url: record.url,
+      status: record.status,
+      contentType: record.responseHeaders?.["content-type"] ?? null,
+      category: record.category,
+      schemeKind: record.schemeKind ?? null,
+      type: record.flags.isSchemeFailed ? "scheme_failed" : record.category,
+      recommendation: schemeRecommendationForRecord(record),
+    });
+  }
+
+  const seen = new Set();
+  return offenders.filter((item) => {
+    const key = `${item.lakeUrl}|${item.url}|${item.type}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 function groupBy(recordsForRun, selector) {
   const grouped = new Map();
   for (const record of recordsForRun) {
@@ -1463,16 +1522,25 @@ function repeatedDownloads(coldRecords, warmRecords) {
 function collectViolations(recordsForRun, summary, detailPagesVisited) {
   const violations = [];
   for (const record of recordsForRun) {
-    if (record.imageVariant === "original") {
+    if (record.category === "lake_original") {
       violations.push({ type: "original_path_loaded", url: record.url, routeGroup: record.routeGroup, phase: record.phase, knownTransferBytes: record.knownTransferBytes, knownResourceBytes: record.knownResourceBytes, bytes: record.knownResourceBytes });
     }
-    if (record.imageVariant === "legacy") {
+    if (record.category === "lake_legacy_image_url") {
       violations.push({ type: "legacy_lake_image_loaded", url: record.url, routeGroup: record.routeGroup, phase: record.phase, knownTransferBytes: record.knownTransferBytes, knownResourceBytes: record.knownResourceBytes, bytes: record.knownResourceBytes });
     }
-    if (record.imageVariant === "legacy" && ["home", "catalog", "detail", "map"].includes(record.routeGroup)) {
+    if (record.category === "lake_thumb_legacy" || record.category === "lake_medium_legacy") {
+      violations.push({ type: "legacy_lake_variant_loaded", url: record.url, routeGroup: record.routeGroup, phase: record.phase, knownTransferBytes: record.knownTransferBytes, knownResourceBytes: record.knownResourceBytes, bytes: record.knownResourceBytes });
+    }
+    if (record.category === "lake_legacy_image_url" && ["home", "catalog", "detail", "map"].includes(record.routeGroup)) {
       violations.push({ type: "public_ui_loaded_lake_image_without_variant", url: record.url, routeGroup: record.routeGroup, phase: record.phase, knownTransferBytes: record.knownTransferBytes, knownResourceBytes: record.knownResourceBytes, bytes: record.knownResourceBytes });
     }
-  if (record.flags.isWeatherApi && (record.responseHeaders["cache-control"] || "").includes("no-store")) {
+    if (record.category === "lake_medium_webp" && ["home", "catalog", "map"].includes(record.routeGroup)) {
+      violations.push({ type: "catalog_should_use_thumb_variant", url: record.url, routeGroup: record.routeGroup, phase: record.phase, knownTransferBytes: record.knownTransferBytes, knownResourceBytes: record.knownResourceBytes, bytes: record.knownResourceBytes });
+    }
+    if (record.category === "lake_thumb_webp" && record.routeGroup === "detail" && ["detail-page", "detail-gallery"].includes(record.phase)) {
+      violations.push({ type: "detail_should_use_medium_variant", url: record.url, routeGroup: record.routeGroup, phase: record.phase, knownTransferBytes: record.knownTransferBytes, knownResourceBytes: record.knownResourceBytes, bytes: record.knownResourceBytes });
+    }
+    if (record.flags.isWeatherApi && (record.responseHeaders["cache-control"] || "").includes("no-store")) {
       violations.push({ type: "no_store_weather_request", url: record.url, routeGroup: record.routeGroup, phase: record.phase, cacheControl: record.responseHeaders["cache-control"] });
     }
     if (record.url.includes("/api/") && !record.responseHeaders["cache-control"]) {
@@ -1489,7 +1557,7 @@ function collectViolations(recordsForRun, summary, detailPagesVisited) {
         violations.push({ type: "scheme_loaded_before_user_action", url: record.url, routeGroup: record.routeGroup, phase: record.phase, knownTransferBytes: record.knownTransferBytes, knownResourceBytes: record.knownResourceBytes, bytes: record.knownResourceBytes });
       }
     }
-    if (record.category === "lake_thumb" || record.category === "lake_medium" || record.category === "lake_original" || record.category === "lake_legacy" || record.category === "lake_placeholder") {
+    if (record.category === "lake_thumb_webp" || record.category === "lake_thumb_legacy" || record.category === "lake_medium_webp" || record.category === "lake_medium_legacy" || record.category === "lake_original" || record.category === "lake_legacy_image_url" || record.category === "lake_placeholder") {
       if (record.phase === "map-open") {
         violations.push({ type: "map_loaded_lake_images_initially", url: record.url, routeGroup: record.routeGroup, phase: record.phase, knownTransferBytes: record.knownTransferBytes, knownResourceBytes: record.knownResourceBytes, bytes: record.knownResourceBytes });
       }
@@ -1634,10 +1702,10 @@ function summarize(recordsForRun, detailPageBreakdown = [], detailPagesVisited =
     weatherKnownTransferBytes: sumTransfer(recordsForRun, (record) => record.category === "weather_api"),
     weatherKnownResourceBytes: sum(recordsForRun, (record) => record.category === "weather_api"),
     weatherKnownBytes: sum(recordsForRun, (record) => record.category === "weather_api"),
-    schemeStorageRequests: count(recordsForRun, (record) => record.category === "scheme_storage"),
-    schemeStorageKnownResourceBytes: sum(recordsForRun, (record) => record.category === "scheme_storage"),
-    schemeWebpRequests: count(recordsForRun, (record) => record.schemeKind === "webp"),
-    schemeWebpKnownResourceBytes: sum(recordsForRun, (record) => record.schemeKind === "webp"),
+    schemeWebpRequests: count(recordsForRun, (record) => record.category === "scheme_webp"),
+    schemeWebpKnownResourceBytes: sum(recordsForRun, (record) => record.category === "scheme_webp"),
+    schemeLegacyRequests: count(recordsForRun, (record) => record.category === "scheme_legacy"),
+    schemeLegacyKnownResourceBytes: sum(recordsForRun, (record) => record.category === "scheme_legacy"),
     schemeExternalRequests: count(recordsForRun, (record) => record.category === "scheme_external"),
     schemeExternalKnownResourceBytes: sum(recordsForRun, (record) => record.category === "scheme_external"),
     schemePngRequests: count(recordsForRun, (record) => record.schemeKind === "png"),
@@ -1660,15 +1728,20 @@ function summarize(recordsForRun, detailPageBreakdown = [], detailPagesVisited =
     top20SupabaseMediumImageTransferRequests: topByTransfer(recordsForRun, (record) => record.flags.isSupabaseStorage && record.imageVariant === "medium"),
     top20ExternalImageTransferRequests: topByTransfer(recordsForRun, (record) => record.flags.isExternalImage),
     top20LocalAssetTransferRequests: topByTransfer(recordsForRun, (record) => record.flags.isStaticAsset && isSameOriginUrl(record.url)),
-    top20LakeThumb: topByCategory(recordsForRun, ["lake_thumb"]),
-    top20LakeMedium: topByCategory(recordsForRun, ["lake_medium"]),
-    top20SchemeImages: topByCategory(recordsForRun, ["scheme_external", "scheme_webp", "scheme_png", "scheme_jpeg", "scheme_storage"]),
-    top20SchemeStorage: topByCategory(recordsForRun, ["scheme_storage"]),
+    top20LakeThumbWebp: topByCategory(recordsForRun, ["lake_thumb_webp"]),
+    top20LakeThumbLegacy: topByCategory(recordsForRun, ["lake_thumb_legacy"]),
+    top20LakeMediumWebp: topByCategory(recordsForRun, ["lake_medium_webp"]),
+    top20LakeMediumLegacy: topByCategory(recordsForRun, ["lake_medium_legacy"]),
+    top20LakeOriginal: topByCategory(recordsForRun, ["lake_original"]),
+    top20LakeLegacyImageUrl: topByCategory(recordsForRun, ["lake_legacy_image_url"]),
+    top20SchemeImages: topByCategory(recordsForRun, ["scheme_external", "scheme_webp", "scheme_legacy", "scheme_png", "scheme_jpeg"]),
     top20SchemeWebp: top(recordsForRun, (record) => record.schemeKind === "webp"),
+    top20SchemeLegacy: topByCategory(recordsForRun, ["scheme_legacy"]),
     top20SchemeExternal: topByCategory(recordsForRun, ["scheme_external"]),
     top20SchemePng: top(recordsForRun, (record) => record.schemeKind === "png"),
     top20SchemeJpeg: top(recordsForRun, (record) => record.schemeKind === "jpeg"),
     top20SchemeFailed: top(recordsForRun, (record) => record.flags.isSchemeFailed),
+    schemeDataOffenders: collectSchemeDataOffenders(recordsForRun),
     top20MapTiles: topByCategory(recordsForRun, ["map_tile"]),
     top20JsBundles: topByCategory(recordsForRun, ["next_static_js"]),
     top20Css: topByCategory(recordsForRun, ["next_static_css"]),
@@ -1772,11 +1845,15 @@ function phaseRow(summary, phase) {
 
 function buildTopOffenderTable(summary, keys) {
   const labels = {
-    top20LakeThumb: "lake_thumb",
-    top20LakeMedium: "lake_medium",
+    top20LakeThumbWebp: "lake_thumb_webp",
+    top20LakeThumbLegacy: "lake_thumb_legacy",
+    top20LakeMediumWebp: "lake_medium_webp",
+    top20LakeMediumLegacy: "lake_medium_legacy",
+    top20LakeOriginal: "lake_original",
+    top20LakeLegacyImageUrl: "lake_legacy_image_url",
     top20SchemeImages: "scheme_images",
-    top20SchemeStorage: "scheme_storage",
     top20SchemeWebp: "scheme_webp",
+    top20SchemeLegacy: "scheme_legacy",
     top20SchemeExternal: "scheme_external",
     top20SchemePng: "scheme_png",
     top20SchemeJpeg: "scheme_jpeg",
@@ -1813,7 +1890,7 @@ function recommendationLines(report) {
   const detailPagesVisited = report.totalDetailPagesVisited || 0;
   const topJsBundles = (cold.top20JsBundles ?? []).slice(0, 3);
   const topSchemeOffenders = (cold.top20SchemeImages ?? []).slice(0, 3);
-  const topSchemeStorage = (cold.top20SchemeStorage ?? []).slice(0, 3);
+  const topSchemeLegacy = (cold.top20SchemeLegacy ?? []).slice(0, 3);
   const topSchemeExternal = (cold.top20SchemeExternal ?? []).slice(0, 3);
   const topSchemePng = (cold.top20SchemePng ?? []).slice(0, 3);
   const topSchemeJpeg = (cold.top20SchemeJpeg ?? []).slice(0, 3);
@@ -1832,12 +1909,12 @@ function recommendationLines(report) {
     lines.push(`Scheme images are still expensive (${formatBytes(schemeOffenderBytes)} across top offenders: ${schemeTop}). Migrate scheme assets into the optimized Storage pipeline, then serve WebP thumb/full variants from immutable hashed paths.`);
   }
 
-  const schemeStorageBytes = sumArray((cold.top20SchemeStorage ?? []).map((item) => item.knownResourceBytes));
-  if (schemeStorageBytes > 0) {
-    const schemeStorageTop = topSchemeStorage
+  const schemeLegacyBytes = sumArray((cold.top20SchemeLegacy ?? []).map((item) => item.knownResourceBytes));
+  if (schemeLegacyBytes > 0) {
+    const schemeLegacyTop = topSchemeLegacy
       .map((item) => `${topOffenderLabel(item)} (${formatBytes(item.knownResourceBytes)})`)
       .join(", ");
-    lines.push(`Scheme storage WebP: ${formatBytes(schemeStorageBytes)} across ${schemeStorageTop || "n/a"}.`);
+    lines.push(`Scheme legacy remaining: ${formatBytes(schemeLegacyBytes)} across ${schemeLegacyTop || "n/a"}.`);
   }
 
   const schemeExternalBytes = sumArray((cold.top20SchemeExternal ?? []).map((item) => item.knownResourceBytes));
@@ -1912,11 +1989,15 @@ function buildMarkdownReport(report) {
   });
 
   const topOffenderRows = buildTopOffenderTable(cold, [
-    "top20LakeThumb",
-    "top20LakeMedium",
+    "top20LakeThumbWebp",
+    "top20LakeThumbLegacy",
+    "top20LakeMediumWebp",
+    "top20LakeMediumLegacy",
+    "top20LakeOriginal",
+    "top20LakeLegacyImageUrl",
     "top20SchemeImages",
-    "top20SchemeStorage",
     "top20SchemeWebp",
+    "top20SchemeLegacy",
     "top20SchemeExternal",
     "top20SchemePng",
     "top20SchemeJpeg",
@@ -1939,6 +2020,15 @@ function buildMarkdownReport(report) {
     formatCount(variant.count),
     formatBytes(variant.knownResourceBytes),
     formatBytes(variant.knownTransferBytes),
+  ]);
+  const schemeDataOffenderRows = (cold.schemeDataOffenders ?? []).map((item) => [
+    item.lakeSlug || "n/a",
+    item.lakeUrl || "n/a",
+    item.type || "n/a",
+    item.status ?? "n/a",
+    item.contentType || "n/a",
+    item.url,
+    item.recommendation,
   ]);
 
   const violationCounts = new Map();
@@ -1974,8 +2064,8 @@ function buildMarkdownReport(report) {
         ["Known resource", formatBytes(cold.totalKnownResourceBytes), formatBytes(warm.totalKnownResourceBytes)],
         ["Image resource", formatBytes(cold.imageKnownResourceBytes), formatBytes(warm.imageKnownResourceBytes)],
         ["Supabase Storage resource", formatBytes(cold.supabaseStorageKnownResourceBytes), formatBytes(warm.supabaseStorageKnownResourceBytes)],
-        ["Scheme storage", `${formatCount(cold.schemeStorageRequests)} / ${formatBytes(cold.schemeStorageKnownResourceBytes)}`, `${formatCount(warm.schemeStorageRequests)} / ${formatBytes(warm.schemeStorageKnownResourceBytes)}`],
         ["Scheme WebP", `${formatCount(cold.schemeWebpRequests)} / ${formatBytes(cold.schemeWebpKnownResourceBytes)}`, `${formatCount(warm.schemeWebpRequests)} / ${formatBytes(warm.schemeWebpKnownResourceBytes)}`],
+        ["Scheme legacy", `${formatCount(cold.schemeLegacyRequests)} / ${formatBytes(cold.schemeLegacyKnownResourceBytes)}`, `${formatCount(warm.schemeLegacyRequests)} / ${formatBytes(warm.schemeLegacyKnownResourceBytes)}`],
         ["Scheme external remaining", `${formatCount(cold.schemeExternalRequests)} / ${formatBytes(cold.schemeExternalKnownResourceBytes)}`, `${formatCount(warm.schemeExternalRequests)} / ${formatBytes(warm.schemeExternalKnownResourceBytes)}`],
         ["Scheme PNG remaining", `${formatCount(cold.schemePngRequests)} / ${formatBytes(cold.schemePngKnownResourceBytes)}`, `${formatCount(warm.schemePngRequests)} / ${formatBytes(warm.schemePngKnownResourceBytes)}`],
         ["Scheme JPG remaining", `${formatCount(cold.schemeJpegRequests)} / ${formatBytes(cold.schemeJpegKnownResourceBytes)}`, `${formatCount(warm.schemeJpegRequests)} / ${formatBytes(warm.schemeJpegKnownResourceBytes)}`],
@@ -1995,10 +2085,10 @@ function buildMarkdownReport(report) {
     markdownTable(
       ["Metric", "Cold", "Warm"],
       [
-        ["Scheme storage requests", formatCount(cold.schemeStorageRequests), formatCount(warm.schemeStorageRequests)],
-        ["Scheme storage resource", formatBytes(cold.schemeStorageKnownResourceBytes), formatBytes(warm.schemeStorageKnownResourceBytes)],
         ["Scheme WebP requests", formatCount(cold.schemeWebpRequests), formatCount(warm.schemeWebpRequests)],
         ["Scheme WebP resource", formatBytes(cold.schemeWebpKnownResourceBytes), formatBytes(warm.schemeWebpKnownResourceBytes)],
+        ["Scheme legacy requests", formatCount(cold.schemeLegacyRequests), formatCount(warm.schemeLegacyRequests)],
+        ["Scheme legacy resource", formatBytes(cold.schemeLegacyKnownResourceBytes), formatBytes(warm.schemeLegacyKnownResourceBytes)],
         ["Scheme external requests", formatCount(cold.schemeExternalRequests), formatCount(warm.schemeExternalRequests)],
         ["Scheme external resource", formatBytes(cold.schemeExternalKnownResourceBytes), formatBytes(warm.schemeExternalKnownResourceBytes)],
         ["Scheme PNG requests", formatCount(cold.schemePngRequests), formatCount(warm.schemePngRequests)],
@@ -2010,7 +2100,15 @@ function buildMarkdownReport(report) {
       ],
     ),
     "",
-    "## 5. Route/Phase Breakdown Table",
+    "## 5. Scheme Data Offenders",
+    schemeDataOffenderRows.length
+      ? markdownTable(
+          ["Slug", "Page", "Type", "Status", "Content-Type", "URL", "Recommendation"],
+          schemeDataOffenderRows,
+        )
+      : "_No scheme data offenders detected._",
+    "",
+    "## 6. Route/Phase Breakdown Table",
     "> `detail-total` is a rollup over all requests attributed to detail pages. `static` groups static assets by category so the page-flow phases stay readable.",
     markdownTable(
       [
@@ -2039,7 +2137,7 @@ function buildMarkdownReport(report) {
       phaseRows,
     ),
     "",
-    "## 6. Top Expensive Detail Pages",
+    "## 7. Top Expensive Detail Pages",
     "### Cold",
     markdownTable(
       ["Lake", "Slug", "Requests", "Transfer", "Resource", "Image resource", "Medium", "Thumb", "Scheme loaded", "Weather requests"],
@@ -2074,19 +2172,19 @@ function buildMarkdownReport(report) {
       ]),
     ),
     "",
-    "## 7. Top Offenders by Category",
+    "## 8. Top Offenders by Category",
     markdownTable(["Category", "Requests", "Resource", "Top offender", "Top offender bytes"], topOffenderRows),
     "",
-    "## 8. Top Remaining Scheme Offenders",
+    "## 9. Top Remaining Scheme Offenders",
     markdownTable(
       ["Bucket", "Requests", "Resource", "Top offender", "Top offender bytes"],
       buildTopOffenderTable(cold, ["top20SchemeExternal", "top20SchemePng", "top20SchemeJpeg", "top20SchemeFailed"]),
     ),
     "",
-    "## 9. Violations/regressions",
+    "## 10. Violations/regressions",
     violationRows.length ? markdownTable(["Violation", "Count"], violationRows) : "- None",
     "",
-    "## 10. Recommendations generated from detected data",
+    "## 11. Recommendations generated from detected data",
     ...recommendationLines(report).map((line) => `- ${line}`),
     "",
   ].join("\n");

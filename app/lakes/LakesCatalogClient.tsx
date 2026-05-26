@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase, type Lake } from "@/lib/supabase";
+import { PUBLIC_LAKE_IMAGE_SELECT } from "@/lib/lake-image-resolver";
 import CatalogView from "./CatalogView";
 import AILakePicker from "./AILakePicker";
 import DarkFiltersBar from "./DarkFiltersBar";
@@ -21,7 +22,7 @@ async function fetchLakes(
 ): Promise<Lake[]> {
   let query = supabase
     .from("lakes")
-    .select("*, lake_images(id, lake_id, url, thumb_url, medium_url, is_primary, sort_order, created_at)");
+    .select(`*, lake_images(${PUBLIC_LAKE_IMAGE_SELECT})`);
 
   if (search) query = query.ilike("name", `%${search}%`);
   if (region) query = query.eq("city", region);
