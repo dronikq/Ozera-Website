@@ -556,6 +556,20 @@ function isAnalyticsRequest(rawUrl, responseHeaders = {}) {
   );
 }
 
+function isVercelObservabilityScript(rawUrl, responseHeaders = {}) {
+  if (!isSameOriginRequest(rawUrl)) return false;
+
+  const contentType = `${responseHeaders["content-type"] || ""}`.toLowerCase();
+  if (!contentType.includes("javascript")) return false;
+
+  try {
+    const pathname = new URL(rawUrl, BASE_URL).pathname;
+    return pathname === "/_vercel/insights/script.js" || pathname === "/_vercel/speed-insights/script.js" || /^\/[a-f0-9]{16}\/script\.js$/i.test(pathname);
+  } catch {
+    return false;
+  }
+}
+
 function isImmutableCacheable(responseHeaders = {}) {
   const cacheControl = `${responseHeaders["cache-control"] || ""}`.toLowerCase();
   return cacheControl.includes("immutable") && cacheControl.includes("max-age=31536000");
@@ -1633,7 +1647,7 @@ function summarizeJsResources(recordsForRun) {
       resourceType: record.resourceType,
       cacheControl: record.responseHeaders["cache-control"] ?? null,
       isImmutableStatic: isSameOriginUrl(record.url) && isImmutableCacheable(record.responseHeaders),
-      isThirdPartyAnalytics: !isSameOriginUrl(record.url) && isAnalyticsRequest(record.url, record.responseHeaders),
+      isThirdPartyAnalytics: isAnalyticsRequest(record.url, record.responseHeaders) || isVercelObservabilityScript(record.url, record.responseHeaders),
     });
   }
 
@@ -1905,10 +1919,11 @@ function collectViolations(recordsForRun, summary, detailPagesVisited) {
       threshold: JS_BUNDLE_HUGE_THRESHOLD_BYTES,
     });
   }
-  if ((summary?.jsRepeatedHardBytes ?? summary?.jsRepeatedBytes ?? 0) > JS_BUNDLE_HUGE_THRESHOLD_BYTES) {
+  const jsRepeatedHardBytes = summary?.jsRepeatedHardBytes ?? 0;
+  if (jsRepeatedHardBytes > JS_BUNDLE_HUGE_THRESHOLD_BYTES) {
     violations.push({
       type: "js_repeated_downloads_too_high",
-      knownResourceBytes: summary.jsRepeatedHardBytes ?? summary.jsRepeatedBytes,
+      knownResourceBytes: jsRepeatedHardBytes,
       threshold: JS_BUNDLE_HUGE_THRESHOLD_BYTES,
     });
   }
@@ -1983,6 +1998,9 @@ function summarize(recordsForRun, detailPageBreakdown = [], detailPagesVisited =
     jsTotalBytes: jsSummary.jsTotalBytes,
     jsUniqueBytes: jsSummary.jsUniqueBytes,
     jsRepeatedBytes: jsSummary.jsRepeatedBytes,
+    jsRepeatedHardBytes: jsSummary.jsRepeatedHardBytes,
+    jsRepeatedImmutableBytes: jsSummary.jsRepeatedImmutableBytes,
+    jsRepeatedThirdPartyBytes: jsSummary.jsRepeatedThirdPartyBytes,
     jsUniqueResourceCount: jsSummary.jsUniqueResourceCount,
     jsRepeatedResourceCount: jsSummary.jsRepeatedResourceCount,
     jsTopUniqueResources: jsSummary.jsTopUniqueResources,
@@ -2375,6 +2393,10 @@ function buildMarkdownReport(report) {
     `- Cold resource: ${formatBytes(cold.totalKnownResourceBytes)}`,
     `- Warm transfer: ${formatBytes(warm.totalKnownTransferBytes)}`,
     `- Warm resource: ${formatBytes(warm.totalKnownResourceBytes)}`,
+    `- JS repeated total: ${formatBytes(cold.jsRepeatedBytes ?? 0)}`,
+    `- JS repeated immutable: ${formatBytes(cold.jsRepeatedImmutableBytes ?? 0)}`,
+    `- JS repeated third-party: ${formatBytes(cold.jsRepeatedThirdPartyBytes ?? 0)}`,
+    `- JS repeated hard: ${formatBytes(cold.jsRepeatedHardBytes ?? 0)}`,
     `- Cold violations: ${cold.violations.length}`,
     `- Warm violations: ${warm.violations.length}`,
     "",
@@ -2498,16 +2520,27 @@ function buildMarkdownReport(report) {
     "## 8. Top Offenders by Category",
     markdownTable(["Category", "Requests", "Resource", "Top offender", "Top offender bytes"], topOffenderRows),
     "",
-    "## 9. Top Remaining Scheme Offenders",
+    "## 9. JS Repeated Breakdown",
+    markdownTable(
+      ["Metric", "Cold", "Warm"],
+      [
+        ["Repeated total", formatBytes(cold.jsRepeatedBytes ?? 0), formatBytes(warm.jsRepeatedBytes ?? 0)],
+        ["Repeated immutable", formatBytes(cold.jsRepeatedImmutableBytes ?? 0), formatBytes(warm.jsRepeatedImmutableBytes ?? 0)],
+        ["Repeated third-party", formatBytes(cold.jsRepeatedThirdPartyBytes ?? 0), formatBytes(warm.jsRepeatedThirdPartyBytes ?? 0)],
+        ["Repeated hard", formatBytes(cold.jsRepeatedHardBytes ?? 0), formatBytes(warm.jsRepeatedHardBytes ?? 0)],
+      ],
+    ),
+    "",
+    "## 10. Top Remaining Scheme Offenders",
     markdownTable(
       ["Bucket", "Requests", "Resource", "Top offender", "Top offender bytes"],
       buildTopOffenderTable(cold, ["top20SchemeExternal", "top20SchemePng", "top20SchemeJpeg", "top20SchemeFailed"]),
     ),
     "",
-    "## 10. Violations/regressions",
+    "## 11. Violations/regressions",
     violationRows.length ? markdownTable(["Violation", "Count"], violationRows) : "- None",
     "",
-    "## 11. Recommendations generated from detected data",
+    "## 12. Recommendations generated from detected data",
     ...recommendationLines(report).map((line) => `- ${line}`),
     "",
   ].join("\n");
