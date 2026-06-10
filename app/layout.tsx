@@ -3,9 +3,8 @@ import { Manrope } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-import Footer from "./components/Footer";
-import AppLaunchModal from "./components/AppLaunchModal";
 import GoogleAnalytics from "./components/GoogleAnalytics";
+import SiteChrome from "./components/SiteChrome";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -85,9 +84,7 @@ export default function RootLayout({
   return (
     <html lang="uk" className={`${manrope.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <AppLaunchModal />
-        {children}
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
         <Analytics />
         <SpeedInsights />
         <GoogleAnalytics />
