@@ -41,6 +41,7 @@ export default function Footer() {
               <Link href="/lakes/add" className="oz-footer__link">Додати озеро</Link>
               <Link href="/terms" className="oz-footer__link">Умови використання</Link>
               <Link href="/privacy" className="oz-footer__link">Конфіденційність</Link>
+              <Link href="/account-deletion" className="oz-footer__link">Видалення акаунта</Link>
             </nav>
           </div>
 

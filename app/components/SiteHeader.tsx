@@ -30,9 +30,6 @@ export default function SiteHeader({ breadcrumbs }: Props) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* Close mobile menu on route change */
-  useEffect(() => { setMenuOpen(false); }, [pathname]);
-
   const isActive = (href: string) => {
     if (href === "/lakes")     return pathname === "/lakes" || (pathname.startsWith("/lakes/") && pathname !== "/lakes/add");
     if (href === "/lakes/add") return pathname === "/lakes/add";
