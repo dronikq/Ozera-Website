@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import InviteCopyButton from "./InviteCopyButton";
 import "./invite.css";
 
-const INVITE_BASE_URL = "https://ozera.in.ua/trips/invite";
+const INVITE_BASE_URL = "https://www.ozera.in.ua/trips/invite";
 const APP_STORE_URL = "https://apps.apple.com/ua/app/ozera/id6765619438?l=ru";
 
 type PageProps = {
@@ -43,6 +43,9 @@ export default async function TripInvitePage({ params }: PageProps) {
   const userAgent = (await headers()).get("user-agent") ?? "";
   const isAndroid = /Android/i.test(userAgent);
   const inviteUrl = `${INVITE_BASE_URL}/${encodeURIComponent(token)}`;
+  const fallbackNote = isAndroid
+    ? "Якщо застосунок не відкрився автоматично — натисніть кнопку ще раз або скористайтесь кодом запрошення після встановлення Ozera."
+    : "Якщо застосунок не відкрився — встановіть Ozera з App Store, а потім скористайтесь кодом запрошення.";
 
   return (
     <main className="invite-page">
@@ -62,25 +65,21 @@ export default async function TripInvitePage({ params }: PageProps) {
             Відкрийте застосунок, щоб приєднатися до поїздки, переглянути учасників та планування.
           </p>
 
-          {isAndroid ? (
-            <div className="invite-android">Android-версія скоро</div>
-          ) : (
-            <div className="invite-actions" aria-label="Дії для запрошення">
-              <a href={inviteUrl} className="oz-btn-primary">
-                Відкрити в Ozera
-              </a>
+          <div className="invite-actions" aria-label="Дії для запрошення">
+            <a href={inviteUrl} className="oz-btn-primary">
+              Відкрити в Ozera
+            </a>
+            {!isAndroid && (
               <a href={APP_STORE_URL} className="oz-btn-secondary" target="_blank" rel="noopener noreferrer">
                 Завантажити в App Store
               </a>
-            </div>
-          )}
+            )}
+          </div>
 
           <div className="invite-meta">
             <div className="invite-meta-row">
               <span className="invite-meta-label">Fallback</span>
-              <p className="invite-note">
-                Якщо застосунок не відкрився — встановіть Ozera з App Store, а потім скористайтесь кодом запрошення.
-              </p>
+              <p className="invite-note">{fallbackNote}</p>
             </div>
 
             <div className="invite-meta-row">

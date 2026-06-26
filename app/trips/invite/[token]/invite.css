@@ -176,16 +176,6 @@
   margin: 0;
 }
 
-.invite-android {
-  margin-top: 22px;
-  padding: 14px 16px;
-  border-radius: 18px;
-  border: 1px solid rgba(179, 90, 69, 0.20);
-  background: rgba(179, 90, 69, 0.08);
-  color: var(--color-danger);
-  font-weight: 700;
-}
-
 @media (max-width: 640px) {
   .invite-shell {
     padding: 18px 14px;
