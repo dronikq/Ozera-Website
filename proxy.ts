@@ -5,13 +5,14 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const ANDROID_ASSET_LINKS_PATH = "/.well-known/assetlinks.json";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const host = request.headers.get("host") ?? "";
 
   // Apex → www redirect (only when host is exactly ozera.in.ua, no www)
-  if (host === "ozera.in.ua") {
+  if (host === "ozera.in.ua" && pathname !== ANDROID_ASSET_LINKS_PATH) {
     const wwwUrl = `https://www.ozera.in.ua${pathname}${request.nextUrl.search}`;
     return NextResponse.redirect(wwwUrl, { status: 308 });
   }
