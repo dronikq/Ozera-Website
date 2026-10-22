@@ -244,13 +244,12 @@
 // ── CONFIG ──────────────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://hakinbhfivthqxvkssok.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhha2luYmhmaXZ0aHF4dmtzc29rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4OTkwODksImV4cCI6MjA4MzQ3NTA4OX0.wS1nf7ymNbYZ1AlamiJiAPvcMAdcgIPBXrdpl4RxPzg';
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhha2luYmhmaXZ0aHF4dmtzc29rIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2Nzg5OTA4OSwiZXhwIjoyMDgzNDc1MDg5fQ.ABINhHvWES-S-oSIdzxZa48V4X8o8-rcJK0GilljCRs';
 const BUCKET = 'lake-images';
 
-// sbAuth — для Google OAuth (anon key)
-// sb — для операцій з даними (service key, минає RLS)
+// Усі запити виконуються з сесією користувача через publishable/anon key.
+// Адмінські права мають перевірятися політиками RLS у Supabase.
 const sbAuth = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+const sb = sbAuth;
 
 // ── STATE ────────────────────────────────────────────────────────────────
 let lakes = [];
